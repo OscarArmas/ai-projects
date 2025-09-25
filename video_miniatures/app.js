@@ -9,6 +9,8 @@ let isPlayerMinimized = false;
 let loadingProgress = 0;
 let musicLoaded = false;
 let videoLoaded = false;
+let musicMutedByUser = false; // To track if the user intentionally mutes
+let experienceStarted = false; // Flag to ensure completion logic runs only once
 const CLIENT_ID = 'a3e059563d7fd3fd21b7448916353fc3'; // SoundCloud Public Client ID
 
 // Default track
@@ -53,27 +55,34 @@ function updateLoadingProgress(percent, message) {
 
 // Check if everything is loaded
 function checkLoadingComplete() {
-    if (musicLoaded && videoLoaded) {
-        // Everything loaded, hide loading screen
-        setTimeout(() => {
-            hideLoadingScreen();
-        }, 500);
-    }
-}
+    // Only run this if both assets are loaded AND the experience hasn't been marked as started
+    if (musicLoaded && videoLoaded && !experienceStarted) {
+        // Set the flag immediately to prevent this block from ever running again
+        experienceStarted = true; 
 
-// Hide loading screen
-function hideLoadingScreen() {
-    const loadingScreen = document.getElementById('loadingScreen');
-    if (loadingScreen) {
-        updateLoadingProgress(100, 'Experience ready!');
+        // Everything is pre-loaded. Hide the main loading screen animations
+        // and then show the "Start Music" button overlay.
         
-        // Fade out animation
-        loadingScreen.style.transition = 'opacity 1s ease-out';
-        loadingScreen.style.opacity = '0';
+        const loadingScreen = document.getElementById('loadingScreen');
+        const startButtonOverlay = document.getElementById('start-button-overlay');
         
-        setTimeout(() => {
-            loadingScreen.style.display = 'none';
-        }, 1000);
+        if (loadingScreen) {
+            // Fade out loading screen
+            loadingScreen.style.transition = 'opacity 0.5s ease-out';
+            loadingScreen.style.opacity = '0';
+            
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                
+                // Now, fade in the "Start Music" button overlay
+                if (startButtonOverlay) {
+                    startButtonOverlay.style.display = 'flex';
+                    setTimeout(() => {
+                        startButtonOverlay.style.opacity = '1';
+                    }, 50); // Short delay to ensure display:flex is applied
+                }
+            }, 500);
+        }
     }
 }
 
@@ -162,7 +171,7 @@ async function loadDefaultTrack() {
         const selectedTrack = playableTracks[randomTrackIndex];
         
         // Play the selected track
-        playTrack(selectedTrack.id, selectedTrack.title, selectedTrack.user.username);
+        playTrack(selectedTrack.id, selectedTrack.title, selectedTrack.user.username, true); // Pass true for autoplay
         
         // Mark music as loaded
         markMusicLoaded();
@@ -203,6 +212,10 @@ function useDirectUrlFallback() {
     // Initialize widget
     player.onload = function() {
         currentWidget = SC.Widget(player);
+        currentWidget.bind(SC.Widget.Events.READY, function() {
+            currentWidget.setVolume(0); // Start muted (fallback)
+            console.log('Music widget loaded and muted (fallback).');
+        });
         markMusicLoaded();
     };
 }
@@ -711,7 +724,7 @@ async function searchTracks() {
 }
 
 // Play track by ID
-function playTrack(trackId, title, artist) {
+function playTrack(trackId, title, artist, isAutoplay = false) {
     const container = document.getElementById('playerContainer');
     const indicator = document.getElementById('playingIndicator');
     const player = document.getElementById('soundcloudPlayer');
@@ -736,6 +749,14 @@ function playTrack(trackId, title, artist) {
     // Initialize widget when it loads
     player.onload = function() {
         currentWidget = SC.Widget(player);
+        currentWidget.bind(SC.Widget.Events.READY, function() {
+            if (isAutoplay) {
+                currentWidget.setVolume(0); // Start muted if it's autoplay
+                console.log('Music widget loaded and muted.');
+            } else {
+                currentWidget.setVolume(50); // Set normal volume for manual plays
+            }
+        });
     };
 }
 
@@ -775,6 +796,7 @@ function playFromUrl() {
     // Initialize widget when it loads
     player.onload = function() {
         currentWidget = SC.Widget(player);
+        // User-initiated, so play with sound
     };
 }
 
@@ -801,6 +823,28 @@ function closePlayer() {
 // Event Listeners
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
+    const startButton = document.getElementById('startButton');
+
+    // Handle the "Click to Start" button
+    if (startButton) {
+        startButton.addEventListener('click', function() {
+            // Unmute music
+            if (currentWidget) {
+                currentWidget.setVolume(50); // Set a good volume
+                currentWidget.play(); // Ensure it plays if it was paused
+                console.log('Music unmuted and playing via Start Button.');
+            }
+            
+            // Hide the button overlay
+            const startButtonOverlay = document.getElementById('start-button-overlay');
+            if (startButtonOverlay) {
+                startButtonOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    startButtonOverlay.style.display = 'none';
+                }, 500); // Wait for transition to finish
+            }
+        }, { once: true }); // Ensure this button can only be clicked once
+    }
     
     // Initialize loading screen
     updateLoadingProgress(10, 'Initializing application...');
@@ -821,22 +865,23 @@ document.addEventListener('DOMContentLoaded', function() {
         loadInitialVideo();
     }, 1500);
     
-    // Fallback: Hide loading after 6 seconds max
+    // Fallback: Hide loading after 8 seconds max and show start button
     setTimeout(() => {
         if (loadingProgress < 100) {
-            console.log('Fallback: Hiding loading screen due to timeout');
+            console.log('Fallback: Forcing display of start button due to timeout');
             musicLoaded = true;
             videoLoaded = true;
-            hideLoadingScreen();
+            checkLoadingComplete(); // This will now show the start button
             
             // Restore transitions after load
+            const mainContainer = document.getElementById('mainContainer');
             if(mainContainer) {
                 setTimeout(() => {
                     mainContainer.style.transition = 'all 0.5s ease';
                 }, 500);
             }
         }
-    }, 6000);
+    }, 8000); // Increased timeout to 8 seconds
     
     // Clear results when the user starts typing
     searchInput.addEventListener('input', function(e) {
