@@ -44,7 +44,7 @@ function updateLoadingProgress(percent, message) {
     
     if (progressBar) progressBar.style.width = `${percent}%`;
     if (loadingText) loadingText.textContent = message;
-    if (loadingPercent) loadingPercent.textContent = `${Math.round(percent)}%`;
+    if (loadingPercent) loadingPercent.textContent = `♪ ${Math.round(percent)}%`;
     
     loadingProgress = percent;
 }
@@ -71,7 +71,6 @@ function hideLoadingScreen() {
         
         setTimeout(() => {
             loadingScreen.style.display = 'none';
-            showNotification('🎵 ¡Experiencia completa cargada!');
         }, 1000);
     }
 }
@@ -166,8 +165,6 @@ async function loadDefaultTrack() {
         // Marcar música como cargada
         markMusicLoaded();
         
-        showNotification('♪ Música por defecto cargada: ' + selectedTrack.title.substring(0, 30) + '...');
-        
     } catch (error) {
         console.error('Error al cargar música por defecto:', error);
         // Usar URL directa como fallback
@@ -205,7 +202,6 @@ function useDirectUrlFallback() {
     player.onload = function() {
         currentWidget = SC.Widget(player);
         markMusicLoaded();
-        showNotification('♪ Música por defecto cargada: ' + DEFAULT_TRACK_TITLE);
     };
 }
 
@@ -233,7 +229,6 @@ function loadInitialVideo() {
     videoElement.addEventListener('loadeddata', function() {
         console.log('Video inicial cargado exitosamente');
         markVideoLoaded();
-        showNotification(`🎬 Video inicial: ${selectedVideo.title}`);
     }, { once: true });
     
     videoElement.addEventListener('error', function(e) {
@@ -267,22 +262,16 @@ function loadDefaultVideo() {
     const videoElement = document.getElementById('backgroundVideo');
     if (!videoElement) {
         console.error('ERROR: No se encontró el elemento backgroundVideo');
-        showNotification('❌ Error: Elemento de video no encontrado');
         return;
     }
-    
-    // Mostrar notificación de carga
-    showNotification(`⏳ Cargando video: ${selectedVideo.title}...`);
     
     // Configurar eventos del video
     videoElement.addEventListener('loadeddata', function() {
         console.log('Video cargado exitosamente');
-        showNotification(`✅ Video cargado: ${selectedVideo.title}`);
     }, { once: true });
     
     videoElement.addEventListener('error', function(e) {
         console.error('Error al cargar video:', e);
-        showNotification(`❌ Error al cargar video: ${selectedVideo.title}`);
     }, { once: true });
     
     // Intentar usar la función existente
@@ -292,7 +281,6 @@ function loadDefaultVideo() {
         console.log('setVideoBackground ejecutado');
     } catch (error) {
         console.error('Error en setVideoBackground:', error);
-        showNotification('❌ Error al configurar video de fondo');
     }
 }
 
@@ -303,7 +291,6 @@ function loadFallbackVideo(excludeIndex) {
     const availableVideos = DEFAULT_VIDEOS.filter((_, index) => index !== excludeIndex);
     
     if (availableVideos.length === 0) {
-        showNotification('⚠️ No se pudieron cargar videos por defecto');
         console.log('No hay más videos disponibles');
         return;
     }
@@ -315,10 +302,8 @@ function loadFallbackVideo(excludeIndex) {
     
     try {
         setVideoBackground(selectedVideo.url);
-        showNotification(`✅ Video alternativo cargado: ${selectedVideo.title}`);
     } catch (error) {
         console.error('Error en video fallback:', error);
-        showNotification('⚠️ Error cargando videos, manteniendo imagen por defecto');
     }
 }
 

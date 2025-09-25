@@ -61,6 +61,27 @@
         .search-container {
             z-index: 30;
         }
+        
+        /* Animaciones musicales personalizadas */
+        @keyframes audioWave {
+            0%, 100% { transform: scaleY(0.3); }
+            50% { transform: scaleY(1); }
+        }
+        
+        .audio-bar {
+            animation: audioWave ease-in-out infinite;
+            transform-origin: bottom;
+        }
+        
+        .audio-bar:nth-child(1) { animation-duration: 1.2s; animation-delay: 0s; }
+        .audio-bar:nth-child(2) { animation-duration: 0.9s; animation-delay: 0.1s; }
+        .audio-bar:nth-child(3) { animation-duration: 1.1s; animation-delay: 0.2s; }
+        .audio-bar:nth-child(4) { animation-duration: 1.3s; animation-delay: 0.3s; }
+        .audio-bar:nth-child(5) { animation-duration: 0.8s; animation-delay: 0.4s; }
+        .audio-bar:nth-child(6) { animation-duration: 1.4s; animation-delay: 0.5s; }
+        .audio-bar:nth-child(7) { animation-duration: 1.0s; animation-delay: 0.6s; }
+        .audio-bar:nth-child(8) { animation-duration: 0.7s; animation-delay: 0.7s; }
+        .audio-bar:nth-child(9) { animation-duration: 1.1s; animation-delay: 0.8s; }
     </style>
 </head>
 <body class="m-0 p-0 h-screen overflow-hidden relative font-sans bg-center bg-cover bg-no-repeat bg-fixed" 
@@ -73,20 +94,47 @@
     <div id="loadingScreen" 
          class="fixed inset-0 z-50 flex items-center justify-center bg-black">
         <div class="text-center">
-            <!-- Spinner de carga -->
-            <div class="inline-block w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin mb-6"></div>
+            <!-- Ecualizador musical minimalista -->
+            <div class="flex items-end justify-center space-x-1 mb-8" style="height: 60px;">
+                <div class="audio-bar w-1 bg-white/60 rounded-full" style="height: 12px;"></div>
+                <div class="audio-bar w-1 bg-white/70 rounded-full" style="height: 24px;"></div>
+                <div class="audio-bar w-1 bg-white/80 rounded-full" style="height: 36px;"></div>
+                <div class="audio-bar w-1 bg-white/90 rounded-full" style="height: 20px;"></div>
+                <div class="audio-bar w-1 bg-white rounded-full" style="height: 40px;"></div>
+                <div class="audio-bar w-1 bg-white/90 rounded-full" style="height: 16px;"></div>
+                <div class="audio-bar w-1 bg-white/80 rounded-full" style="height: 32px;"></div>
+                <div class="audio-bar w-1 bg-white/70 rounded-full" style="height: 28px;"></div>
+                <div class="audio-bar w-1 bg-white/60 rounded-full" style="height: 14px;"></div>
+            </div>
             
             <!-- Texto de carga -->
             <h2 class="text-2xl font-light text-white mb-4">Cargando Experiencia</h2>
             <p id="loadingText" class="text-white/80 text-sm">Preparando música y video...</p>
             
-            <!-- Barra de progreso -->
-            <div class="w-64 h-1 bg-white/20 rounded-full mt-6 mx-auto overflow-hidden">
-                <div id="progressBar" class="h-full bg-white transition-all duration-500 ease-out" style="width: 0%"></div>
+            <!-- Barra de progreso musical -->
+            <div class="w-72 h-2 bg-white/10 rounded-full mt-6 mx-auto overflow-hidden relative">
+                <div id="progressBar" class="h-full bg-gradient-to-r from-white/80 to-white transition-all duration-500 ease-out relative" style="width: 0%">
+                    <!-- Pulso sutil en la barra -->
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
+                </div>
+                <!-- Pequeñas marcas como notas musicales en la barra -->
+                <div class="absolute top-1/2 left-1/4 w-0.5 h-0.5 bg-white/30 rounded-full transform -translate-y-1/2"></div>
+                <div class="absolute top-1/2 left-1/2 w-0.5 h-0.5 bg-white/30 rounded-full transform -translate-y-1/2"></div>
+                <div class="absolute top-1/2 left-3/4 w-0.5 h-0.5 bg-white/30 rounded-full transform -translate-y-1/2"></div>
             </div>
             
-            <!-- Porcentaje -->
-            <div id="loadingPercent" class="text-white/60 text-xs mt-2">0%</div>
+            <!-- Porcentaje con símbolo musical sutil -->
+            <div id="loadingPercent" class="text-white/50 text-xs mt-3 font-mono tracking-wider">♪ 0%</div>
+        </div>
+        
+        <!-- Partículas musicales flotantes sutiles -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute top-1/4 left-1/4 text-white/10 text-xs animate-ping" style="animation-delay: 1s; animation-duration: 4s;">♪</div>
+            <div class="absolute top-1/3 right-1/3 text-white/10 text-xs animate-ping" style="animation-delay: 2.5s; animation-duration: 3s;">♫</div>
+            <div class="absolute bottom-1/4 left-1/3 text-white/10 text-xs animate-ping" style="animation-delay: 0.5s; animation-duration: 5s;">♪</div>
+            <div class="absolute bottom-1/3 right-1/4 text-white/10 text-xs animate-ping" style="animation-delay: 3s; animation-duration: 3.5s;">♬</div>
+            <div class="absolute top-2/3 left-1/6 text-white/10 text-xs animate-ping" style="animation-delay: 1.8s; animation-duration: 4.2s;">♫</div>
+            <div class="absolute top-1/6 right-1/6 text-white/10 text-xs animate-ping" style="animation-delay: 2.2s; animation-duration: 3.8s;">♪</div>
         </div>
     </div>
     
@@ -223,17 +271,17 @@
          class="fixed bottom-5 right-5 hidden gap-3 z-20">
         <button onclick="toggleVideoPlayback()" 
                 id="playPauseBtn"
-                class="w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border-none
-                       bg-white/90 glass-effect hover:bg-white hover:scale-110">⏸️</button>
+                class="w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border border-white/20
+                       bg-white/10 glass-effect text-white hover:bg-white/20 hover:scale-110 hover:border-white/30">⏸️</button>
         <button onclick="toggleVideoMute()" 
                 id="muteBtn" 
                 title="Silenciar video (V)"
-                class="w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border-none
-                       bg-white/90 glass-effect hover:bg-white hover:scale-110">🔇</button>
+                class="w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border border-white/20
+                       bg-white/10 glass-effect text-white hover:bg-white/20 hover:scale-110 hover:border-white/30">🔇</button>
         <button onclick="removeVideoBackground()" 
                 title="Quitar video"
-                class="w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border-none
-                       bg-white/90 glass-effect hover:bg-white hover:scale-110">❌</button>
+                class="w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border border-white/20
+                       bg-white/10 glass-effect text-white hover:bg-white/20 hover:scale-110 hover:border-white/30">❌</button>
     </div>
     
     <!-- Reproductor lateral pequeño -->
