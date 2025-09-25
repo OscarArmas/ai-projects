@@ -6,6 +6,105 @@ let isMinimized = false;
 let isPlayerMinimized = false;
 const CLIENT_ID = 'a3e059563d7fd3fd21b7448916353fc3'; // Client ID público de SoundCloud
 
+// Canción por defecto
+const DEFAULT_TRACK_URL = 'https://soundcloud.com/brentfaiyaz/rolling-stone-8?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing';
+const DEFAULT_TRACK_ID = '293';
+const DEFAULT_TRACK_TITLE = 'Rolling Stone';
+const DEFAULT_TRACK_ARTIST = 'Default Playlist';
+
+// Función para cargar canción por defecto usando búsqueda
+async function loadDefaultTrack() {
+    const container = document.getElementById('playerContainer');
+    const indicator = document.getElementById('playingIndicator');
+    const player = document.getElementById('soundcloudPlayer');
+    
+    // Lista de términos de búsqueda para música por defecto
+    const defaultSearchTerms = [
+        'lofi hip hop',
+        'chill music',
+        'ambient music',
+        'relaxing music',
+        'study music',
+        'chillhop'
+    ];
+    
+    // Seleccionar un término de búsqueda aleatorio
+    const randomIndex = Math.floor(Math.random() * defaultSearchTerms.length);
+    const searchTerm = defaultSearchTerms[randomIndex];
+    
+    // Mostrar indicador de carga
+    indicator.innerHTML = `♪ Cargando música por defecto...`;
+    indicator.style.display = 'block';
+    indicator.classList.remove('hidden');
+    
+    try {
+        // Buscar tracks usando el término seleccionado
+        const response = await fetch(`https://api.soundcloud.com/tracks?q=${encodeURIComponent(searchTerm)}&client_id=${CLIENT_ID}&limit=10`);
+        
+        if (!response.ok) {
+            throw new Error('Error en la búsqueda');
+        }
+        
+        const tracks = await response.json();
+        
+        // Filtrar solo tracks reproducibles
+        const playableTracks = tracks.filter(track => track.streamable);
+        
+        if (playableTracks.length === 0) {
+            // Si no hay tracks reproducibles, usar URL directa como fallback
+            useDirectUrlFallback();
+            return;
+        }
+        
+        // Seleccionar un track aleatorio de los resultados
+        const randomTrackIndex = Math.floor(Math.random() * playableTracks.length);
+        const selectedTrack = playableTracks[randomTrackIndex];
+        
+        // Reproducir el track seleccionado
+        playTrack(selectedTrack.id, selectedTrack.title, selectedTrack.user.username);
+        
+        showNotification('♪ Música por defecto cargada: ' + selectedTrack.title.substring(0, 30) + '...');
+        
+    } catch (error) {
+        console.error('Error al cargar música por defecto:', error);
+        // Usar URL directa como fallback
+        useDirectUrlFallback();
+    }
+}
+
+// Función fallback usando URL directa
+function useDirectUrlFallback() {
+    const container = document.getElementById('playerContainer');
+    const indicator = document.getElementById('playingIndicator');
+    const player = document.getElementById('soundcloudPlayer');
+    
+    // Usar la URL que el usuario configuró
+    const fallbackUrl = DEFAULT_TRACK_URL;
+    
+    // Actualizar indicador
+    indicator.innerHTML = `♪ ${DEFAULT_TRACK_TITLE} - ${DEFAULT_TRACK_ARTIST}`;
+    
+    // Mostrar reproductor
+    container.style.display = 'block';
+    container.classList.remove('hidden');
+    indicator.style.display = 'block';
+    indicator.classList.remove('hidden');
+    
+    // Crear URL del widget
+    const widgetUrl = `https://w.soundcloud.com/player/?url=${encodeURIComponent(fallbackUrl)}&client_id=${CLIENT_ID}&auto_play=true&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=true`;
+    
+    player.src = widgetUrl;
+    
+    // Limpiar resultados de búsqueda
+    clearSearchResults();
+    
+    // Inicializar widget
+    player.onload = function() {
+        currentWidget = SC.Widget(player);
+        showNotification('♪ Música por defecto cargada: ' + DEFAULT_TRACK_TITLE);
+    };
+}
+
 // Función para minimizar/mostrar la interfaz
 function toggleMinimize() {
     const container = document.getElementById('mainContainer');
@@ -486,6 +585,11 @@ function closePlayer() {
 // Event Listeners
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
+    
+    // Cargar canción por defecto después de un pequeño delay
+    setTimeout(() => {
+        loadDefaultTrack();
+    }, 1500);
     
     // Limpiar resultados cuando el usuario empiece a escribir
     searchInput.addEventListener('input', function(e) {
