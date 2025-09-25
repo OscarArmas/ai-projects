@@ -1,0 +1,131 @@
+<!-- COMPONENTES REUTILIZABLES -->
+<!-- Este archivo contiene los componentes HTML que se pueden reutilizar -->
+
+<!-- ========================================== -->
+<!-- COMPONENTE: Botón Glassmorphism -->
+<!-- ========================================== -->
+<!-- 
+Uso: Copia y personaliza según necesidad
+Clases base: bg-white/60 glass-effect border border-white/40 rounded-3xl px-6 py-3 text-sm font-medium cursor-pointer transition-all duration-300 shadow-md
+Hover: hover:bg-white/80 hover:transform hover:-translate-y-1 hover:shadow-lg
+-->
+
+<button class="bg-white/60 glass-effect border border-white/40 rounded-3xl px-6 py-3 text-sm font-medium cursor-pointer transition-all duration-300 shadow-md hover:bg-white/80 hover:transform hover:-translate-y-1 hover:shadow-lg">
+    Botón Glassmorphism
+</button>
+
+<!-- ========================================== -->
+<!-- COMPONENTE: Botón Transparente -->
+<!-- ========================================== -->
+<button class="bg-white/5 glass-effect border border-white/20 text-white rounded-3xl px-6 py-3 text-sm font-medium cursor-pointer transition-all duration-300 shadow-md hover:bg-white/15 hover:transform hover:-translate-y-1 hover:shadow-lg">
+    Botón Transparente
+</button>
+
+<!-- ========================================== -->
+<!-- COMPONENTE: Input con Glassmorphism -->
+<!-- ========================================== -->
+<input type="text" 
+       placeholder="Texto placeholder..."
+       class="w-full max-w-lg px-6 py-4 border-none rounded-full text-base text-center outline-none transition-all duration-300 bg-white/70 glass-effect shadow-lg border border-white/30 focus:bg-white/85 focus:shadow-xl focus:transform focus:-translate-y-1 focus:border-white/50 placeholder:text-gray-600">
+
+<!-- ========================================== -->
+<!-- COMPONENTE: Panel Modal/Flotante -->
+<!-- ========================================== -->
+<div class="fixed p-5 rounded-2xl shadow-xl border border-white/30 bg-white/95 glass-effect-strong z-50">
+    <button class="absolute top-3 right-4 bg-none border-none text-lg text-gray-400 cursor-pointer w-6 h-6 flex items-center justify-center hover:text-gray-600">×</button>
+    <h3 class="m-0 mb-4 text-base text-gray-800 font-medium">Título del Panel</h3>
+    <div>Contenido del panel...</div>
+</div>
+
+<!-- ========================================== -->
+<!-- COMPONENTE: Botón Circular (Control) -->
+<!-- ========================================== -->
+<button class="w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border-none bg-white/90 glass-effect hover:bg-white hover:scale-110">
+    🔘
+</button>
+
+<!-- ========================================== -->
+<!-- COMPONENTE: Indicador con Animación -->
+<!-- ========================================== -->
+<div class="fixed px-3 py-1 rounded-2xl text-xs animate-pulse-slow border border-white/20 bg-orange-400/80 glass-effect text-white">
+    ♪ Texto del indicador
+</div>
+
+<!-- ========================================== -->
+<!-- COMPONENTE: Notificación Temporal -->
+<!-- ========================================== -->
+<div class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-black/80 text-white px-6 py-3 rounded-lg z-50 text-sm glass-effect">
+    ✅ Mensaje de notificación
+</div>
+
+<!-- ========================================== -->
+<!-- COMPONENTE: Label de Archivo (Upload) -->
+<!-- ========================================== -->
+<label class="block p-3 mb-3 text-center text-sm cursor-pointer transition-all duration-300 rounded-lg w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:transform hover:-translate-y-1 hover:shadow-lg">
+    📁 Subir archivo
+</label>
+
+<!-- ========================================== -->
+<!-- COMPONENTE: Resultado de Búsqueda -->
+<!-- ========================================== -->
+<div class="p-3 border-b border-gray-200 cursor-pointer text-left transition-all duration-200 hover:bg-orange-100/50 last:border-b-0">
+    <div class="font-medium text-gray-800 text-sm">Título del resultado</div>
+    <div class="text-gray-600 text-xs mt-1">Información adicional</div>
+</div>
+
+<!-- ========================================== -->
+<!-- COMPONENTE: Container Principal con Centrado -->
+<!-- ========================================== -->
+<div class="relative w-full h-screen flex justify-center items-center z-20 transition-all duration-500">
+    <div class="text-center transition-all duration-500">
+        <!-- Contenido centrado -->
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- CLASES UTILITY PERSONALIZADAS -->
+<!-- ========================================== -->
+<!-- 
+Glassmorphism: glass-effect, glass-effect-strong
+Animaciones: minimized-slide, minimized-slide-x
+Overlay: background-overlay
+Colores personalizados: 
+  - bg-white/70 (fondo semi-transparente)
+  - border-white/30 (borde sutil)
+  - bg-orange-400/80 (color temático)
+-->
+
+<!-- ========================================== -->
+<!-- RESPONSIVE BREAKPOINTS -->
+<!-- ========================================== -->
+<!-- 
+sm: 640px+ (móviles grandes)
+md: 768px+ (tablets)
+lg: 1024px+ (escritorio)
+xl: 1280px+ (escritorio grande)
+
+Ejemplos de uso responsivo:
+- w-full sm:w-80 md:w-96 lg:w-[500px]
+- flex-col sm:flex-row
+- text-xs sm:text-sm md:text-base
+-->
+
+<!-- ========================================== -->
+<!-- GUÍA DE ESTADOS -->
+<!-- ========================================== -->
+<!-- 
+Estados comunes:
+- hover: efectos al pasar el mouse
+- focus: cuando el elemento está enfocado
+- active: cuando se hace clic
+- disabled: cuando está deshabilitado
+- first: primer elemento
+- last: último elemento
+
+Clases de estado personalizadas:
+- minimized-slide: deslizar hacia arriba
+- minimized-slide-x: deslizar hacia la derecha
+- hidden: ocultar elemento
+- opacity-0: invisible pero ocupa espacio
+- pointer-events-none: no recibe eventos de mouse
+-->

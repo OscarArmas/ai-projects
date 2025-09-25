@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoundCloud Music Player</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'pulse-slow': 'pulse 2s infinite',
+                        'fade-in-out': 'fadeInOut 3s ease-in-out'
+                    },
+                    backdropBlur: {
+                        'xs': '2px'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            20% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+        }
+        
+        /* Clases personalizadas para efectos específicos */
+        .glass-effect {
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+        
+        .glass-effect-strong {
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+        }
+        
+        .minimized-slide {
+            transform: translateY(-100vh);
+        }
+        
+        .minimized-slide-x {
+            transform: translateX(100%);
+        }
+        
+        .background-overlay {
+            background: rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="m-0 p-0 h-screen overflow-hidden relative font-sans bg-center bg-cover bg-no-repeat bg-fixed" 
+      style="background-image: url('https://images.unsplash.com/photo-1470225620780-dba8ba36b745?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')">
+    
+    <!-- Overlay sutil para mejorar legibilidad -->
+    <div class="absolute inset-0 background-overlay z-10"></div>
+    
+    <!-- Video de fondo -->
+    <video id="backgroundVideo" 
+           class="fixed top-0 left-0 w-full h-full object-cover z-0 hidden" 
+           muted loop autoplay playsinline>
+    </video>
+    
+    <!-- Botón de minimización -->
+    <button id="minimizeBtn" 
+            onclick="toggleMinimize()" 
+            title="Minimizar interfaz (M)"
+            class="fixed top-5 left-5 w-12 h-12 rounded-full cursor-pointer text-xl flex items-center justify-center transition-all duration-300 z-50 
+                   bg-white/10 glass-effect border border-white/20 text-white shadow-lg hover:bg-white/20 hover:scale-110 hover:shadow-xl">
+        <span id="minimizeIcon">−</span>
+    </button>
+    
+    <!-- Indicador de interfaz minimizada -->
+    <div id="minimizedIndicator" 
+         class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+                bg-black/60 glass-effect text-white px-8 py-5 rounded-2xl text-center z-40 hidden 
+                shadow-lg border border-white/20">
+        <div class="text-base">🎵 Interfaz minimizada</div>
+        <div class="text-xs mt-1 opacity-80">Presiona M o haz clic en el botón para mostrar</div>
+    </div>
+    
+    <!-- Contenedor principal -->
+    <div id="mainContainer" 
+         class="relative w-full h-screen flex justify-center items-center z-20 transition-all duration-500">
+        
+        <!-- Buscador minimalista flotante -->
+        <div class="text-center transition-all duration-500">
+            <input type="text" 
+                   id="searchInput" 
+                   placeholder="🎵 Buscar música o pegar URL de SoundCloud..."
+                   class="w-full max-w-lg px-6 py-4 border-none rounded-full text-base text-center outline-none transition-all duration-300 
+                          bg-white/70 glass-effect shadow-lg border border-white/30 
+                          focus:bg-white/85 focus:shadow-xl focus:transform focus:-translate-y-1 focus:border-white/50
+                          placeholder:text-gray-600
+                          sm:w-80 md:w-96 lg:w-[500px]">
+            
+            <div class="mt-5 flex gap-4 justify-center flex-col sm:flex-row items-center">
+                <button onclick="searchTracks()" 
+                        class="px-6 py-3 rounded-3xl text-sm font-medium cursor-pointer transition-all duration-300 shadow-md
+                               bg-white/60 glass-effect text-gray-800 border border-white/40
+                               hover:bg-white/80 hover:transform hover:-translate-y-1 hover:shadow-lg
+                               w-48 sm:w-auto">
+                    Buscar
+                </button>
+                <button onclick="playFromUrl()" 
+                        class="px-6 py-3 rounded-3xl text-sm font-medium cursor-pointer transition-all duration-300 shadow-md
+                               bg-white/5 glass-effect text-white border border-white/20
+                               hover:bg-white/15 hover:transform hover:-translate-y-1 hover:shadow-lg
+                               w-48 sm:w-auto">
+                    Reproducir URL
+                </button>
+            </div>
+        </div>
+        
+        <!-- Resultados de búsqueda flotantes -->
+        <div id="searchResults" 
+             class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 mt-16 
+                    w-full max-w-lg max-h-80 overflow-y-auto rounded-2xl p-5 hidden shadow-xl z-50 border border-white/30
+                    bg-white/80 glass-effect-strong">
+        </div>
+    </div>
+    
+    <!-- Información para cambiar fondo -->
+    <div onclick="toggleBackgroundOptions()" 
+         class="fixed bottom-5 left-5 px-5 py-4 rounded-xl text-xs text-gray-600 z-20 cursor-pointer transition-all duration-300 select-none
+                bg-white/90 glass-effect hover:bg-white hover:transform hover:-translate-y-1 hover:shadow-lg">
+        🖼️ Cambiar fondo de pantalla
+    </div>
+    
+    <!-- Opciones de fondo -->
+    <div id="backgroundOptions" 
+         class="fixed bottom-20 left-5 p-5 rounded-2xl hidden z-50 shadow-xl min-w-70 border border-white/30
+                bg-white/95 glass-effect-strong">
+        
+        <button onclick="closeBackgroundOptions()" 
+                class="absolute top-3 right-4 bg-none border-none text-lg text-gray-400 cursor-pointer w-6 h-6 flex items-center justify-center
+                       hover:text-gray-600">×</button>
+        
+        <h3 class="m-0 mb-4 text-base text-gray-800 font-medium">Cambiar Fondo</h3>
+        
+        <div class="mb-4">
+            <input type="file" id="fileInputImage" class="hidden" accept="image/*" onchange="handleImageUpload(event)">
+            <label for="fileInputImage" 
+                   class="block p-3 mb-3 text-center text-sm cursor-pointer transition-all duration-300 rounded-lg w-full
+                          bg-gradient-to-r from-indigo-500 to-purple-600 text-white
+                          hover:transform hover:-translate-y-1 hover:shadow-lg">
+                🖼️ Subir imagen desde mi dispositivo
+            </label>
+            
+            <input type="file" id="fileInputVideo" class="hidden" accept="video/*" onchange="handleVideoUpload(event)">
+            <label for="fileInputVideo" 
+                   class="block p-3 text-center text-sm cursor-pointer transition-all duration-300 rounded-lg w-full
+                          bg-gradient-to-r from-red-500 to-red-600 text-white
+                          hover:transform hover:-translate-y-1 hover:shadow-lg">
+                🎬 Subir video desde mi dispositivo
+            </label>
+        </div>
+        
+        <div class="mb-4">
+            <input type="text" 
+                   id="urlInputBg" 
+                   placeholder="https://ejemplo.com/imagen.jpg o video.mp4"
+                   class="w-full p-3 border-2 border-gray-200 rounded-lg text-xs mb-3 focus:outline-none focus:border-indigo-500">
+            <button onclick="applyUrlBackground()" 
+                    class="w-full p-3 text-sm cursor-pointer transition-all duration-300 rounded-lg border-none text-white
+                           bg-gradient-to-r from-orange-400 to-yellow-400
+                           hover:transform hover:-translate-y-1 hover:shadow-lg">
+                🌐 Usar imagen/video desde URL
+            </button>
+        </div>
+    </div>
+    
+    <!-- Controles de video -->
+    <div id="videoControls" 
+         class="fixed bottom-5 right-5 hidden gap-3 z-20">
+        <button onclick="toggleVideoPlayback()" 
+                id="playPauseBtn"
+                class="w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border-none
+                       bg-white/90 glass-effect hover:bg-white hover:scale-110">⏸️</button>
+        <button onclick="toggleVideoMute()" 
+                id="muteBtn" 
+                title="Silenciar video (V)"
+                class="w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border-none
+                       bg-white/90 glass-effect hover:bg-white hover:scale-110">🔇</button>
+        <button onclick="removeVideoBackground()" 
+                title="Quitar video"
+                class="w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border-none
+                       bg-white/90 glass-effect hover:bg-white hover:scale-110">❌</button>
+    </div>
+    
+    <!-- Reproductor lateral pequeño -->
+    <div id="playerContainer" 
+         class="hidden fixed top-5 right-5 w-70 h-45 rounded-xl shadow-lg z-50 overflow-hidden border transition-all duration-300
+                bg-white/90 glass-effect border-orange-400/30 hover:scale-105 hover:shadow-xl
+                sm:w-60 sm:h-38 lg:w-70 lg:h-45">
+        <div class="relative w-full h-full bg-white">
+            <button onclick="togglePlayerMinimize()" 
+                    title="Minimizar reproductor"
+                    class="absolute top-1 right-8 w-5 h-5 rounded-full cursor-pointer text-xs flex items-center justify-center transition-all duration-200 border-none z-50
+                           bg-black/30 glass-effect text-white hover:bg-black/50 hover:scale-110">−</button>
+            <button onclick="closePlayer()" 
+                    class="absolute top-1 right-1 w-5 h-5 rounded-full cursor-pointer text-xs flex items-center justify-center transition-all duration-200 border-none z-50
+                           bg-orange-400/70 glass-effect text-white hover:bg-orange-400/90 hover:scale-110">×</button>
+            <iframe id="soundcloudPlayer" class="w-full h-full border-none"></iframe>
+        </div>
+    </div>
+    
+    <!-- Indicador de música reproduciéndose -->
+    <div id="playingIndicator" 
+         class="fixed top-55 right-5 px-3 py-1 rounded-2xl text-xs z-40 hidden animate-pulse-slow border border-white/20
+                bg-orange-400/80 glass-effect text-white">
+        ♪ Música reproduciéndose
+    </div>
+
+    <!-- Script principal -->
+    <script src="https://w.soundcloud.com/player/api.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
