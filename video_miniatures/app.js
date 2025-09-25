@@ -12,7 +12,7 @@ let videoLoaded = false;
 const CLIENT_ID = 'a3e059563d7fd3fd21b7448916353fc3'; // SoundCloud Public Client ID
 
 // Default track
-const DEFAULT_TRACK_URL = 'https://soundcloud.com/fumbumfumbum/aoyama-killer-story?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing';
+const DEFAULT_TRACK_URL = 'https://soundcloud.com/brentfaiyaz/rolling-stone-8?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing';
 const DEFAULT_TRACK_ID = '293';
 const DEFAULT_TRACK_TITLE = 'Rolling Stone';
 const DEFAULT_TRACK_ARTIST = 'Default Playlist';
@@ -21,7 +21,7 @@ const DEFAULT_TRACK_ARTIST = 'Default Playlist';
 // INITIAL VIDEO - CHANGE YOUR PREFERRED VIDEO HERE
 // ==========================================
 const INITIAL_VIDEO = {
-    url: 'https://d3o8hbmq1ueggw.cloudfront.net/6zxj4%2Ffile%2Fe6846f52f810d13b3408a86905c8875e_d2efdff9f2d63024035ca595c8ab1904.mp4?response-content-disposition=inline%3Bfilename%3D%22e6846f52f810d13b3408a86905c8875e_d2efdff9f2d63024035ca595c8ab1904.mp4%22%3B&response-content-type=video%2Fmp4&Expires=1758792080&Signature=HCRR2iIKyZOpO4B8ZfhhBGeJh-CwZT9wE0BRFc5WCl0Nt1AFz31XNSL0ubnmqi-NfQjb84iqYBA-tTCrM9hgK4w~EtQoNWjlwV88xVP2usK1peG3Wlt~CHWdulSIW34~7a3GGLfOqGm9ldVRbND0CzKjF5JpooayIVUpd3-kpjbfx3sIXCIMPWgjGF8koPS5COnjW9tl8Xdnki9bPpMfyZffZ6VuhumPitUniD2S0H1292MymYVdQiQ7seuWAxrO1BuKXd8Q1OsbFv1dSm~YCOh4d8pN1s6XyLYtgJu8QK6fxQg8pK~u669u27mImI0clVL6MSlNOedLQtVqkUwF~w__&Key-Pair-Id=APKAJT5WQLLEOADKLHBQ',
+    url: 'https://pouch.jumpshare.com/preview/1DfWCwmyAmMICA1opc3und6pkqoXzQ_3VeuIWm3jyeg4odKv5QG9Spid0RIyFX0pV5Ei84yOLcttRcS-QF-VRvkR1T-yFINJVvaCkbX2YqGt2HXjIx8bjXpG99p07D90GaAxh40BVZFpx9CEUTwQrW6yjbN-I2pg_cnoHs_AmgI.mp4',
     title: 'Initial Video',
     type: 'initial'
 };
