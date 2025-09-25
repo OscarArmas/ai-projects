@@ -568,22 +568,38 @@ function toggleVideoPlayback() {
 function toggleVideoMute() {
     if (!currentWidget) {
         console.log('No music widget available to mute');
+        showNotification('⚠️ No music loaded to mute');
         return;
     }
     
     const muteBtn = document.getElementById('muteBtn');
+    if (!muteBtn) {
+        console.error('Mute button not found');
+        return;
+    }
+    
+    // Add visual feedback for touch
+    muteBtn.style.transform = 'scale(0.95)';
+    setTimeout(() => {
+        muteBtn.style.transform = '';
+    }, 150);
     
     currentWidget.getVolume(function(volume) {
         if (volume > 0) {
             // Mute the music
             currentWidget.setVolume(0);
-            muteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 9v6h4l5 5V4l-5 5H9z"/><line x1="19" y1="5" x2="5" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+            muteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path d="M9 9v6h4l5 5V4l-5 5H9z"/>
+                <line x1="19" y1="5" x2="5" y2="19" stroke-linecap="round"/>
+            </svg>`;
             musicMutedByUser = true;
             console.log('Music muted');
         } else {
             // Unmute the music
             currentWidget.setVolume(50);
-            muteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 9v6h4l5 5V4l-5 5H9z"/></svg>`;
+            muteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path d="M9 9v6h4l5 5V4l-5 5H9z"/>
+            </svg>`;
             musicMutedByUser = false;
             console.log('Music unmuted');
         }
@@ -973,8 +989,21 @@ document.addEventListener('DOMContentLoaded', function() {
         playPauseBtn.className = 'w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border border-white/20 bg-white/10 glass-effect text-white hover:bg-white/20 hover:scale-110 hover:border-white/30 flex items-center justify-center';
     }
     if (muteBtn) {
-        muteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 9v6h4l5 5V4l-5 5H9z"/></svg>`;
-        muteBtn.className = 'w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border border-white/20 bg-white/10 glass-effect text-white hover:bg-white/20 hover:scale-110 hover:border-white/30 flex items-center justify-center';
+        // Set initial icon (unmuted state)
+        muteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path d="M9 9v6h4l5 5V4l-5 5H9z"/>
+        </svg>`;
+        
+        // Add mobile-friendly event listeners
+        muteBtn.addEventListener('click', toggleVideoMute);
+        muteBtn.addEventListener('touchend', function(e) {
+            e.preventDefault(); // Prevent double-firing on mobile
+            toggleVideoMute();
+        });
+        
+        // Improve accessibility
+        muteBtn.setAttribute('role', 'button');
+        muteBtn.setAttribute('aria-label', 'Toggle music mute');
     }
     if (removeBtn) {
         removeBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="18" x2="18" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
