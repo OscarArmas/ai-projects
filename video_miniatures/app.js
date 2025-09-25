@@ -119,72 +119,21 @@ const DEFAULT_VIDEOS = [
     }
 ];
 
-// Load default track using search
+// Load default track using direct URL (more reliable)
 async function loadDefaultTrack() {
-    const container = document.getElementById('playerContainer');
-    const indicator = document.getElementById('playingIndicator');
-    const player = document.getElementById('soundcloudPlayer');
-    
-    // List of search terms for default music
-    const defaultSearchTerms = [
-        'lofi hip hop',
-        'chill music',
-        'ambient music',
-        'relaxing music',
-        'study music',
-        'chillhop'
-    ];
-    
-    // Select a random search term
-    const randomIndex = Math.floor(Math.random() * defaultSearchTerms.length);
-    const searchTerm = defaultSearchTerms[randomIndex];
-    
-    // Show loading indicator
-    indicator.innerHTML = `♪ Loading default music...`;
-    indicator.style.display = 'block';
-    indicator.classList.remove('hidden');
+    console.log('Loading default track via direct URL...');
     
     // Update loading progress
     updateLoadingProgress(20, 'Loading default music...');
     
-    try {
-        // Search for tracks using the selected term
-        const response = await fetch(`https://api.soundcloud.com/tracks?q=${encodeURIComponent(searchTerm)}&client_id=${CLIENT_ID}&limit=10`);
-        
-        if (!response.ok) {
-            throw new Error('Search error');
-        }
-        
-        const tracks = await response.json();
-        
-        // Filter only streamable tracks
-        const playableTracks = tracks.filter(track => track.streamable);
-        
-        if (playableTracks.length === 0) {
-            // If no streamable tracks, use direct URL as a fallback
-            useDirectUrlFallback();
-            return;
-        }
-        
-        // Select a random track from the results
-        const randomTrackIndex = Math.floor(Math.random() * playableTracks.length);
-        const selectedTrack = playableTracks[randomTrackIndex];
-        
-        // Play the selected track
-        playTrack(selectedTrack.id, selectedTrack.title, selectedTrack.user.username, true); // Pass true for autoplay
-        
-        // Mark music as loaded
-        markMusicLoaded();
-        
-    } catch (error) {
-        console.error('Error loading default music:', error);
-        // Use direct URL as a fallback
-        useDirectUrlFallback();
-    }
+    // Use direct URL immediately (more reliable than API search)
+    useDirectUrlFallback();
 }
 
 // Fallback function using direct URL
 function useDirectUrlFallback() {
+    console.log('Using direct URL fallback for default music');
+    
     const container = document.getElementById('playerContainer');
     const indicator = document.getElementById('playingIndicator');
     const player = document.getElementById('soundcloudPlayer');
@@ -193,7 +142,7 @@ function useDirectUrlFallback() {
     const fallbackUrl = DEFAULT_TRACK_URL;
     
     // Update indicator
-    indicator.innerHTML = `♪ ${DEFAULT_TRACK_TITLE} - ${DEFAULT_TRACK_ARTIST}`;
+    indicator.innerHTML = `♪ Loading ${DEFAULT_TRACK_TITLE}...`;
     
     // Show player
     container.style.display = 'block';
@@ -201,8 +150,8 @@ function useDirectUrlFallback() {
     indicator.style.display = 'block';
     indicator.classList.remove('hidden');
     
-    // Create widget URL
-    const widgetUrl = `https://w.soundcloud.com/player/?url=${encodeURIComponent(fallbackUrl)}&client_id=${CLIENT_ID}&auto_play=true&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=true`;
+    // Create widget URL - using visual=false for the compact player
+    const widgetUrl = `https://w.soundcloud.com/player/?url=${encodeURIComponent(fallbackUrl)}&hide_related=true&show_comments=false&show_user=false&show_reposts=false&visual=false`;
     
     player.src = widgetUrl;
     
@@ -213,10 +162,30 @@ function useDirectUrlFallback() {
     player.onload = function() {
         currentWidget = SC.Widget(player);
         currentWidget.bind(SC.Widget.Events.READY, function() {
-            currentWidget.setVolume(0); // Start muted (fallback)
-            console.log('Music widget loaded and muted (fallback).');
+            console.log('Default music widget loaded and ready');
+            
+            // Update the 'Now Playing' title
+            currentWidget.getCurrentSound(function(sound) {
+                if (sound && indicator) {
+                    indicator.innerHTML = `♪ ${sound.title} - ${sound.user.username}`;
+                    
+                    const nowPlayingEl = document.getElementById('nowPlaying');
+                    if (nowPlayingEl) {
+                        nowPlayingEl.textContent = sound.title;
+                    }
+                }
+            });
+            
+            // Start muted for autoplay compliance
+            currentWidget.setVolume(0);
+            console.log('Default music loaded and muted, ready for Start button');
+            markMusicLoaded();
         });
-        markMusicLoaded();
+        
+        currentWidget.bind(SC.Widget.Events.ERROR, function(error) {
+            console.error('Error loading default track:', error);
+            markMusicLoaded(); // Mark as loaded even if failed
+        });
     };
 }
 
