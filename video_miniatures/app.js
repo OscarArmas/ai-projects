@@ -4,7 +4,7 @@
 let currentWidget = null;
 let backgroundVideo = null;
 let isVideoBackground = false;
-let isMinimized = false;
+let isMinimized = true; // Start with the UI minimized
 let isPlayerMinimized = false;
 let loadingProgress = 0;
 let musicLoaded = false;
@@ -336,13 +336,15 @@ function toggleMinimize() {
             playingIndicator.classList.add('minimized-slide-x', 'opacity-0', 'pointer-events-none');
         }
         
-        // Show temporary indicator
-        indicator.classList.remove('hidden');
-        indicator.classList.add('animate-fade-in-out');
-        setTimeout(() => {
-            indicator.classList.add('hidden');
-            indicator.classList.remove('animate-fade-in-out');
-        }, 3000);
+        // Show temporary indicator only if the page has already loaded
+        if (loadingProgress >= 100) {
+            indicator.classList.remove('hidden');
+            indicator.classList.add('animate-fade-in-out');
+            setTimeout(() => {
+                indicator.classList.add('hidden');
+                indicator.classList.remove('animate-fade-in-out');
+            }, 3000);
+        }
         
     } else {
         // Show UI
@@ -569,28 +571,38 @@ function applyUrlBackground() {
 // Video controls
 function toggleVideoPlayback() {
     if (backgroundVideo) {
+        const playPauseBtn = document.getElementById('playPauseBtn');
         if (backgroundVideo.paused) {
             backgroundVideo.play();
-            document.getElementById('playPauseBtn').textContent = '▶️';
+            playPauseBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="6" y="5" width="4" height="14" rx="2"/><rect x="14" y="5" width="4" height="14" rx="2"/></svg>`;
         } else {
             backgroundVideo.pause();
-            document.getElementById('playPauseBtn').textContent = '⏸️';
+            playPauseBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><polygon points="5,3 19,12 5,21 5,3"/></svg>`;
         }
+        playPauseBtn.className = 'w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border border-white/20 bg-white/10 glass-effect text-white hover:bg-white/20 hover:scale-110 hover:border-white/30 flex items-center justify-center';
     }
 }
 
 function toggleVideoMute() {
     if (backgroundVideo) {
         backgroundVideo.muted = !backgroundVideo.muted;
-        document.getElementById('muteBtn').textContent = backgroundVideo.muted ? '🔇' : '🔊';
+        const muteBtn = document.getElementById('muteBtn');
+        muteBtn.innerHTML = backgroundVideo.muted
+            ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 9v6h4l5 5V4l-5 5H9z"/><line x1="19" y1="5" x2="5" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`
+            : `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 9v6h4l5 5V4l-5 5H9z"/></svg>`;
+        muteBtn.className = 'w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border border-white/20 bg-white/10 glass-effect text-white hover:bg-white/20 hover:scale-110 hover:border-white/30 flex items-center justify-center';
     }
 }
 
 function removeVideoBackground() {
     hideVideoBackground();
-    // Revert to default image
     document.body.style.backgroundImage = `url('https://images.unsplash.com/photo-1470225620780-dba8ba36b745?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')`;
     showNotification('✅ Background video removed');
+    const removeBtn = document.getElementById('removeVideoBtn') || document.querySelector('button[title="Remove video"]');
+    if (removeBtn) {
+        removeBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="18" x2="18" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+        removeBtn.className = 'w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border border-white/20 bg-white/10 glass-effect text-white hover:bg-white/20 hover:scale-110 hover:border-white/30 flex items-center justify-center';
+    }
 }
 
 // Show/hide background options
@@ -793,6 +805,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize loading screen
     updateLoadingProgress(10, 'Initializing application...');
     
+    // Hide main container initially since it starts minimized
+    const mainContainer = document.getElementById('mainContainer');
+    if(mainContainer) {
+        mainContainer.style.transition = 'none'; // Prevent animation on page load
+    }
+
     // Load default track after a short delay
     setTimeout(() => {
         loadDefaultTrack();
@@ -810,6 +828,13 @@ document.addEventListener('DOMContentLoaded', function() {
             musicLoaded = true;
             videoLoaded = true;
             hideLoadingScreen();
+            
+            // Restore transitions after load
+            if(mainContainer) {
+                setTimeout(() => {
+                    mainContainer.style.transition = 'all 0.5s ease';
+                }, 500);
+            }
         }
     }, 6000);
     
@@ -893,4 +918,21 @@ document.addEventListener('DOMContentLoaded', function() {
             clearSearchResults();
         }
     });
+
+    // Iconos elegantes para los controles de video
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const muteBtn = document.getElementById('muteBtn');
+    const removeBtn = document.querySelector('button[title="Remove video"]') || document.getElementById('removeVideoBtn');
+    if (playPauseBtn) {
+        playPauseBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="6" y="5" width="4" height="14" rx="2"/><rect x="14" y="5" width="4" height="14" rx="2"/></svg>`;
+        playPauseBtn.className = 'w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border border-white/20 bg-white/10 glass-effect text-white hover:bg-white/20 hover:scale-110 hover:border-white/30 flex items-center justify-center';
+    }
+    if (muteBtn) {
+        muteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 9v6h4l5 5V4l-5 5H9z"/></svg>`;
+        muteBtn.className = 'w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border border-white/20 bg-white/10 glass-effect text-white hover:bg-white/20 hover:scale-110 hover:border-white/30 flex items-center justify-center';
+    }
+    if (removeBtn) {
+        removeBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="18" x2="18" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+        removeBtn.className = 'w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border border-white/20 bg-white/10 glass-effect text-white hover:bg-white/20 hover:scale-110 hover:border-white/30 flex items-center justify-center';
+    }
 });

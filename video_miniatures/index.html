@@ -144,16 +144,16 @@
            muted loop autoplay playsinline>
     </video>
     
-    <!-- Botón de minimización -->
+    <!-- Minimize button -->
     <button id="minimizeBtn" 
             onclick="toggleMinimize()" 
-            title="Minimize UI (M)"
+            title="Show UI (M)"
             class="fixed top-5 left-5 w-12 h-12 rounded-full cursor-pointer text-xl flex items-center justify-center transition-all duration-300 z-50 
-                   bg-white/10 glass-effect border border-white/20 text-white shadow-lg hover:bg-white/20 hover:scale-110 hover:shadow-xl">
-        <span id="minimizeIcon">−</span>
+                   bg-black/30 glass-effect border border-white/20 text-white shadow-lg hover:bg-white/20 hover:scale-110 hover:shadow-xl">
+        <span id="minimizeIcon">+</span>
     </button>
     
-    <!-- Indicador de interfaz minimizada -->
+    <!-- Minimized UI indicator -->
     <div id="minimizedIndicator" 
          class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
                 bg-black/60 glass-effect text-white px-8 py-5 rounded-2xl text-center z-40 hidden 
@@ -162,11 +162,11 @@
         <div class="text-xs mt-1 opacity-80">Press M or click the button to show</div>
     </div>
     
-    <!-- Contenedor principal -->
+    <!-- Main container -->
     <div id="mainContainer" 
-         class="relative w-full h-screen flex justify-center items-center z-20 transition-all duration-500">
+         class="relative w-full h-screen flex justify-center items-center z-20 transition-all duration-500 minimized-slide opacity-0 pointer-events-none">
         
-        <!-- Buscador minimalista flotante -->
+        <!-- Minimalist floating search -->
         <div class="search-container text-center transition-all duration-500">
             <input type="text" 
                    id="searchInput" 
@@ -288,7 +288,7 @@
     <div id="playerContainer" 
          class="hidden fixed top-5 right-5 w-70 h-45 rounded-xl shadow-lg z-50 overflow-hidden border transition-all duration-300
                 bg-white/90 glass-effect border-orange-400/30 hover:scale-105 hover:shadow-xl
-                sm:w-60 sm:h-38 lg:w-70 lg:h-45">
+                sm:w-60 sm:h-38 lg:w-70 lg:h-45 minimized-slide-x opacity-0 pointer-events-none">
         <div class="relative w-full h-full bg-white">
             <button onclick="togglePlayerMinimize()" 
                     title="Minimize player"
@@ -311,5 +311,26 @@
     <!-- Script principal -->
     <script src="https://w.soundcloud.com/player/api.js"></script>
     <script src="app.js"></script>
+    <script>
+        // Estado inicial minimizado
+        let isMinimized = true;
+        let isPlayerMinimized = true;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Forzar estado minimizado visual
+            const container = document.getElementById('mainContainer');
+            const minimizeBtn = document.getElementById('minimizeBtn');
+            const minimizeIcon = document.getElementById('minimizeIcon');
+            const playerContainer = document.getElementById('playerContainer');
+            const playingIndicator = document.getElementById('playingIndicator');
+
+            container.classList.add('minimized-slide', 'opacity-0', 'pointer-events-none');
+            minimizeBtn.classList.add('bg-black/30');
+            minimizeIcon.textContent = '+';
+            minimizeBtn.title = 'Show UI (M)';
+            playerContainer.classList.add('minimized-slide-x', 'opacity-0', 'pointer-events-none');
+            playingIndicator.classList.add('hidden');
+        });
+    </script>
 </body>
 </html>
