@@ -125,21 +125,21 @@
     
     <!-- Información para cambiar fondo -->
     <div onclick="toggleBackgroundOptions()" 
-         class="fixed bottom-5 left-5 px-5 py-4 rounded-xl text-xs text-gray-600 z-20 cursor-pointer transition-all duration-300 select-none
-                bg-white/90 glass-effect hover:bg-white hover:transform hover:-translate-y-1 hover:shadow-lg">
+         class="fixed bottom-5 left-5 px-5 py-4 rounded-xl text-xs text-white z-20 cursor-pointer transition-all duration-300 select-none
+                bg-white/5 glass-effect border border-white/20 hover:bg-white/15 hover:transform hover:-translate-y-1 hover:shadow-lg">
         🖼️ Cambiar fondo de pantalla
     </div>
     
     <!-- Opciones de fondo -->
     <div id="backgroundOptions" 
          class="fixed bottom-20 left-5 p-5 rounded-2xl hidden z-50 shadow-xl min-w-70 border border-white/30
-                bg-white/95 glass-effect-strong">
+                bg-white/80 glass-effect-strong">
         
         <button onclick="closeBackgroundOptions()" 
-                class="absolute top-3 right-4 bg-none border-none text-lg text-gray-400 cursor-pointer w-6 h-6 flex items-center justify-center
-                       hover:text-gray-600">×</button>
+                class="absolute top-3 right-4 bg-none border-none text-lg text-white cursor-pointer w-6 h-6 flex items-center justify-center
+                       hover:text-gray-200 transition-colors duration-200">×</button>
         
-        <h3 class="m-0 mb-4 text-base text-gray-800 font-medium">Cambiar Fondo</h3>
+        <h3 class="m-0 mb-4 text-base text-white font-medium">Cambiar Fondo</h3>
         
         <div class="mb-4">
             <input type="file" id="fileInputImage" class="hidden" accept="image/*" onchange="handleImageUpload(event)">
@@ -163,7 +163,9 @@
             <input type="text" 
                    id="urlInputBg" 
                    placeholder="https://ejemplo.com/imagen.jpg o video.mp4"
-                   class="w-full p-3 border-2 border-gray-200 rounded-lg text-xs mb-3 focus:outline-none focus:border-indigo-500">
+                   class="w-full p-3 border border-white/40 rounded-lg text-xs mb-3 outline-none transition-all duration-300
+                          bg-white/20 glass-effect text-white placeholder:text-gray-300
+                          focus:bg-white/30 focus:border-white/60">
             <button onclick="applyUrlBackground()" 
                     class="w-full p-3 text-sm cursor-pointer transition-all duration-300 rounded-lg border-none text-white
                            bg-gradient-to-r from-orange-400 to-yellow-400
