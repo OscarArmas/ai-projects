@@ -4,6 +4,9 @@ let backgroundVideo = null;
 let isVideoBackground = false;
 let isMinimized = false;
 let isPlayerMinimized = false;
+let loadingProgress = 0;
+let musicLoaded = false;
+let videoLoaded = false;
 const CLIENT_ID = 'a3e059563d7fd3fd21b7448916353fc3'; // Client ID público de SoundCloud
 
 // Canción por defecto
@@ -28,6 +31,64 @@ const INITIAL_VIDEO = {
 // - Sintel: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4'
 // - ForBiggerBlazes: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
 // O cualquier URL de video .mp4 que tengas
+
+// ==========================================
+// SISTEMA DE LOADING
+// ==========================================
+
+// Actualizar progreso de carga
+function updateLoadingProgress(percent, message) {
+    const progressBar = document.getElementById('progressBar');
+    const loadingText = document.getElementById('loadingText');
+    const loadingPercent = document.getElementById('loadingPercent');
+    
+    if (progressBar) progressBar.style.width = `${percent}%`;
+    if (loadingText) loadingText.textContent = message;
+    if (loadingPercent) loadingPercent.textContent = `${Math.round(percent)}%`;
+    
+    loadingProgress = percent;
+}
+
+// Verificar si todo está cargado
+function checkLoadingComplete() {
+    if (musicLoaded && videoLoaded) {
+        // Todo cargado, ocultar loading
+        setTimeout(() => {
+            hideLoadingScreen();
+        }, 500);
+    }
+}
+
+// Ocultar pantalla de loading
+function hideLoadingScreen() {
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen) {
+        updateLoadingProgress(100, 'Experiencia lista!');
+        
+        // Animación de fade out
+        loadingScreen.style.transition = 'opacity 1s ease-out';
+        loadingScreen.style.opacity = '0';
+        
+        setTimeout(() => {
+            loadingScreen.style.display = 'none';
+            showNotification('🎵 ¡Experiencia completa cargada!');
+        }, 1000);
+    }
+}
+
+// Marcar música como cargada
+function markMusicLoaded() {
+    musicLoaded = true;
+    updateLoadingProgress(50, 'Música cargada, preparando video...');
+    checkLoadingComplete();
+}
+
+// Marcar video como cargado
+function markVideoLoaded() {
+    videoLoaded = true;
+    updateLoadingProgress(90, 'Video cargado, finalizando...');
+    checkLoadingComplete();
+}
 
 // Videos adicionales que salen al presionar "Video por defecto"
 const DEFAULT_VIDEOS = [
@@ -73,6 +134,9 @@ async function loadDefaultTrack() {
     indicator.style.display = 'block';
     indicator.classList.remove('hidden');
     
+    // Actualizar progreso de loading
+    updateLoadingProgress(20, 'Cargando música por defecto...');
+    
     try {
         // Buscar tracks usando el término seleccionado
         const response = await fetch(`https://api.soundcloud.com/tracks?q=${encodeURIComponent(searchTerm)}&client_id=${CLIENT_ID}&limit=10`);
@@ -98,6 +162,9 @@ async function loadDefaultTrack() {
         
         // Reproducir el track seleccionado
         playTrack(selectedTrack.id, selectedTrack.title, selectedTrack.user.username);
+        
+        // Marcar música como cargada
+        markMusicLoaded();
         
         showNotification('♪ Música por defecto cargada: ' + selectedTrack.title.substring(0, 30) + '...');
         
@@ -137,6 +204,7 @@ function useDirectUrlFallback() {
     // Inicializar widget
     player.onload = function() {
         currentWidget = SC.Widget(player);
+        markMusicLoaded();
         showNotification('♪ Música por defecto cargada: ' + DEFAULT_TRACK_TITLE);
     };
 }
@@ -150,22 +218,28 @@ function loadInitialVideo() {
     console.log(`Cargando video inicial: ${selectedVideo.title}`);
     console.log(`URL: ${selectedVideo.url}`);
     
+    // Actualizar progreso de loading
+    updateLoadingProgress(60, 'Cargando video inicial...');
+    
     // Obtener el elemento de video
     const videoElement = document.getElementById('backgroundVideo');
     if (!videoElement) {
         console.error('ERROR: No se encontró el elemento backgroundVideo');
+        markVideoLoaded(); // Marcar como cargado aunque falle
         return;
     }
     
     // Configurar eventos del video
     videoElement.addEventListener('loadeddata', function() {
         console.log('Video inicial cargado exitosamente');
+        markVideoLoaded();
         showNotification(`🎬 Video inicial: ${selectedVideo.title}`);
     }, { once: true });
     
     videoElement.addEventListener('error', function(e) {
         console.error('Error al cargar video inicial:', e);
         console.log('Continuando sin video de fondo');
+        markVideoLoaded(); // Marcar como cargado aunque falle
     }, { once: true });
     
     // Cargar el video
@@ -729,15 +803,28 @@ function closePlayer() {
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
     
+    // Inicializar pantalla de loading
+    updateLoadingProgress(10, 'Iniciando aplicación...');
+    
     // Cargar canción por defecto después de un pequeño delay
     setTimeout(() => {
         loadDefaultTrack();
-    }, 1500);
+    }, 800);
     
     // Cargar video inicial automáticamente después de la música
     setTimeout(() => {
         loadInitialVideo();
-    }, 2500);
+    }, 1500);
+    
+    // Fallback: Ocultar loading después de 6 segundos máximo
+    setTimeout(() => {
+        if (loadingProgress < 100) {
+            console.log('Fallback: Ocultando loading por tiempo máximo');
+            musicLoaded = true;
+            videoLoaded = true;
+            hideLoadingScreen();
+        }
+    }, 6000);
     
     // Limpiar resultados cuando el usuario empiece a escribir
     searchInput.addEventListener('input', function(e) {
