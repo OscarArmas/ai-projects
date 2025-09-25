@@ -828,6 +828,45 @@ function closePlayer() {
     }
 }
 
+// Function to request fullscreen on mobile
+function requestMobileFullscreen() {
+    const element = document.documentElement;
+    
+    if (element.requestFullscreen) {
+        element.requestFullscreen();
+    } else if (element.webkitRequestFullscreen) { // Safari
+        element.webkitRequestFullscreen();
+    } else if (element.mozRequestFullScreen) { // Firefox
+        element.mozRequestFullScreen();
+    } else if (element.msRequestFullscreen) { // IE/Edge
+        element.msRequestFullscreen();
+    }
+}
+
+// Auto-detect mobile and suggest fullscreen
+function initMobileFullscreen() {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+        console.log('Mobile device detected - optimized for full screen');
+        
+        // Add listener for double-tap to go fullscreen
+        let lastTap = 0;
+        document.addEventListener('touchend', function(e) {
+            const currentTime = new Date().getTime();
+            const tapLength = currentTime - lastTap;
+            if (tapLength < 500 && tapLength > 0) {
+                // Double tap detected
+                if (!document.fullscreenElement) {
+                    requestMobileFullscreen();
+                }
+                e.preventDefault();
+            }
+            lastTap = currentTime;
+        });
+    }
+}
+
 // Event Listeners
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
@@ -872,6 +911,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize loading screen
     updateLoadingProgress(10, 'Initializing application...');
+    
+    // Initialize mobile fullscreen features
+    initMobileFullscreen();
     
     // Hide main container initially since it starts minimized
     const mainContainer = document.getElementById('mainContainer');
