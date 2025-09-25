@@ -843,12 +843,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 currentWidget.setVolume(50); // Set a good volume.
                 console.log('Music playing and unmuted via Start Button.');
 
-                // NEW: Minimize the player after a short delay
-                setTimeout(() => {
-                    if (!isPlayerMinimized) {
-                        togglePlayerMinimize();
-                    }
-                }, 500); // 0.5 second delay
+                // Check if device is mobile (especially iOS)
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                
+                if (!isMobile || !isIOS) {
+                    // Only auto-minimize on desktop to avoid iOS audio issues
+                    setTimeout(() => {
+                        if (!isPlayerMinimized) {
+                            togglePlayerMinimize();
+                        }
+                    }, 500); // 0.5 second delay
+                } else {
+                    console.log('Mobile/iOS detected - keeping player visible to maintain audio playback');
+                }
             }
             
             // Hide the button overlay
