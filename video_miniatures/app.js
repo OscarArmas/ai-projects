@@ -739,7 +739,7 @@ function playTrack(trackId, title, artist, isAutoplay = false) {
     indicator.classList.remove('hidden');
     
     // Create widget URL
-    const widgetUrl = `https://w.soundcloud.com/player/?url=https://api.soundcloud.com/tracks/${trackId}&client_id=${CLIENT_ID}&auto_play=true&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=true`;
+    const widgetUrl = `https://w.soundcloud.com/player/?url=https://api.soundcloud.com/tracks/${trackId}&client_id=${CLIENT_ID}&auto_play=true&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=false`;
     
     player.src = widgetUrl;
     
@@ -750,6 +750,19 @@ function playTrack(trackId, title, artist, isAutoplay = false) {
     player.onload = function() {
         currentWidget = SC.Widget(player);
         currentWidget.bind(SC.Widget.Events.READY, function() {
+            console.log('SoundCloud Widget is ready.');
+            
+            // Update the 'Now Playing' title
+            currentWidget.getCurrentSound(function(sound) {
+                if (sound) {
+                    const nowPlayingEl = document.getElementById('nowPlaying');
+                    if (nowPlayingEl) {
+                        nowPlayingEl.textContent = sound.title;
+                    }
+                }
+            });
+
+            // Don't try to play here. Just set initial volume and wait for the user to click "Start Music".
             if (isAutoplay) {
                 currentWidget.setVolume(0); // Start muted if it's autoplay
                 console.log('Music widget loaded and muted.');
@@ -802,22 +815,18 @@ function playFromUrl() {
 
 // Close player
 function closePlayer() {
-    const container = document.getElementById('playerContainer');
-    const indicator = document.getElementById('playingIndicator');
-    const player = document.getElementById('soundcloudPlayer');
-    
-    container.style.display = 'none';
-    container.classList.add('hidden');
-    indicator.style.display = 'none';
-    indicator.classList.add('hidden');
-    
-    // Stop the music if it's playing
-    if (currentWidget) {
-        currentWidget.pause();
-        currentWidget = null;
+    const playerContainer = document.getElementById('playerContainer');
+    const nowPlayingEl = document.getElementById('nowPlaying');
+    if (playerContainer) {
+        playerContainer.classList.add('opacity-0', 'pointer-events-none');
+        if (currentWidget) {
+            currentWidget.pause();
+        }
+        // Reset the 'Now Playing' text for the next time
+        if (nowPlayingEl) {
+            nowPlayingEl.textContent = 'Now Playing...';
+        }
     }
-    
-    player.src = '';
 }
 
 // Event Listeners
