@@ -321,6 +321,13 @@ function showNotification(message) {
     }, 3000);
 }
 
+// Función para limpiar resultados y ocultar container
+function clearSearchResults() {
+    const resultsContainer = document.getElementById('searchResults');
+    resultsContainer.classList.add('hidden');
+    resultsContainer.innerHTML = '';
+}
+
 // Buscar tracks en SoundCloud
 async function searchTracks() {
     const query = document.getElementById('searchInput').value.trim();
@@ -345,6 +352,11 @@ async function searchTracks() {
         
         if (tracks.length === 0) {
             resultsContainer.innerHTML = '<div class="text-center text-gray-600 text-sm p-5">No se encontraron resultados</div>';
+            
+            // Ocultar el mensaje automáticamente después de 4 segundos
+            setTimeout(() => {
+                clearSearchResults();
+            }, 4000);
             return;
         }
         
@@ -363,6 +375,11 @@ async function searchTracks() {
         
         if (resultsHTML === '') {
             resultsContainer.innerHTML = '<div class="text-center text-gray-600 text-sm p-5">No hay tracks reproducibles disponibles</div>';
+            
+            // Ocultar el mensaje automáticamente después de 4 segundos
+            setTimeout(() => {
+                clearSearchResults();
+            }, 4000);
         } else {
             resultsContainer.innerHTML = resultsHTML;
         }
@@ -370,6 +387,11 @@ async function searchTracks() {
     } catch (error) {
         console.error('Error:', error);
         resultsContainer.innerHTML = '<div class="text-center text-gray-600 text-sm p-5">❌ Error en la búsqueda. Intenta de nuevo.</div>';
+        
+        // Ocultar el error automáticamente después de 5 segundos
+        setTimeout(() => {
+            clearSearchResults();
+        }, 5000);
     }
 }
 
@@ -394,7 +416,7 @@ function playTrack(trackId, title, artist) {
     player.src = widgetUrl;
     
     // Ocultar resultados de búsqueda
-    document.getElementById('searchResults').classList.add('hidden');
+    clearSearchResults();
     
     // Inicializar widget cuando se cargue
     player.onload = function() {
@@ -463,8 +485,23 @@ function closePlayer() {
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    
+    // Limpiar resultados cuando el usuario empiece a escribir
+    searchInput.addEventListener('input', function(e) {
+        // Si hay resultados visibles y el usuario está escribiendo, ocultarlos
+        const resultsContainer = document.getElementById('searchResults');
+        if (!resultsContainer.classList.contains('hidden') && e.target.value.length > 0) {
+            // Solo limpiar si hay un mensaje de error visible
+            const errorMessage = resultsContainer.innerHTML.includes('❌ Error en la búsqueda');
+            if (errorMessage) {
+                clearSearchResults();
+            }
+        }
+    });
+    
     // Permitir buscar con Enter
-    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+    searchInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             // Verificar si parece una URL
             if (this.value.includes('soundcloud.com')) {
@@ -480,6 +517,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.key === 'Escape') {
             closePlayer();
             closeBackgroundOptions();
+            clearSearchResults();
         }
         
         // Minimizar interfaz con tecla M
@@ -508,15 +546,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Cerrar opciones al hacer clic fuera
+    // Cerrar opciones y resultados al hacer clic fuera
     document.addEventListener('click', function(e) {
         const options = document.getElementById('backgroundOptions');
         const trigger = document.querySelector('[onclick="toggleBackgroundOptions()"]');
+        const resultsContainer = document.getElementById('searchResults');
+        const searchContainer = document.querySelector('.search-container') || searchInput.parentElement;
         
+        // Cerrar opciones de fondo
         if (!options.classList.contains('hidden') && 
             !options.contains(e.target) && 
             !trigger.contains(e.target)) {
             closeBackgroundOptions();
+        }
+        
+        // Cerrar resultados de búsqueda si se hace clic fuera
+        if (!resultsContainer.classList.contains('hidden') && 
+            !resultsContainer.contains(e.target) && 
+            !searchContainer.contains(e.target)) {
+            clearSearchResults();
         }
     });
 });
