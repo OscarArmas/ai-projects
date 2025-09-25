@@ -50,6 +50,17 @@
         .background-overlay {
             background: rgba(0, 0, 0, 0.1);
         }
+        
+        /* Separación visual entre elementos para evitar confusión de texto */
+        #backgroundOptions {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        
+        /* Asegurar que el texto del buscador no interfiera visualmente */
+        .search-container {
+            z-index: 30;
+        }
     </style>
 </head>
 <body class="m-0 p-0 h-screen overflow-hidden relative font-sans bg-center bg-cover bg-no-repeat bg-fixed" 
@@ -78,7 +89,7 @@
          class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
                 bg-black/60 glass-effect text-white px-8 py-5 rounded-2xl text-center z-40 hidden 
                 shadow-lg border border-white/20">
-        <div class="text-base">🎵 Interfaz minimizada</div>
+        <div class="text-base">Interfaz minimizada</div>
         <div class="text-xs mt-1 opacity-80">Presiona M o haz clic en el botón para mostrar</div>
     </div>
     
@@ -87,7 +98,7 @@
          class="relative w-full h-screen flex justify-center items-center z-20 transition-all duration-500">
         
         <!-- Buscador minimalista flotante -->
-        <div class="text-center transition-all duration-500">
+        <div class="search-container text-center transition-all duration-500">
             <input type="text" 
                    id="searchInput" 
                    placeholder="🎵 Buscar música o pegar URL de SoundCloud..."
@@ -125,52 +136,49 @@
     
     <!-- Información para cambiar fondo -->
     <div onclick="toggleBackgroundOptions()" 
-         class="fixed bottom-5 left-5 px-5 py-4 rounded-xl text-xs text-white z-20 cursor-pointer transition-all duration-300 select-none
-                bg-white/5 glass-effect border border-white/20 hover:bg-white/15 hover:transform hover:-translate-y-1 hover:shadow-lg">
-        🖼️ Cambiar fondo de pantalla
+         class="fixed bottom-5 left-5 px-4 py-3 rounded-lg text-xs text-white/80 z-20 cursor-pointer transition-all duration-300 select-none
+                bg-black/20 glass-effect border border-white/10 hover:bg-black/30 hover:text-white hover:border-white/20 shadow-sm">
+        Cambiar fondo
     </div>
     
     <!-- Opciones de fondo -->
     <div id="backgroundOptions" 
-         class="fixed bottom-20 left-5 p-5 rounded-2xl hidden z-50 shadow-xl min-w-70 border border-white/30
-                bg-white/80 glass-effect-strong">
+         class="fixed bottom-20 left-5 p-6 rounded-xl hidden z-50 shadow-2xl min-w-72 border border-white/20
+                bg-black/40 glass-effect-strong backdrop-blur-xl">
         
         <button onclick="closeBackgroundOptions()" 
-                class="absolute top-3 right-4 bg-none border-none text-lg text-white cursor-pointer w-6 h-6 flex items-center justify-center
-                       hover:text-gray-200 transition-colors duration-200">×</button>
+                class="absolute top-3 right-3 bg-none border-none text-lg text-white/60 cursor-pointer w-6 h-6 flex items-center justify-center
+                       hover:text-white transition-colors duration-200">×</button>
         
-        <h3 class="m-0 mb-4 text-base text-white font-medium">Cambiar Fondo</h3>
+        <h3 class="m-0 mb-6 text-sm text-white font-normal uppercase tracking-wide opacity-90">Configurar Fondo</h3>
         
-        <div class="mb-4">
+        <div class="mb-6">
             <input type="file" id="fileInputImage" class="hidden" accept="image/*" onchange="handleImageUpload(event)">
             <label for="fileInputImage" 
-                   class="block p-3 mb-3 text-center text-sm cursor-pointer transition-all duration-300 rounded-lg w-full
-                          bg-gradient-to-r from-indigo-500 to-purple-600 text-white
-                          hover:transform hover:-translate-y-1 hover:shadow-lg">
-                🖼️ Subir imagen desde mi dispositivo
+                   class="block p-3 mb-3 text-center text-xs cursor-pointer transition-all duration-300 rounded-md w-full
+                          bg-white/10 border border-white/20 text-white/90 hover:bg-white/20 hover:border-white/30 hover:text-white">
+                Subir imagen
             </label>
             
             <input type="file" id="fileInputVideo" class="hidden" accept="video/*" onchange="handleVideoUpload(event)">
             <label for="fileInputVideo" 
-                   class="block p-3 text-center text-sm cursor-pointer transition-all duration-300 rounded-lg w-full
-                          bg-gradient-to-r from-red-500 to-red-600 text-white
-                          hover:transform hover:-translate-y-1 hover:shadow-lg">
-                🎬 Subir video desde mi dispositivo
+                   class="block p-3 text-center text-xs cursor-pointer transition-all duration-300 rounded-md w-full
+                          bg-white/10 border border-white/20 text-white/90 hover:bg-white/20 hover:border-white/30 hover:text-white">
+                Subir video
             </label>
         </div>
         
-        <div class="mb-4">
+        <div class="space-y-3">
             <input type="text" 
                    id="urlInputBg" 
-                   placeholder="https://ejemplo.com/imagen.jpg o video.mp4"
-                   class="w-full p-3 border border-white/40 rounded-lg text-xs mb-3 outline-none transition-all duration-300
-                          bg-white/20 glass-effect text-white placeholder:text-gray-300
-                          focus:bg-white/30 focus:border-white/60">
+                   placeholder="URL de imagen o video"
+                   class="w-full p-3 border border-white/20 rounded-md text-xs outline-none transition-all duration-300
+                          bg-white/5 glass-effect text-white placeholder:text-white/50
+                          focus:bg-white/10 focus:border-white/40">
             <button onclick="applyUrlBackground()" 
-                    class="w-full p-3 text-sm cursor-pointer transition-all duration-300 rounded-lg border-none text-white
-                           bg-gradient-to-r from-orange-400 to-yellow-400
-                           hover:transform hover:-translate-y-1 hover:shadow-lg">
-                🌐 Usar imagen/video desde URL
+                    class="w-full p-3 text-xs cursor-pointer transition-all duration-300 rounded-md border border-white/20 text-white
+                           bg-white/10 hover:bg-white/20 hover:border-white/30">
+                Aplicar desde URL
             </button>
         </div>
     </div>
