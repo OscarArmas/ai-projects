@@ -7,10 +7,46 @@ let isPlayerMinimized = false;
 const CLIENT_ID = 'a3e059563d7fd3fd21b7448916353fc3'; // Client ID público de SoundCloud
 
 // Canción por defecto
-const DEFAULT_TRACK_URL = 'https://soundcloud.com/brentfaiyaz/rolling-stone-8?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing';
+const DEFAULT_TRACK_URL = 'https://soundcloud.com/fumbumfumbum/aoyama-killer-story?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing';
 const DEFAULT_TRACK_ID = '293';
 const DEFAULT_TRACK_TITLE = 'Rolling Stone';
 const DEFAULT_TRACK_ARTIST = 'Default Playlist';
+
+// ==========================================
+// VIDEO INICIAL - CAMBIA AQUÍ TU VIDEO PREFERIDO
+// ==========================================
+const INITIAL_VIDEO = {
+    url: 'https://d3o8hbmq1ueggw.cloudfront.net/6zxj4%2Ffile%2Fe6846f52f810d13b3408a86905c8875e_d2efdff9f2d63024035ca595c8ab1904.mp4?response-content-disposition=inline%3Bfilename%3D%22e6846f52f810d13b3408a86905c8875e_d2efdff9f2d63024035ca595c8ab1904.mp4%22%3B&response-content-type=video%2Fmp4&Expires=1758792080&Signature=HCRR2iIKyZOpO4B8ZfhhBGeJh-CwZT9wE0BRFc5WCl0Nt1AFz31XNSL0ubnmqi-NfQjb84iqYBA-tTCrM9hgK4w~EtQoNWjlwV88xVP2usK1peG3Wlt~CHWdulSIW34~7a3GGLfOqGm9ldVRbND0CzKjF5JpooayIVUpd3-kpjbfx3sIXCIMPWgjGF8koPS5COnjW9tl8Xdnki9bPpMfyZffZ6VuhumPitUniD2S0H1292MymYVdQiQ7seuWAxrO1BuKXd8Q1OsbFv1dSm~YCOh4d8pN1s6XyLYtgJu8QK6fxQg8pK~u669u27mImI0clVL6MSlNOedLQtVqkUwF~w__&Key-Pair-Id=APKAJT5WQLLEOADKLHBQ',
+    title: 'Video Inicial',
+    type: 'initial'
+};
+
+// Para cambiar el video inicial, reemplaza la URL arriba con tu video preferido:
+// Ejemplos de URLs que puedes usar:
+// - BigBuckBunny: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
+// - ElephantsDream: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4'
+// - Sintel: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4'
+// - ForBiggerBlazes: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
+// O cualquier URL de video .mp4 que tengas
+
+// Videos adicionales que salen al presionar "Video por defecto"
+const DEFAULT_VIDEOS = [
+    {
+        url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+        title: 'Elephants Dream',
+        type: 'sample'
+    },
+    {
+        url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+        title: 'For Bigger Blazes',
+        type: 'sample'
+    },
+    {
+        url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
+        title: 'Sintel',
+        type: 'sample'
+    }
+];
 
 // Función para cargar canción por defecto usando búsqueda
 async function loadDefaultTrack() {
@@ -103,6 +139,113 @@ function useDirectUrlFallback() {
         currentWidget = SC.Widget(player);
         showNotification('♪ Música por defecto cargada: ' + DEFAULT_TRACK_TITLE);
     };
+}
+
+// Función para cargar el video inicial automáticamente
+function loadInitialVideo() {
+    console.log('=== Cargando video inicial automáticamente ===');
+    
+    const selectedVideo = INITIAL_VIDEO;
+    
+    console.log(`Cargando video inicial: ${selectedVideo.title}`);
+    console.log(`URL: ${selectedVideo.url}`);
+    
+    // Obtener el elemento de video
+    const videoElement = document.getElementById('backgroundVideo');
+    if (!videoElement) {
+        console.error('ERROR: No se encontró el elemento backgroundVideo');
+        return;
+    }
+    
+    // Configurar eventos del video
+    videoElement.addEventListener('loadeddata', function() {
+        console.log('Video inicial cargado exitosamente');
+        showNotification(`🎬 Video inicial: ${selectedVideo.title}`);
+    }, { once: true });
+    
+    videoElement.addEventListener('error', function(e) {
+        console.error('Error al cargar video inicial:', e);
+        console.log('Continuando sin video de fondo');
+    }, { once: true });
+    
+    // Cargar el video
+    try {
+        console.log('Llamando a setVideoBackground para video inicial...');
+        setVideoBackground(selectedVideo.url);
+        console.log('Video inicial configurado');
+    } catch (error) {
+        console.error('Error en setVideoBackground inicial:', error);
+    }
+}
+
+// Función para cargar video por defecto aleatorio (al presionar el botón)
+function loadDefaultVideo() {
+    console.log('=== Iniciando loadDefaultVideo (botón presionado) ===');
+    
+    // Seleccionar un video aleatorio de la lista adicional
+    const randomIndex = Math.floor(Math.random() * DEFAULT_VIDEOS.length);
+    const selectedVideo = DEFAULT_VIDEOS[randomIndex];
+    
+    console.log(`Cargando video aleatorio: ${selectedVideo.title}`);
+    console.log(`URL: ${selectedVideo.url}`);
+    
+    // Obtener el elemento de video
+    const videoElement = document.getElementById('backgroundVideo');
+    if (!videoElement) {
+        console.error('ERROR: No se encontró el elemento backgroundVideo');
+        showNotification('❌ Error: Elemento de video no encontrado');
+        return;
+    }
+    
+    // Mostrar notificación de carga
+    showNotification(`⏳ Cargando video: ${selectedVideo.title}...`);
+    
+    // Configurar eventos del video
+    videoElement.addEventListener('loadeddata', function() {
+        console.log('Video cargado exitosamente');
+        showNotification(`✅ Video cargado: ${selectedVideo.title}`);
+    }, { once: true });
+    
+    videoElement.addEventListener('error', function(e) {
+        console.error('Error al cargar video:', e);
+        showNotification(`❌ Error al cargar video: ${selectedVideo.title}`);
+    }, { once: true });
+    
+    // Intentar usar la función existente
+    try {
+        console.log('Llamando a setVideoBackground...');
+        setVideoBackground(selectedVideo.url);
+        console.log('setVideoBackground ejecutado');
+    } catch (error) {
+        console.error('Error en setVideoBackground:', error);
+        showNotification('❌ Error al configurar video de fondo');
+    }
+}
+
+// Función fallback para cargar otro video si falla
+function loadFallbackVideo(excludeIndex) {
+    console.log('Intentando video fallback...');
+    
+    const availableVideos = DEFAULT_VIDEOS.filter((_, index) => index !== excludeIndex);
+    
+    if (availableVideos.length === 0) {
+        showNotification('⚠️ No se pudieron cargar videos por defecto');
+        console.log('No hay más videos disponibles');
+        return;
+    }
+    
+    const randomIndex = Math.floor(Math.random() * availableVideos.length);
+    const selectedVideo = availableVideos[randomIndex];
+    
+    console.log(`Probando video fallback: ${selectedVideo.title}`);
+    
+    try {
+        setVideoBackground(selectedVideo.url);
+        showNotification(`✅ Video alternativo cargado: ${selectedVideo.title}`);
+    } catch (error) {
+        console.error('Error en video fallback:', error);
+        showNotification('⚠️ Error cargando videos, manteniendo imagen por defecto');
+    }
 }
 
 // Función para minimizar/mostrar la interfaz
@@ -590,6 +733,11 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         loadDefaultTrack();
     }, 1500);
+    
+    // Cargar video inicial automáticamente después de la música
+    setTimeout(() => {
+        loadInitialVideo();
+    }, 2500);
     
     // Limpiar resultados cuando el usuario empiece a escribir
     searchInput.addEventListener('input', function(e) {

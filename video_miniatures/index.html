@@ -182,11 +182,18 @@
                    class="w-full p-3 border border-white/20 rounded-md text-xs outline-none transition-all duration-300
                           bg-white/5 glass-effect text-white placeholder:text-white/50
                           focus:bg-white/10 focus:border-white/40">
-            <button onclick="applyUrlBackground()" 
-                    class="w-full p-3 text-xs cursor-pointer transition-all duration-300 rounded-md border border-white/20 text-white
-                           bg-white/10 hover:bg-white/20 hover:border-white/30">
-                Aplicar desde URL
-            </button>
+            <div class="flex gap-2">
+                <button onclick="applyUrlBackground()" 
+                        class="flex-1 p-3 text-xs cursor-pointer transition-all duration-300 rounded-md border border-white/20 text-white
+                               bg-white/10 hover:bg-white/20 hover:border-white/30">
+                    Aplicar desde URL
+                </button>
+                <button onclick="loadDefaultVideo()" 
+                        class="flex-1 p-3 text-xs cursor-pointer transition-all duration-300 rounded-md border border-white/20 text-white
+                               bg-black/20 hover:bg-black/30 hover:border-white/30">
+                    Video por defecto
+                </button>
+            </div>
         </div>
     </div>
     
