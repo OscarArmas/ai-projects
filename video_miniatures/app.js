@@ -584,7 +584,7 @@ function applyUrlBackground() {
 // Video controls
 function toggleVideoPlayback() {
     if (backgroundVideo) {
-        const playPauseBtn = document.getElementById('playPauseBtn');
+        const playPauseBtn = document.getElementById('videoPlayPauseBtn');
         if (backgroundVideo.paused) {
             backgroundVideo.play();
             playPauseBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="6" y="5" width="4" height="14" rx="2"/><rect x="14" y="5" width="4" height="14" rx="2"/></svg>`;
@@ -843,6 +843,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 currentWidget.play(); // Explicitly start playback.
                 currentWidget.setVolume(50); // Set a good volume.
                 console.log('Music playing and unmuted via Start Button.');
+
+                // NEW: Minimize the player after a short delay
+                setTimeout(() => {
+                    if (!isPlayerMinimized) {
+                        togglePlayerMinimize();
+                    }
+                }, 500); // 0.5 second delay
             }
             
             // Hide the button overlay
@@ -975,7 +982,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Iconos elegantes para los controles de video
-    const playPauseBtn = document.getElementById('playPauseBtn');
+    const playPauseBtn = document.getElementById('videoPlayPauseBtn');
     const muteBtn = document.getElementById('muteBtn');
     const removeBtn = document.querySelector('button[title="Remove video"]') || document.getElementById('removeVideoBtn');
     if (playPauseBtn) {
