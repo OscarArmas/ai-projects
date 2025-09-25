@@ -633,7 +633,7 @@ function closeBackgroundOptions() {
 }
 
 // Show temporary notification
-function showNotification(message) {
+function showNotification(message, isError = false) {
     const notification = document.createElement('div');
     notification.className = `
         fixed top-5 left-1/2 transform -translate-x-1/2 
@@ -830,9 +830,10 @@ document.addEventListener('DOMContentLoaded', function() {
         startButton.addEventListener('click', function() {
             // Unmute music
             if (currentWidget) {
-                currentWidget.setVolume(50); // Set a good volume
-                currentWidget.play(); // Ensure it plays if it was paused
-                console.log('Music unmuted and playing via Start Button.');
+                // This is a trusted user interaction, so we can now play and set volume.
+                currentWidget.play(); // Explicitly start playback.
+                currentWidget.setVolume(50); // Set a good volume.
+                console.log('Music playing and unmuted via Start Button.');
             }
             
             // Hide the button overlay
