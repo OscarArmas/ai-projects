@@ -424,7 +424,7 @@ function setVideoBackground(videoUrl) {
     document.body.style.backgroundImage = 'none';
     isVideoBackground = true;
     
-    // Configure video
+    // Configure video - ALWAYS MUTED (no audio from video)
     backgroundVideo.muted = true;
     backgroundVideo.loop = true;
     backgroundVideo.play().catch(e => {
@@ -597,14 +597,28 @@ function toggleVideoPlayback() {
 }
 
 function toggleVideoMute() {
-    if (backgroundVideo) {
-        backgroundVideo.muted = !backgroundVideo.muted;
-        const muteBtn = document.getElementById('muteBtn');
-        muteBtn.innerHTML = backgroundVideo.muted
-            ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 9v6h4l5 5V4l-5 5H9z"/><line x1="19" y1="5" x2="5" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`
-            : `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 9v6h4l5 5V4l-5 5H9z"/></svg>`;
-        muteBtn.className = 'w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border border-white/20 bg-white/10 glass-effect text-white hover:bg-white/20 hover:scale-110 hover:border-white/30 flex items-center justify-center';
+    if (!currentWidget) {
+        console.log('No music widget available to mute');
+        return;
     }
+    
+    const muteBtn = document.getElementById('muteBtn');
+    
+    currentWidget.getVolume(function(volume) {
+        if (volume > 0) {
+            // Mute the music
+            currentWidget.setVolume(0);
+            muteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 9v6h4l5 5V4l-5 5H9z"/><line x1="19" y1="5" x2="5" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+            musicMutedByUser = true;
+            console.log('Music muted');
+        } else {
+            // Unmute the music
+            currentWidget.setVolume(50);
+            muteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 9v6h4l5 5V4l-5 5H9z"/></svg>`;
+            musicMutedByUser = false;
+            console.log('Music unmuted');
+        }
+    });
 }
 
 function removeVideoBackground() {
