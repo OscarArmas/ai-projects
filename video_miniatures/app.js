@@ -11,7 +11,7 @@ let musicLoaded = false;
 let videoLoaded = false;
 let musicMutedByUser = false; // To track if the user intentionally mutes
 let experienceStarted = false; // Flag to ensure completion logic runs only once
-const CLIENT_ID = 'a3e059563d7fd3fd21b7448916353fc3'; // SoundCloud Public Client ID
+const CLIENT_ID = 'iZIs9mchVcX5lhVRyQGGAYlNPVldzAoJ'; // SoundCloud Public Client ID (Updated 2024)
 
 // Default track
 const DEFAULT_TRACK_URL = 'https://soundcloud.com/brentfaiyaz/rolling-stone-8?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing';

@@ -340,57 +340,5 @@
     <!-- Script principal -->
     <script src="https://w.soundcloud.com/player/api.js"></script>
     <script src="app.js"></script>
-    <script>
-        // Estado inicial minimizado
-        let isMinimized = true;
-        let isPlayerMinimized = true;
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Forzar estado minimizado visual
-            const container = document.getElementById('mainContainer');
-            const minimizeBtn = document.getElementById('minimizeBtn');
-            const minimizeIcon = document.getElementById('minimizeIcon');
-            const playerContainer = document.getElementById('playerContainer');
-            const playingIndicator = document.getElementById('playingIndicator');
-
-            container.classList.add('minimized-slide', 'opacity-0', 'pointer-events-none');
-            minimizeBtn.classList.add('bg-black/30');
-            minimizeIcon.textContent = '+';
-            minimizeBtn.title = 'Show UI (M)';
-            playerContainer.classList.add('minimized-slide-x', 'opacity-0', 'pointer-events-none');
-            playingIndicator.classList.add('hidden');
-            
-            // Mostrar el botón de start encima del video cuando todo esté listo
-            function showStartButton() {
-                const overlay = document.getElementById('start-button-overlay');
-                if (overlay) {
-                    overlay.style.display = 'flex';
-                    setTimeout(() => { overlay.style.opacity = 1; }, 50);
-                }
-            }
-            function hideStartButton() {
-                const overlay = document.getElementById('start-button-overlay');
-                if (overlay) {
-                    overlay.style.opacity = 0;
-                    setTimeout(() => { overlay.style.display = 'none'; }, 400);
-                }
-            }
-            // Cuando termine el loading, mostrar el botón de start
-            const originalHideLoadingScreen = window.hideLoadingScreen;
-            window.hideLoadingScreen = function() {
-                if (originalHideLoadingScreen) originalHideLoadingScreen();
-                showStartButton();
-            };
-            // Al hacer click en el botón, iniciar música y ocultar el botón
-            const startButton = document.getElementById('startButton');
-            if (startButton) {
-                startButton.addEventListener('click', function() {
-                    hideStartButton();
-                    // Aquí puedes iniciar la música automáticamente si lo deseas
-                    if (typeof loadDefaultTrack === 'function') loadDefaultTrack();
-                });
-            }
-        });
-    </script>
 </body>
 </html>
