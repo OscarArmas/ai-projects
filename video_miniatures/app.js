@@ -551,57 +551,48 @@ function applyUrlBackground() {
 }
 
 // Video controls
-function toggleVideoPlayback() {
-    if (backgroundVideo) {
-        const playPauseBtn = document.getElementById('videoPlayPauseBtn');
-        if (backgroundVideo.paused) {
-            backgroundVideo.play();
-            playPauseBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="6" y="5" width="4" height="14" rx="2"/><rect x="14" y="5" width="4" height="14" rx="2"/></svg>`;
-        } else {
-            backgroundVideo.pause();
-            playPauseBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><polygon points="5,3 19,12 5,21 5,3"/></svg>`;
-        }
-        playPauseBtn.className = 'w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border border-white/20 bg-white/10 glass-effect text-white hover:bg-white/20 hover:scale-110 hover:border-white/30 flex items-center justify-center';
-    }
-}
+// Video playback function removed - videos now autoplay without manual controls
 
-function toggleVideoMute() {
+function toggleMusicPlayback() {
     if (!currentWidget) {
-        console.log('No music widget available to mute');
-        showNotification('⚠️ No music loaded to mute');
+        console.log('No music widget available');
         return;
     }
     
-    const muteBtn = document.getElementById('muteBtn');
-    if (!muteBtn) {
-        console.error('Mute button not found');
+    const toggleBtn = document.getElementById('pauseBtn');
+    if (!toggleBtn) {
+        console.error('Music toggle button not found');
         return;
     }
     
     // Add visual feedback for touch
-    muteBtn.style.transform = 'scale(0.95)';
+    toggleBtn.style.transform = 'scale(0.95)';
     setTimeout(() => {
-        muteBtn.style.transform = '';
+        toggleBtn.style.transform = '';
     }, 150);
     
-    currentWidget.getVolume(function(volume) {
-        if (volume > 0) {
-            // Mute the music
-            currentWidget.setVolume(0);
-            muteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path d="M9 9v6h4l5 5V4l-5 5H9z"/>
-                <line x1="19" y1="5" x2="5" y2="19" stroke-linecap="round"/>
-            </svg>`;
-            musicMutedByUser = true;
-            console.log('Music muted');
-        } else {
-            // Unmute the music
+    // Check if music is currently playing and toggle
+    currentWidget.isPaused(function(paused) {
+        if (paused) {
+            // Music is paused, so play it
+            currentWidget.play();
             currentWidget.setVolume(50);
-            muteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path d="M9 9v6h4l5 5V4l-5 5H9z"/>
+            // Change to pause icon
+            toggleBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <rect x="6" y="4" width="4" height="16" rx="1"/>
+                <rect x="14" y="4" width="4" height="16" rx="1"/>
             </svg>`;
-            musicMutedByUser = false;
-            console.log('Music unmuted');
+            toggleBtn.title = "Pause Music";
+            console.log('Music playing');
+        } else {
+            // Music is playing, so pause it
+            currentWidget.pause();
+            // Change to play icon
+            toggleBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <polygon points="5,3 19,12 5,21"/>
+            </svg>`;
+            toggleBtn.title = "Play Music";
+            console.log('Music paused');
         }
     });
 }
@@ -1001,9 +992,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isVideoBackground && backgroundVideo) {
             if (e.code === 'Space') {
                 e.preventDefault();
-                toggleVideoPlayback();
+                // Space bar no longer controls video playback
             } else if (e.key === 'v' || e.key === 'V') {
-                toggleVideoMute();
+                toggleMusicPlayback();
             }
         }
     });
@@ -1030,31 +1021,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Iconos elegantes para los controles de video
-    const playPauseBtn = document.getElementById('videoPlayPauseBtn');
-    const muteBtn = document.getElementById('muteBtn');
-    const removeBtn = document.querySelector('button[title="Remove video"]') || document.getElementById('removeVideoBtn');
-    if (playPauseBtn) {
-        playPauseBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="6" y="5" width="4" height="14" rx="2"/><rect x="14" y="5" width="4" height="14" rx="2"/></svg>`;
-        playPauseBtn.className = 'w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border border-white/20 bg-white/10 glass-effect text-white hover:bg-white/20 hover:scale-110 hover:border-white/30 flex items-center justify-center';
-    }
-    if (muteBtn) {
-        // Set initial icon (unmuted state)
-        muteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path d="M9 9v6h4l5 5V4l-5 5H9z"/>
+    // Inicializar el botón toggle de música
+    const pauseBtn = document.getElementById('pauseBtn');
+    if (pauseBtn) {
+        // Set initial pause icon (assuming music will be playing after Start Music)
+        pauseBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <rect x="6" y="4" width="4" height="16" rx="1"/>
+            <rect x="14" y="4" width="4" height="16" rx="1"/>
         </svg>`;
         
-        // Add mobile-friendly event listeners
-        muteBtn.addEventListener('click', toggleVideoMute);
-        muteBtn.addEventListener('touchend', function(e) {
-            e.preventDefault(); // Prevent double-firing on mobile
-            toggleVideoMute();
-        });
-        
         // Improve accessibility
-        muteBtn.setAttribute('role', 'button');
-        muteBtn.setAttribute('aria-label', 'Toggle music mute');
+        pauseBtn.setAttribute('role', 'button');
+        pauseBtn.setAttribute('aria-label', 'Toggle music playback');
     }
+    
+    // Botón de remover video
+    const removeBtn = document.querySelector('button[title="Remove video"]') || document.getElementById('removeVideoBtn');
     if (removeBtn) {
         removeBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="18" x2="18" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
         removeBtn.className = 'w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border border-white/20 bg-white/10 glass-effect text-white hover:bg-white/20 hover:scale-110 hover:border-white/30 flex items-center justify-center';
