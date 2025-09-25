@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -108,8 +108,8 @@
             </div>
             
             <!-- Texto de carga -->
-            <h2 class="text-2xl font-light text-white mb-4">Cargando Experiencia</h2>
-            <p id="loadingText" class="text-white/80 text-sm">Preparando música y video...</p>
+            <h2 class="text-2xl font-light text-white mb-4">Loading Experience</h2>
+            <p id="loadingText" class="text-white/80 text-sm">Preparing music and video...</p>
             
             <!-- Barra de progreso musical -->
             <div class="w-72 h-2 bg-white/10 rounded-full mt-6 mx-auto overflow-hidden relative">
@@ -147,7 +147,7 @@
     <!-- Botón de minimización -->
     <button id="minimizeBtn" 
             onclick="toggleMinimize()" 
-            title="Minimizar interfaz (M)"
+            title="Minimize UI (M)"
             class="fixed top-5 left-5 w-12 h-12 rounded-full cursor-pointer text-xl flex items-center justify-center transition-all duration-300 z-50 
                    bg-white/10 glass-effect border border-white/20 text-white shadow-lg hover:bg-white/20 hover:scale-110 hover:shadow-xl">
         <span id="minimizeIcon">−</span>
@@ -158,8 +158,8 @@
          class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
                 bg-black/60 glass-effect text-white px-8 py-5 rounded-2xl text-center z-40 hidden 
                 shadow-lg border border-white/20">
-        <div class="text-base">Interfaz minimizada</div>
-        <div class="text-xs mt-1 opacity-80">Presiona M o haz clic en el botón para mostrar</div>
+        <div class="text-base">UI Minimized</div>
+        <div class="text-xs mt-1 opacity-80">Press M or click the button to show</div>
     </div>
     
     <!-- Contenedor principal -->
@@ -170,7 +170,7 @@
         <div class="search-container text-center transition-all duration-500">
             <input type="text" 
                    id="searchInput" 
-                   placeholder="🎵 Buscar música o pegar URL de SoundCloud..."
+                   placeholder="Search for music or paste a SoundCloud URL..."
                    class="w-full max-w-lg px-6 py-4 border-none rounded-full text-base text-center outline-none transition-all duration-300 
                           bg-white/70 glass-effect shadow-lg border border-white/30 
                           focus:bg-white/85 focus:shadow-xl focus:transform focus:-translate-y-1 focus:border-white/50
@@ -183,21 +183,21 @@
                                bg-white/60 glass-effect text-gray-800 border border-white/40
                                hover:bg-white/80 hover:transform hover:-translate-y-1 hover:shadow-lg
                                w-48 sm:w-auto">
-                    Buscar
+                    Search
                 </button>
                 <button onclick="playFromUrl()" 
                         class="px-6 py-3 rounded-3xl text-sm font-medium cursor-pointer transition-all duration-300 shadow-md
                                bg-white/5 glass-effect text-white border border-white/20
                                hover:bg-white/15 hover:transform hover:-translate-y-1 hover:shadow-lg
                                w-48 sm:w-auto">
-                    Reproducir URL
+                    Play URL
                 </button>
                 <button onclick="loadDefaultTrack()" 
                         class="px-4 py-2 rounded-2xl text-xs font-medium cursor-pointer transition-all duration-300 shadow-sm
                                bg-black/10 glass-effect text-white border border-white/10
                                hover:bg-black/20 hover:transform hover:-translate-y-1 hover:shadow-md
                                w-40 sm:w-auto">
-                    Música por defecto
+                    Default Music
                 </button>
             </div>
         </div>
@@ -214,7 +214,7 @@
     <div onclick="toggleBackgroundOptions()" 
          class="fixed bottom-5 left-5 px-4 py-3 rounded-lg text-xs text-white/80 z-20 cursor-pointer transition-all duration-300 select-none
                 bg-black/20 glass-effect border border-white/10 hover:bg-black/30 hover:text-white hover:border-white/20 shadow-sm">
-        Cambiar fondo
+        Change Background
     </div>
     
     <!-- Opciones de fondo -->
@@ -226,28 +226,28 @@
                 class="absolute top-3 right-3 bg-none border-none text-lg text-white/60 cursor-pointer w-6 h-6 flex items-center justify-center
                        hover:text-white transition-colors duration-200">×</button>
         
-        <h3 class="m-0 mb-6 text-sm text-white font-normal uppercase tracking-wide opacity-90">Configurar Fondo</h3>
+        <h3 class="m-0 mb-6 text-sm text-white font-normal uppercase tracking-wide opacity-90">Configure Background</h3>
         
         <div class="mb-6">
             <input type="file" id="fileInputImage" class="hidden" accept="image/*" onchange="handleImageUpload(event)">
             <label for="fileInputImage" 
                    class="block p-3 mb-3 text-center text-xs cursor-pointer transition-all duration-300 rounded-md w-full
                           bg-white/10 border border-white/20 text-white/90 hover:bg-white/20 hover:border-white/30 hover:text-white">
-                Subir imagen
+                Upload Image
             </label>
             
             <input type="file" id="fileInputVideo" class="hidden" accept="video/*" onchange="handleVideoUpload(event)">
             <label for="fileInputVideo" 
                    class="block p-3 text-center text-xs cursor-pointer transition-all duration-300 rounded-md w-full
                           bg-white/10 border border-white/20 text-white/90 hover:bg-white/20 hover:border-white/30 hover:text-white">
-                Subir video
+                Upload Video
             </label>
         </div>
         
         <div class="space-y-3">
             <input type="text" 
                    id="urlInputBg" 
-                   placeholder="URL de imagen o video"
+                   placeholder="Image or video URL"
                    class="w-full p-3 border border-white/20 rounded-md text-xs outline-none transition-all duration-300
                           bg-white/5 glass-effect text-white placeholder:text-white/50
                           focus:bg-white/10 focus:border-white/40">
@@ -255,12 +255,12 @@
                 <button onclick="applyUrlBackground()" 
                         class="flex-1 p-3 text-xs cursor-pointer transition-all duration-300 rounded-md border border-white/20 text-white
                                bg-white/10 hover:bg-white/20 hover:border-white/30">
-                    Aplicar desde URL
+                    Apply from URL
                 </button>
                 <button onclick="loadDefaultVideo()" 
                         class="flex-1 p-3 text-xs cursor-pointer transition-all duration-300 rounded-md border border-white/20 text-white
                                bg-black/20 hover:bg-black/30 hover:border-white/30">
-                    Video por defecto
+                    Default Video
                 </button>
             </div>
         </div>
@@ -275,11 +275,11 @@
                        bg-white/10 glass-effect text-white hover:bg-white/20 hover:scale-110 hover:border-white/30">⏸️</button>
         <button onclick="toggleVideoMute()" 
                 id="muteBtn" 
-                title="Silenciar video (V)"
+                title="Mute video (V)"
                 class="w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border border-white/20
                        bg-white/10 glass-effect text-white hover:bg-white/20 hover:scale-110 hover:border-white/30">🔇</button>
         <button onclick="removeVideoBackground()" 
-                title="Quitar video"
+                title="Remove video"
                 class="w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border border-white/20
                        bg-white/10 glass-effect text-white hover:bg-white/20 hover:scale-110 hover:border-white/30">❌</button>
     </div>
@@ -291,7 +291,7 @@
                 sm:w-60 sm:h-38 lg:w-70 lg:h-45">
         <div class="relative w-full h-full bg-white">
             <button onclick="togglePlayerMinimize()" 
-                    title="Minimizar reproductor"
+                    title="Minimize player"
                     class="absolute top-1 right-8 w-5 h-5 rounded-full cursor-pointer text-xs flex items-center justify-center transition-all duration-200 border-none z-50
                            bg-black/30 glass-effect text-white hover:bg-black/50 hover:scale-110">−</button>
             <button onclick="closePlayer()" 
@@ -305,7 +305,7 @@
     <div id="playingIndicator" 
          class="fixed top-55 right-5 px-3 py-1 rounded-2xl text-xs z-40 hidden animate-pulse-slow border border-white/20
                 bg-orange-400/80 glass-effect text-white">
-        ♪ Música reproduciéndose
+        Now Playing
     </div>
 
     <!-- Script principal -->

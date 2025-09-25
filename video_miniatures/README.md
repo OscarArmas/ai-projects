@@ -1,84 +1,84 @@
-# SoundCloud Music Player - Versión Tailwind CSS
+# SoundCloud Music Player - Tailwind CSS Version
 
-## 📁 Estructura de Archivos
+## 📁 File Structure
 
 ```
 video_miniatures/
-├── index.html          # Archivo principal con Tailwind CSS
-├── app.js             # Lógica JavaScript separada
-├── components.html    # Componentes reutilizables y guía de estilos
-├── page.html         # Archivo original (respaldo)
-└── README.md         # Esta documentación
+├── index.html          # Main file with Tailwind CSS
+├── app.js              # Separate JavaScript logic
+├── components.html     # Reusable components and style guide
+├── page.html           # Original file (backup)
+└── README.md           # This documentation
 ```
 
-## 🚀 Características
+## 🚀 Features
 
-- **Interfaz moderna** con Tailwind CSS y efectos glassmorphism
-- **Reproducción de música** desde SoundCloud
-- **Fondos personalizables** (imagen/video)
-- **Interfaz minimizable** para visualización completa del fondo
-- **Totalmente responsivo** para móviles, tablets y desktop
-- **Controles de teclado** intuitivos
+- **Modern UI** with Tailwind CSS and glassmorphism effects
+- **Music playback** from SoundCloud
+- **Customizable backgrounds** (image/video)
+- **Minimizable interface** for full background view
+- **Fully responsive** for mobile, tablets, and desktop
+- **Intuitive keyboard controls**
 
-## 🎨 Tecnologías Utilizadas
+## 🎨 Technologies Used
 
-- **HTML5**: Estructura semántica
-- **Tailwind CSS**: Framework de utilidades CSS
-- **JavaScript Vanilla**: Sin dependencias adicionales
-- **SoundCloud API**: Reproducción de música
-- **Glassmorphism**: Efectos de cristal modernos
+- **HTML5**: Semantic structure
+- **Tailwind CSS**: CSS utility framework
+- **Vanilla JavaScript**: No external dependencies
+- **SoundCloud API**: Music playback
+- **Glassmorphism**: Modern glass-like effects
 
-## 🔧 Configuración
+## 🔧 Setup
 
-### 1. Usar el reproductor
+### 1. Using the player
 
-1. Abre `index.html` en tu navegador
-2. El archivo ya incluye Tailwind CSS desde CDN
-3. Todos los archivos deben estar en la misma carpeta
+1. Open `index.html` in your browser
+2. The file already includes Tailwind CSS from a CDN
+3. All files must be in the same folder
 
-### 2. Personalización
+### 2. Customization
 
-- **Componentes**: Consulta `components.html` para elementos reutilizables
-- **Estilos**: Modifica las clases de Tailwind en `index.html`
-- **Funcionalidad**: Edita `app.js` para cambios en la lógica
+- **Components**: Check `components.html` for reusable elements
+- **Styles**: Modify Tailwind classes in `index.html`
+- **Functionality**: Edit `app.js` for logic changes
 
-## 🎹 Controles de Teclado
+## 🎹 Keyboard Controls
 
-| Tecla | Función |
-|-------|---------|
-| `M` | Minimizar/mostrar interfaz completa |
-| `P` | Minimizar/mostrar reproductor |
-| `V` | Silenciar/activar video de fondo |
-| `Espacio` | Pausar/reproducir video de fondo |
-| `ESC` | Cerrar reproductor y opciones |
-| `Enter` | Buscar música o reproducir URL |
+| Key     | Function                      |
+|---------|-------------------------------|
+| `M`     | Minimize/show the entire UI   |
+| `P`     | Minimize/show the player only |
+| `V`     | Mute/unmute the background video |
+| `Space` | Pause/play the background video  |
+| `ESC`   | Close player and options      |
+| `Enter` | Search for music or play URL  |
 
-## 📱 Características Responsivas
+## 📱 Responsive Features
 
 ### Desktop (1024px+)
-- Reproductor: 280x180px
-- Buscador: 500px de ancho
-- Botones lado a lado
+- Player: 280x180px
+- Search bar: 500px width
+- Buttons side-by-side
 
 ### Tablet (768px+)
-- Reproductor: 240x150px
-- Buscador: 384px de ancho
-- Botones apilados
+- Player: 240x150px
+- Search bar: 384px width
+- Buttons stacked
 
-### Móvil (640px-)
-- Reproductor: 220x130px
-- Buscador: 320px de ancho
-- Interfaz optimizada para touch
+### Mobile (640px-)
+- Player: 220x130px
+- Search bar: 320px width
+- Touch-optimized interface
 
-## 🎨 Sistema de Diseño
+## 🎨 Design System
 
-### Colores Principales
-- **Fondo principal**: Transparencias blancas (white/70, white/90)
-- **Acentos**: Naranja (#ff7e5f, orange-400)
-- **Texto**: Grises (gray-600, gray-800)
-- **Estados**: Verde para éxito, rojo para errores
+### Main Colors
+- **Main Background**: White transparencies (white/70, white/90)
+- **Accents**: Orange (#ff7e5f, orange-400)
+- **Text**: Grays (gray-600, gray-800)
+- **States**: Green for success, red for errors
 
-### Efectos Glassmorphism
+### Glassmorphism Effects
 ```css
 .glass-effect {
     backdrop-filter: blur(15px);
@@ -87,46 +87,46 @@ video_miniatures/
 }
 ```
 
-### Animaciones
-- **Transiciones**: 300ms ease para interacciones
-- **Hover**: Escala 1.1, elevación y cambio de opacidad
-- **Minimización**: Deslizamiento suave con fade
+### Animations
+- **Transitions**: 300ms ease for interactions
+- **Hover**: Scale 1.1, elevation, and opacity change
+- **Minimization**: Smooth slide with fade
 
-## 📦 Componentes Principales
+## 📦 Main Components
 
-### 1. Buscador Principal
-- Input con glassmorphism
-- Botones de acción
-- Resultados flotantes
+### 1. Main Search
+- Input with glassmorphism
+- Action buttons
+- Floating results
 
-### 2. Mini Reproductor
-- Iframe de SoundCloud embebido
-- Controles de minimización
-- Indicador de reproducción
+### 2. Mini Player
+- Embedded SoundCloud iframe
+- Minimization controls
+- Playback indicator
 
-### 3. Controles de Fondo
-- Selector de archivos locales
-- Input para URLs
-- Controles de video
+### 3. Background Controls
+- Local file selector
+- Input for URLs
+- Video controls
 
-### 4. Sistema de Minimización
-- Botón flotante siempre visible
-- Estados persistentes
-- Animaciones fluidas
+### 4. Minimization System
+- Always-visible floating button
+- Persistent states
+- Fluid animations
 
-## 🔄 Migración desde CSS Vanilla
+## 🔄 Migration from Vanilla CSS
 
-### Cambios Principales
+### Main Changes
 
-1. **Clases de utilidad**: CSS personalizado → Clases Tailwind
-2. **Responsividad**: Media queries → Clases responsivas
-3. **Estados**: Pseudo-clases CSS → Modificadores Tailwind
-4. **Organización**: Un archivo → Archivos separados
+1. **Utility classes**: Custom CSS → Tailwind classes
+2. **Responsiveness**: Media queries → Responsive classes
+3. **States**: CSS pseudo-classes → Tailwind modifiers
+4. **Organization**: One file → Separate files
 
-### Equivalencias CSS → Tailwind
+### CSS → Tailwind Equivalents
 
 ```css
-/* Antes */
+/* Before */
 .search-input {
     background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(15px);
@@ -134,36 +134,36 @@ video_miniatures/
     padding: 18px 25px;
 }
 
-/* Después */
+/* After */
 class="bg-white/70 glass-effect rounded-full px-6 py-4"
 ```
 
-## 🐛 Solución de Problemas
+## 🐛 Troubleshooting
 
-### Problema: Tailwind no carga estilos
-- **Solución**: Verifica conexión a internet para CDN
-- **Alternativa**: Descarga Tailwind CSS localmente
+### Problem: Tailwind styles don't load
+- **Solution**: Check your internet connection for the CDN
+- **Alternative**: Download Tailwind CSS locally
 
-### Problema: SoundCloud no reproduce
-- **Causa**: Client ID puede expirar
-- **Solución**: Actualiza CLIENT_ID en `app.js`
+### Problem: SoundCloud doesn't play
+- **Cause**: The Client ID might expire
+- **Solution**: Update `CLIENT_ID` in `app.js`
 
-### Problema: Videos no cargan
-- **Causa**: Restricciones CORS
-- **Solución**: Usa videos desde dominios compatibles
+### Problem: Videos don't load
+- **Cause**: CORS restrictions
+- **Solution**: Use videos from compatible domains
 
-## 📈 Mejoras Futuras
+## 📈 Future Improvements
 
-- [ ] Modo offline con Tailwind local
-- [ ] Themes personalizables
-- [ ] Playlist automática
-- [ ] Integración con otras plataformas
+- [ ] Offline mode with local Tailwind
+- [ ] Customizable themes
+- [ ] Automatic playlist
+- [ ] Integration with other platforms
 - [ ] PWA (Progressive Web App)
 
-## 📄 Licencia
+## 📄 License
 
-Este proyecto está bajo licencia MIT. Puedes usarlo libremente para proyectos personales y comerciales.
+This project is under the MIT License. You can use it freely for personal and commercial projects.
 
 ---
 
-**Desarrollado con ❤️ usando Tailwind CSS**
+**Developed with ❤️ using Tailwind CSS**
