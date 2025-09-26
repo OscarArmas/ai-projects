@@ -18,6 +18,9 @@
     
     <title>SoundCloud Music Player</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Album Banner Component Styles -->
+    <link rel="stylesheet" href="banner.css">
     <script>
         tailwind.config = {
             theme: {
@@ -154,262 +157,8 @@
             animation: subtleGlow 3s ease-in-out infinite;
         }
         
-        /* =============== PRESENTACIÓN DE ÁLBUM GÓTICO R&B =============== */
-        
-        /* Importar fuentes elegantes y sofisticadas */
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400;1,500;1,600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
-        
-        /* Banner minimalista para la presentación del álbum */
-        .album-presentation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: auto;
-            min-height: 120px;
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.95) 100%);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-            padding: 20px 40px;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 1.5s ease-in-out;
-            pointer-events: none;
-            transform: translateY(-100%);
-        }
-        
-        .album-presentation.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        
-        /* Título del álbum - Estilo banner minimalista */
-        .album-title {
-            font-family: 'Cinzel Decorative', serif;
-            font-size: clamp(1.5rem, 4vw, 3rem);
-            font-weight: 700;
-            color: #ffffff;
-            text-align: left;
-            margin: 0;
-            margin-right: 0.5rem;
-            letter-spacing: 2px;
-            text-shadow: 
-                0 0 10px rgba(255, 255, 255, 0.3),
-                0 0 20px rgba(212, 175, 55, 0.2);
-            animation: titleBannerGlow 4s ease-in-out infinite alternate;
-            line-height: 1.2;
-            text-transform: uppercase;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        /* "by" texto - Estilo banner minimalista */
-        .by-text {
-            font-family: 'EB Garamond', serif;
-            font-size: clamp(1rem, 2.5vw, 1.4rem);
-            font-weight: 400;
-            font-style: italic;
-            color: #cccccc;
-            margin: 0 0.8rem;
-            opacity: 0.9;
-            letter-spacing: 1px;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
-        }
-        
-        /* Nombre del artista - Estilo banner elegante */
-        .artist-name {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(1.2rem, 3.5vw, 2.2rem);
-            font-weight: 600;
-            font-style: italic;
-            color: #d4af37;
-            text-align: left;
-            margin: 0;
-            margin-left: 0.5rem;
-            letter-spacing: 1px;
-            text-shadow: 
-                0 0 10px rgba(212, 175, 55, 0.4),
-                0 0 15px rgba(212, 175, 55, 0.2);
-            animation: artistBannerGlow 5s ease-in-out infinite alternate;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        /* "Available Now" texto - Estilo banner minimalista */
-        .coming-soon {
-            font-family: 'Crimson Text', serif;
-            font-size: clamp(0.8rem, 2vw, 1.1rem);
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.7);
-            text-align: center;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            opacity: 0.9;
-            margin-left: 1.5rem;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
-            animation: comingSoonBanner 3s ease-in-out infinite;
-            white-space: nowrap;
-            position: relative;
-            padding: 8px 16px;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            border-radius: 20px;
-            background: rgba(212, 175, 55, 0.1);
-        }
-        
-        /* Separador visual minimalista para banner */
-        .banner-separator {
-            width: 2px;
-            height: 40px;
-            background: linear-gradient(180deg, transparent 0%, rgba(212, 175, 55, 0.6) 50%, transparent 100%);
-            margin: 0 1rem;
-            opacity: 0.7;
-        }
-        
-        /* Animaciones específicas para banner */
-        @keyframes titleBannerGlow {
-            0% { 
-                text-shadow: 
-                    0 0 10px rgba(255, 255, 255, 0.3),
-                    0 0 20px rgba(212, 175, 55, 0.2);
-            }
-            100% { 
-                text-shadow: 
-                    0 0 15px rgba(255, 255, 255, 0.5),
-                    0 0 25px rgba(212, 175, 55, 0.4);
-            }
-        }
-        
-        @keyframes artistBannerGlow {
-            0% { 
-                text-shadow: 
-                    0 0 10px rgba(212, 175, 55, 0.4),
-                    0 0 15px rgba(212, 175, 55, 0.2);
-            }
-            100% { 
-                text-shadow: 
-                    0 0 15px rgba(212, 175, 55, 0.6),
-                    0 0 20px rgba(212, 175, 55, 0.3);
-            }
-        }
-        
-        @keyframes comingSoonBanner {
-            0%, 100% { 
-                opacity: 0.9;
-                background: rgba(212, 175, 55, 0.1);
-            }
-            50% { 
-                opacity: 1;
-                background: rgba(212, 175, 55, 0.15);
-            }
-        }
-        
-        /* Entrada y salida del banner */
-        .album-presentation.entering {
-            animation: bannerSlideIn 2s ease-out forwards;
-        }
-        
-        .album-presentation.exiting {
-            animation: bannerSlideOut 1.5s ease-in forwards;
-        }
-        
-        @keyframes bannerSlideIn {
-            0% {
-                opacity: 0;
-                transform: translateY(-100%);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes bannerSlideOut {
-            0% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-100%);
-            }
-        }
-        
-        /* Colores personalizados para elementos decorativos */
-        .text-gold\/20 {
-            color: rgba(212, 175, 55, 0.2) !important;
-        }
-        
-        .text-gold\/40 {
-            color: rgba(212, 175, 55, 0.4) !important;
-        }
-        
-        .text-gray-600\/30 {
-            color: rgba(75, 85, 99, 0.3) !important;
-        }
-        
-        /* Responsive para dispositivos móviles */
-        @media (max-width: 768px) {
-            .album-presentation {
-                padding: 15px 20px;
-                min-height: 100px;
-                flex-direction: column;
-                gap: 8px;
-            }
-            
-            .album-title {
-                font-size: clamp(1.2rem, 5vw, 2rem);
-                margin-right: 0;
-                text-align: center;
-            }
-            
-            .artist-name {
-                font-size: clamp(1rem, 4vw, 1.6rem);
-                margin-left: 0;
-                text-align: center;
-            }
-            
-            .by-text {
-                font-size: clamp(0.9rem, 3vw, 1.2rem);
-                margin: 0 0.5rem;
-            }
-            
-            .coming-soon {
-                font-size: clamp(0.7rem, 2.5vw, 1rem);
-                margin-left: 0;
-                padding: 6px 12px;
-            }
-            
-            .banner-separator {
-                display: none;
-            }
-        }
-        
-        /* Ajuste adicional para pantallas muy pequeñas */
-        @media (max-width: 480px) {
-            .album-presentation {
-                padding: 12px 15px;
-                min-height: 80px;
-            }
-            
-            .album-title {
-                font-size: clamp(1rem, 6vw, 1.5rem);
-                letter-spacing: 1px;
-            }
-            
-            .artist-name {
-                font-size: clamp(0.9rem, 5vw, 1.3rem);
-            }
-        }
+        /* =============== ALBUM BANNER INTEGRATION =============== */
+        /* Los estilos del banner están ahora en banner.css para mejor modularidad */
     </style>
 </head>
 <body class="m-0 p-0 h-screen mobile-fullscreen overflow-hidden relative font-sans bg-center bg-cover bg-no-repeat bg-fixed" 
@@ -486,24 +235,111 @@
         </button>
     </div>
 
-    <!-- =============== BANNER DE PRESENTACIÓN DE ÁLBUM =============== -->
-    <div id="album-presentation" class="album-presentation">
-        <!-- Contenido del banner minimalista -->
-        <div class="flex items-center justify-center flex-wrap gap-0">
-            <!-- Título del álbum -->
-            <h1 id="album-title" class="album-title">Midnight Symphony</h1>
-            
-            <!-- Separador visual -->
-            <div class="banner-separator hidden sm:block"></div>
-            
-            <!-- "by" y nombre del artista -->
-            <div class="flex items-center">
-                <span class="by-text">by</span>
-                <h2 id="artist-name" class="artist-name">Rekon</h2>
+    <!-- =============== ALBUM BANNER COMPONENT =============== -->
+    <div id="albumBanner" class="album-banner" onclick="toggleBanner()">
+        <!-- Contenido del banner -->
+        <div class="banner-content">
+            <!-- Vista minimizada -->
+            <div class="banner-minimized">
+                <h1 class="album-title">Midnight Symphony</h1>
+                <div class="banner-separator">•</div>
+                <p class="artist-subtitle mb-0">by Rekon</p>
             </div>
             
-            <!-- Estado del álbum -->
-            <p class="coming-soon">Available Now</p>
+            <!-- Vista expandida -->
+            <div class="banner-expanded">
+                <!-- Título principal expandido -->
+                <h1 class="album-title-expanded">Midnight Symphony</h1>
+                <h2 class="artist-subtitle">By Rekon</h2>
+                
+                <!-- Portada del álbum -->
+                <div class="album-cover-container">
+                    <div class="album-cover" title="Midnight Symphony - Album Cover"></div>
+                </div>
+                
+                <!-- Íconos de plataformas -->
+                <div class="platforms-container">
+                    <a href="#" class="platform-icon spotify" title="Escuchar en Spotify">
+                        <span>♪</span>
+                    </a>
+                    <a href="#" class="platform-icon apple-music" title="Escuchar en Apple Music">
+                        <span>🎵</span>
+                    </a>
+                    <a href="#" class="platform-icon soundcloud" title="Escuchar en SoundCloud">
+                        <span>🎧</span>
+                    </a>
+                </div>
+                
+                <!-- Tracklist como stickers -->
+                <div class="tracklist-container">
+                    <h3 class="tracklist-title">Tracklist</h3>
+                    
+                    <div class="track-sticker">
+                        <span class="track-icon">🎵</span>
+                        <div class="track-info">
+                            <div class="track-name">Midnight Prelude</div>
+                            <div class="track-duration">3:42</div>
+                        </div>
+                    </div>
+                    
+                    <div class="track-sticker">
+                        <span class="track-icon">⚡</span>
+                        <div class="track-info">
+                            <div class="track-name">Electric Dreams</div>
+                            <div class="track-duration">4:15</div>
+                        </div>
+                    </div>
+                    
+                    <div class="track-sticker">
+                        <span class="track-icon">💫</span>
+                        <div class="track-info">
+                            <div class="track-name">Starlight Serenade</div>
+                            <div class="track-duration">5:28</div>
+                        </div>
+                    </div>
+                    
+                    <div class="track-sticker">
+                        <span class="track-icon">🎵</span>
+                        <div class="track-info">
+                            <div class="track-name">Urban Lullaby</div>
+                            <div class="track-duration">3:54</div>
+                        </div>
+                    </div>
+                    
+                    <div class="track-sticker">
+                        <span class="track-icon">⚡</span>
+                        <div class="track-info">
+                            <div class="track-name">Neon Nights</div>
+                            <div class="track-duration">4:37</div>
+                        </div>
+                    </div>
+                    
+                    <div class="track-sticker">
+                        <span class="track-icon">💫</span>
+                        <div class="track-info">
+                            <div class="track-name">Symphony Finale</div>
+                            <div class="track-duration">6:12</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Perfil del artista -->
+                <div class="artist-profile">
+                    <div class="artist-photo" title="Rekon - Artist Photo"></div>
+                    <div class="social-links">
+                        <a href="#" class="social-icon" title="Instagram">📷</a>
+                        <a href="#" class="social-icon" title="Twitter">🐦</a>
+                        <a href="#" class="social-icon" title="YouTube">📺</a>
+                        <a href="#" class="social-icon" title="TikTok">🎬</a>
+                    </div>
+                </div>
+            </div>
+            </div>
+            
+        <!-- Indicador de click (solo visible en modo minimizado) -->
+        <div class="click-indicator">
+            <span>Click here to explore</span>
+            <div class="click-arrow"></div>
         </div>
     </div>
     
@@ -698,6 +534,7 @@
 
     <!-- Script principal -->
     <script src="https://w.soundcloud.com/player/api.js"></script>
+    <script src="banner.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

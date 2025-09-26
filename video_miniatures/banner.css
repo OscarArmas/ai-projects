@@ -1,0 +1,842 @@
+/**
+ * =====================================================
+ * ALBUM BANNER COMPONENT - ESTILOS CSS
+ * =====================================================
+ * Hoja de estilos independiente para el banner del álbum
+ * Incluye texturas dinámicas, animaciones y diseño responsivo
+ * Autor: Sistema de IA
+ * Fecha: 2025
+ * =====================================================
+ */
+
+/* =============================================== */
+/*              FUENTES EXTERNAS                 */
+/* =============================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap');
+
+/* =============================================== */
+/*              CONFIGURACIÓN PRINCIPAL          */
+/* =============================================== */
+
+:root {
+    /* Paleta Editorial - Lujo Moderno */
+    --banner-gold-champagne: #D4C5A3;
+    --banner-dark-bg: rgba(12, 12, 12, 0.85);
+    --banner-glass-bg: rgba(255, 255, 255, 0.02);
+    --banner-border-gold: rgba(212, 197, 163, 0.2);
+    --banner-text-primary: #EAEAEA;
+    --banner-text-secondary: #888888;
+    --banner-text-accent: var(--banner-gold-champagne);
+    
+    /* Sombras y efectos - Sutiles y elegantes */
+    --banner-shadow-main: 0 10px 50px rgba(0, 0, 0, 0.4);
+    --banner-shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.3);
+    --banner-glow-gold: 0 0 30px rgba(212, 197, 163, 0.15);
+    
+    /* Tiempos de animación */
+    --banner-transition-main: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --banner-transition-fast: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* =============================================== */
+/*              EFECTOS DE VIDRIO                 */
+/* =============================================== */
+
+.banner-glass-effect {
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+}
+
+/* =============================================== */
+/*              BANNER PRINCIPAL                  */
+/* =============================================== */
+
+.album-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: auto;
+    min-height: 100px;
+    background: var(--banner-dark-bg);
+    border-bottom: 1px solid var(--banner-border-gold);
+    box-shadow: var(--banner-shadow-main);
+    z-index: 1000;
+    cursor: pointer;
+    transition: var(--banner-transition-main);
+    transform: translateY(-100%);
+    opacity: 0;
+}
+
+.album-banner.visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.album-banner.expanded {
+    min-height: 100vh;
+    height: 100vh;
+    cursor: default;
+    overflow-y: auto;
+}
+
+/* =============================================== */
+/*              TEXTURAS DINÁMICAS               */
+/* =============================================== */
+
+.album-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 10% 90%, rgba(212, 197, 163, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 90% 10%, rgba(212, 197, 163, 0.04) 0%, transparent 50%);
+    animation: bannerTextureFloat 10s ease-in-out infinite alternate;
+    pointer-events: none;
+}
+
+.album-banner::after {
+    display: none; /* Simplificamos texturas para un look más limpio */
+}
+
+@keyframes bannerTextureFloat {
+    0% { transform: translateY(0) scale(1); opacity: 0.5; }
+    100% { transform: translateY(-15px) scale(1.03); opacity: 0.7; }
+}
+
+@keyframes bannerTextureShift {
+    0%, 100% { transform: translateX(0) rotate(0deg); opacity: 0.8; }
+    33% { transform: translateX(5px) rotate(0.5deg); opacity: 1; }
+    66% { transform: translateX(-3px) rotate(-0.3deg); opacity: 0.7; }
+}
+
+/* =============================================== */
+/*              CONTENIDO DEL BANNER             */
+/* =============================================== */
+
+.banner-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 20px;
+}
+
+/* Contenido minimizado */
+.banner-minimized {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 120px;
+    gap: 15px;
+}
+
+/* Contenido expandido */
+.banner-expanded {
+    display: none;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 40px 20px;
+}
+
+.album-banner.expanded .banner-minimized {
+    display: none;
+}
+
+.album-banner.expanded .banner-expanded {
+    display: block;
+}
+
+/* =============================================== */
+/*              TIPOGRAFÍAS ELEGANTES            */
+/* =============================================== */
+
+.album-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 500;
+    color: var(--banner-text-accent);
+    text-align: center;
+    margin: 0;
+    letter-spacing: 0.3em;
+    text-shadow: none;
+    animation: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-left: 0.3em; /* Compensar letter-spacing */
+}
+
+.album-title-expanded {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(4rem, 10vw, 7rem);
+    font-weight: 600;
+    color: var(--banner-text-accent);
+    text-align: center;
+    margin: 40px 0 20px 0;
+    letter-spacing: 0.1em;
+    line-height: 1;
+    text-shadow: var(--banner-glow-gold);
+    animation: none;
+    text-transform: uppercase;
+}
+
+.artist-subtitle {
+    font-family: 'EB Garamond', serif;
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    font-weight: 400;
+    font-style: italic;
+    color: var(--banner-text-secondary);
+    text-align: center;
+    margin: 10px 0 30px 0;
+    letter-spacing: 0.1em;
+    text-shadow: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Separador visual */
+.banner-separator {
+    color: var(--banner-secondary-gold);
+    font-size: 1.5rem;
+    opacity: 0.7;
+}
+
+@keyframes bannerTitleGlow {
+    0% { 
+        text-shadow: 
+            0 0 15px rgba(240, 240, 240, 0.2),
+            0 0 30px rgba(201, 179, 106, 0.15);
+    }
+    100% { 
+        text-shadow: 
+            0 0 25px rgba(240, 240, 240, 0.3),
+            0 0 50px rgba(201, 179, 106, 0.25);
+    }
+}
+
+@keyframes bannerTitleGlowExpanded {
+    0% { 
+        text-shadow: 
+            0 0 25px rgba(240, 240, 240, 0.25),
+            0 0 50px rgba(201, 179, 106, 0.2);
+    }
+    100% { 
+        text-shadow: 
+            0 0 35px rgba(240, 240, 240, 0.35),
+            0 0 70px rgba(201, 179, 106, 0.3);
+    }
+}
+
+/* =============================================== */
+/*              INDICADOR DE CLICK               */
+/* =============================================== */
+
+.click-indicator {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Crimson Text', serif;
+    font-size: 0.9rem;
+    color: var(--banner-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    animation: bannerPulseIndicator 2s ease-in-out infinite;
+    transition: opacity 0.3s ease;
+}
+
+.album-banner.expanded .click-indicator {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.click-arrow {
+    width: 12px;
+    height: 12px;
+    border-right: 2px solid var(--banner-text-accent);
+    border-bottom: 2px solid var(--banner-text-accent);
+    transform: rotate(45deg);
+    animation: bannerArrowBounce 1.5s ease-in-out infinite;
+}
+
+@keyframes bannerPulseIndicator {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+@keyframes bannerArrowBounce {
+    0%, 100% { transform: rotate(45deg) translateY(0); }
+    50% { transform: rotate(45deg) translateY(3px); }
+}
+
+/* =============================================== */
+/*              PORTADA DEL ÁLBUM                 */
+/* =============================================== */
+
+.album-cover-container {
+    display: flex;
+    justify-content: center;
+    margin: 40px 0;
+}
+
+.album-cover {
+    width: 280px;
+    height: 280px;
+    background: transparent;
+    border-radius: 50%;
+    transform: none;
+    box-shadow: none;
+    transition: var(--banner-transition-fast);
+    position: relative;
+    overflow: visible;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.album-cover:hover {
+    transform: scale(1.03);
+    box-shadow: none;
+}
+
+.album-cover::before, .album-cover::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: transparent;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.album-cover::before {
+    width: 100%;
+    height: 100%;
+    border: 1px solid var(--banner-border-gold);
+}
+
+.album-cover::after {
+    width: 10px;
+    height: 10px;
+    background: var(--banner-text-accent);
+    border: none;
+}
+
+.album-cover:hover::before {
+    border-color: var(--banner-text-accent);
+    transform: translate(-50%, -50%) scale(1.02);
+}
+
+@keyframes bannerVinylSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* =============================================== */
+/*              ÍCONOS DE PLATAFORMAS             */
+/* =============================================== */
+
+.platforms-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 30px 0;
+}
+
+.platform-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: var(--banner-transition-fast);
+    position: relative;
+    background-color: transparent;
+    border: 1px solid transparent;
+}
+
+.platform-icon::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: inherit;
+    filter: blur(10px);
+    opacity: 0.3;
+    transform: scale(1.2);
+}
+
+.platform-icon:hover {
+    transform: scale(1.1);
+    box-shadow: none;
+    background-color: var(--banner-glass-bg);
+    border: 1px solid var(--banner-border-gold);
+}
+
+.platform-icon svg {
+    width: 22px;
+    height: 22px;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+    fill: var(--banner-text-secondary);
+}
+
+.platform-icon:hover svg {
+    opacity: 1;
+    fill: var(--banner-text-accent);
+}
+
+/* Eliminamos clases de colores específicos */
+.platform-icon.spotify,
+.platform-icon.apple-music,
+.platform-icon.soundcloud,
+.platform-icon.subtle {
+    background-color: transparent !important;
+    border: 1px solid transparent !important;
+}
+.platform-icon.subtle:hover {
+    background-color: var(--banner-glass-bg) !important;
+    border: 1px solid var(--banner-border-gold) !important;
+}
+
+
+/* =============================================== */
+/*              TRACKLIST STICKERS               */
+/* =============================================== */
+
+.tracklist-container {
+    max-width: 600px;
+    margin: 50px auto;
+}
+
+.tracklist-title {
+    font-family: 'EB Garamond', serif;
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: var(--banner-text-secondary);
+    text-align: center;
+    margin-bottom: 30px;
+    text-shadow: none;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.track-sticker {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--banner-border-gold);
+    border-radius: 0;
+    padding: 22px 10px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: var(--banner-transition-fast);
+    position: relative;
+    overflow: hidden;
+    transform: none !important;
+}
+
+.track-sticker:first-of-type {
+    border-top: 1px solid var(--banner-border-gold);
+}
+.track-sticker:nth-child(even) {
+    transform: none;
+    margin-left: 0;
+}
+
+.track-sticker:nth-child(odd) {
+    transform: none;
+    margin-right: 0;
+}
+
+.track-sticker:hover {
+    transform: none;
+    background: var(--banner-glass-bg);
+    box-shadow: none;
+}
+
+.track-icon {
+    width: 20px;
+    height: 20px;
+    opacity: 0.6;
+    transition: all 0.4s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.track-icon svg {
+    width: 14px;
+    height: 14px;
+    fill: var(--banner-text-secondary);
+    transition: all 0.4s ease;
+}
+
+.track-sticker:hover .track-icon svg {
+    fill: var(--banner-text-accent);
+    transform: scale(1.1);
+}
+
+.track-info {
+    flex: 1;
+}
+
+.track-name {
+    font-family: 'EB Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--banner-text-primary);
+    margin: 0;
+    transition: color 0.4s ease;
+}
+
+.track-sticker:hover .track-name {
+    color: var(--banner-text-accent);
+}
+
+.track-duration {
+    font-family: 'EB Garamond', serif;
+    font-size: 0.9rem;
+    color: var(--banner-text-secondary);
+    margin-top: 2px;
+}
+
+/* Separadores editoriales */
+.editorial-separator {
+    width: 100px;
+    height: 1px;
+    background: var(--banner-border-gold);
+    margin: 40px auto;
+    position: relative;
+    text-align: center;
+}
+
+.editorial-separator::before {
+    content: '◆';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--banner-dark-bg);
+    padding: 0 10px;
+    color: var(--banner-text-accent);
+    font-size: 14px;
+}
+
+/* =============================================== */
+/*              PERFIL DEL ARTISTA               */
+/* =============================================== */
+
+.artist-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 60px;
+    padding: 30px;
+    border-top: 1px solid var(--banner-border-gold);
+}
+
+.artist-photo {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: transparent;
+    margin-bottom: 20px;
+    box-shadow: none;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--banner-border-gold);
+}
+
+.artist-photo svg {
+    width: 30px;
+    height: 30px;
+    opacity: 0.8;
+    fill: var(--banner-text-secondary);
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.social-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: var(--banner-text-secondary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.social-icon:hover {
+    background: transparent;
+    color: var(--banner-text-accent);
+    transform: translateY(-2px);
+}
+
+.social-icon svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
+/* =============================================== */
+/*              DISEÑO RESPONSIVO                 */
+/* =============================================== */
+
+@media (max-width: 768px) {
+    .album-banner {
+        min-height: 120px; /* Aumentamos altura mínima */
+    }
+    
+    .banner-content {
+        padding: 15px;
+        min-height: 120px; /* Asegurar altura mínima del contenido */
+    }
+    
+    .banner-minimized {
+        flex-direction: column;
+        gap: 5px;
+        text-align: center;
+        justify-content: center;
+        min-height: 90px; /* Altura mínima para evitar traslapes */
+        padding-bottom: 25px; /* Espacio para el indicador */
+    }
+    
+    .banner-separator {
+        display: none;
+    }
+    
+    .album-title {
+        font-size: clamp(1.2rem, 5vw, 1.8rem);
+        letter-spacing: 0.2em;
+        margin: 0;
+    }
+    
+    .album-title-expanded {
+        font-size: clamp(2rem, 8vw, 4rem);
+    }
+    
+    .artist-subtitle {
+        font-size: clamp(0.9rem, 3.5vw, 1.2rem);
+        margin: 2px 0 0 0; /* Reducimos margen para evitar traslape */
+        line-height: 1.2;
+    }
+    
+    .album-cover {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .platforms-container {
+        gap: 15px;
+    }
+    
+    .platform-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+    
+    .tracklist-container {
+        margin: 30px auto;
+        padding: 0 10px;
+    }
+    
+    .track-sticker {
+        padding: 12px 15px;
+        margin: 10px 0;
+    }
+    
+    .track-sticker:nth-child(even) {
+        margin-left: 10px;
+    }
+    
+    .track-sticker:nth-child(odd) {
+        margin-right: 10px;
+    }
+    
+    .click-indicator {
+        font-size: 0.75rem;
+        bottom: 8px;
+        letter-spacing: 1px;
+    }
+}
+
+@media (max-width: 480px) {
+    .album-banner {
+        min-height: 110px; /* Altura mínima ajustada */
+    }
+    
+    .banner-content {
+        padding: 10px;
+        min-height: 110px;
+    }
+    
+    .banner-minimized {
+        min-height: 80px;
+        padding-bottom: 20px; /* Más espacio para el indicador */
+        gap: 3px;
+    }
+    
+    .album-title {
+        font-size: clamp(1rem, 5vw, 1.5rem);
+        letter-spacing: 0.15em;
+    }
+    
+    .artist-subtitle {
+        font-size: clamp(0.8rem, 3vw, 1rem);
+        margin: 1px 0 0 0;
+    }
+    
+    .album-cover {
+        width: 200px;
+        height: 200px;
+    }
+    
+    .platforms-container {
+        gap: 10px;
+    }
+    
+    .platform-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1rem;
+    }
+    
+    .tracklist-container {
+        padding: 0 5px;
+    }
+    
+    .track-sticker {
+        padding: 10px 12px;
+        margin: 8px 0;
+    }
+    
+    .track-sticker:nth-child(even) {
+        margin-left: 5px;
+    }
+    
+    .track-sticker:nth-child(odd) {
+        margin-right: 5px;
+    }
+    
+    .click-indicator {
+        font-size: 0.7rem;
+        bottom: 6px;
+    }
+}
+
+/* =============================================== */
+/*              ANIMACIONES ADICIONALES          */
+/* =============================================== */
+
+/* Animación de entrada del banner */
+@keyframes bannerSlideIn {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Animación de salida del banner */
+@keyframes bannerSlideOut {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+}
+
+/* Animación de expansión */
+@keyframes bannerExpand {
+    from {
+        height: 120px;
+        min-height: 120px;
+    }
+    to {
+        height: 100vh;
+        min-height: 100vh;
+    }
+}
+
+/* Animación de contracción */
+@keyframes bannerContract {
+    from {
+        height: 100vh;
+        min-height: 100vh;
+    }
+    to {
+        height: 120px;
+        min-height: 120px;
+    }
+}
+
+/* =============================================== */
+/*              ESTADOS DE ACCESIBILIDAD         */
+/* =============================================== */
+
+/* Estados de focus para accesibilidad */
+.album-banner:focus-visible {
+    outline: 2px solid var(--banner-text-accent);
+    outline-offset: 2px;
+}
+
+.platform-icon:focus-visible,
+.social-icon:focus-visible {
+    outline: 2px solid var(--banner-text-accent);
+    outline-offset: 2px;
+}
+
+/* Reducir animaciones para usuarios que prefieren menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+    .album-banner,
+    .album-banner::before,
+    .album-banner::after,
+    .album-cover::before,
+    .track-sticker,
+    .platform-icon,
+    .social-icon {
+        animation: none;
+        transition: none;
+    }
+    
+    .album-banner {
+        transition: opacity 0.3s ease;
+    }
+}

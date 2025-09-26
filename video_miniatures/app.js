@@ -103,88 +103,21 @@ function markVideoLoaded() {
 }
 
 // ==========================================
-// ALBUM PRESENTATION FUNCTIONS
+// ALBUM BANNER INTEGRATION
 // ==========================================
 
-// Show the album presentation with gothic R&B style
-function showAlbumPresentation(albumTitle = 'Midnight Symphony', artistName = 'Rekon') {
-    console.log('🎭 Showing album presentation:', albumTitle, 'by', artistName);
-    
-    const presentation = document.getElementById('album-presentation');
-    const titleElement = document.getElementById('album-title');
-    const artistElement = document.getElementById('artist-name');
-    
-    if (!presentation || !titleElement || !artistElement) {
-        console.error('Album presentation elements not found');
-        return;
-    }
-    
-    // Update content dynamically
-    titleElement.textContent = albumTitle;
-    artistElement.textContent = artistName;
-    
-    // Show the presentation with entrance animation
-    presentation.style.display = 'flex';
-    presentation.style.visibility = 'visible';
-    presentation.style.opacity = '0';
-    
-    // Force a reflow to ensure the initial state is applied
-    presentation.offsetHeight;
-    
-    // Add entering animation class
-    presentation.classList.add('entering');
-    
-    // Fade in
-    setTimeout(() => {
-        presentation.style.opacity = '1';
-        presentation.classList.add('show');
-    }, 50);
-    
-    // Auto-hide after 5 seconds with exit animation
-    setTimeout(() => {
-        hideAlbumPresentation();
-    }, 5000);
-    
-    // Mark as shown to prevent showing again in the same session
-    albumPresentationShown = true;
-}
-
-// Hide the album presentation with exit animation
-function hideAlbumPresentation() {
-    const presentation = document.getElementById('album-presentation');
-    
-    if (!presentation) {
-        console.error('Album presentation element not found');
-        return;
-    }
-    
-    console.log('🎭 Hiding album presentation');
-    
-    // Add exit animation
-    presentation.classList.remove('entering', 'show');
-    presentation.classList.add('exiting');
-    
-    // Start fade out
-    presentation.style.opacity = '0';
-    
-    // Hide completely after animation
-    setTimeout(() => {
-        presentation.style.display = 'none';
-        presentation.style.visibility = 'hidden';
-        presentation.classList.remove('exiting');
-    }, 1500); // Match the exit animation duration
-}
-
-// Get current track info and show presentation accordingly
+// Show the album banner using the new component
 function showAlbumPresentationFromTrack() {
     if (albumPresentationShown) {
-        console.log('📚 Album presentation already shown in this session');
+        console.log('📚 Album banner already shown in this session');
         return;
     }
     
     if (!currentWidget) {
-        console.log('📚 No widget available, showing default album presentation');
-        showAlbumPresentation();
+        console.log('📚 No widget available, showing default album banner');
+        if (window.AlbumBanner) {
+            window.AlbumBanner.show();
+        }
         return;
     }
     
@@ -193,16 +126,24 @@ function showAlbumPresentationFromTrack() {
         if (sound && sound.title) {
             console.log('📚 Got track info:', sound.title, 'by', sound.user?.username || 'Unknown Artist');
             
-            // Use track title as album title and artist name
-            const albumTitle = sound.title;
-            const artistName = sound.user?.username || 'Rekon';
-            
-            showAlbumPresentation(albumTitle, artistName);
+            // Use the new banner component
+            if (window.AlbumBanner) {
+                window.AlbumBanner.showForTrack({
+                    title: sound.title,
+                    artist: sound.user?.username || 'Rekon',
+                    duration: sound.duration || null
+                });
+            }
         } else {
-            console.log('📚 No track info available, showing default presentation');
-            showAlbumPresentation();
+            console.log('📚 No track info available, showing default banner');
+            if (window.AlbumBanner) {
+                window.AlbumBanner.show();
+            }
         }
     });
+    
+    // Mark as shown to prevent showing again in the same session
+    albumPresentationShown = true;
 }
 
 // Additional videos that appear when "Default Video" is pressed
