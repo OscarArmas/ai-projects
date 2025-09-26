@@ -11,6 +11,7 @@ let musicLoaded = false;
 let videoLoaded = false;
 let musicMutedByUser = false; // To track if the user intentionally mutes
 let experienceStarted = false; // Flag to ensure completion logic runs only once
+let programmaticPlay = false; // Flag to distinguish between user clicks and programmatic play
 const CLIENT_ID = 'iZIs9mchVcX5lhVRyQGGAYlNPVldzAoJ'; // SoundCloud Public Client ID (Updated 2024)
 
 // Default track
@@ -180,6 +181,25 @@ function useDirectUrlFallback() {
             currentWidget.setVolume(0);
             console.log('Default music loaded and muted, ready for Start button');
             markMusicLoaded();
+        });
+        
+        // Auto-minimize when user clicks play in the SoundCloud widget
+        currentWidget.bind(SC.Widget.Events.PLAY, function() {
+            console.log('🎵 Music started playing from SoundCloud widget');
+            console.log('Programmatic play flag:', programmaticPlay);
+            
+            // Only auto-minimize if it's NOT a programmatic play (user clicked play in widget)
+            if (!programmaticPlay) {
+                setTimeout(() => {
+                    if (!isPlayerMinimized) {
+                        console.log('🔄 Auto-minimizing player due to USER clicking play in SoundCloud widget');
+                        togglePlayerMinimize();
+                    }
+                }, 1500); // 1.5 second delay to ensure play started successfully
+            } else {
+                console.log('⏭️ Skipping auto-minimize because this was a programmatic play (Start Button)');
+                programmaticPlay = false; // Reset the flag
+            }
         });
         
         currentWidget.bind(SC.Widget.Events.ERROR, function(error) {
@@ -573,10 +593,11 @@ function toggleMusicPlayback() {
     
     // Check if music is currently playing and toggle
     currentWidget.isPaused(function(paused) {
-        if (paused) {
-            // Music is paused, so play it
-            currentWidget.play();
-            currentWidget.setVolume(50);
+            if (paused) {
+                // Music is paused, so play it
+                programmaticPlay = true; // This is a programmatic play from controls, not user clicking in widget
+                currentWidget.play();
+                currentWidget.setVolume(50);
             // Change to pause icon
             toggleBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                 <rect x="6" y="4" width="4" height="16" rx="1"/>
@@ -760,6 +781,25 @@ function playTrack(trackId, title, artist, isAutoplay = false) {
                 currentWidget.setVolume(50); // Set normal volume for manual plays
             }
         });
+        
+        // Auto-minimize when user clicks play in the SoundCloud widget
+        currentWidget.bind(SC.Widget.Events.PLAY, function() {
+            console.log('🎵 Music started playing from SoundCloud widget (selected track)');
+            console.log('Programmatic play flag:', programmaticPlay);
+            
+            // Only auto-minimize if it's NOT a programmatic play (user clicked play in widget)
+            if (!programmaticPlay) {
+                setTimeout(() => {
+                    if (!isPlayerMinimized) {
+                        console.log('🔄 Auto-minimizing player due to USER clicking play in SoundCloud widget');
+                        togglePlayerMinimize();
+                    }
+                }, 1500); // 1.5 second delay to ensure play started successfully
+            } else {
+                console.log('⏭️ Skipping auto-minimize because this was a programmatic play');
+                programmaticPlay = false; // Reset the flag
+            }
+        });
     };
 }
 
@@ -799,6 +839,26 @@ function playFromUrl() {
     // Initialize widget when it loads
     player.onload = function() {
         currentWidget = SC.Widget(player);
+        
+        // Auto-minimize when user clicks play in the SoundCloud widget
+        currentWidget.bind(SC.Widget.Events.PLAY, function() {
+            console.log('🎵 Music started playing from SoundCloud widget (URL track)');
+            console.log('Programmatic play flag:', programmaticPlay);
+            
+            // Only auto-minimize if it's NOT a programmatic play (user clicked play in widget)
+            if (!programmaticPlay) {
+                setTimeout(() => {
+                    if (!isPlayerMinimized) {
+                        console.log('🔄 Auto-minimizing player due to USER clicking play in SoundCloud widget');
+                        togglePlayerMinimize();
+                    }
+                }, 1500); // 1.5 second delay to ensure play started successfully
+            } else {
+                console.log('⏭️ Skipping auto-minimize because this was a programmatic play');
+                programmaticPlay = false; // Reset the flag
+            }
+        });
+        
         // User-initiated, so play with sound
     };
 }
@@ -868,6 +928,9 @@ document.addEventListener('DOMContentLoaded', function() {
         startButton.addEventListener('click', function() {
             // Unmute music
             if (currentWidget) {
+                // Set flag to indicate this is a programmatic play, not user clicking in widget
+                programmaticPlay = true;
+                
                 // This is a trusted user interaction, so we can now play and set volume.
                 currentWidget.play(); // Explicitly start playback.
                 currentWidget.setVolume(50); // Set a good volume.
