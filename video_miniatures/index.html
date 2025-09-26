@@ -126,6 +126,33 @@
         .audio-bar:nth-child(7) { animation-duration: 1.0s; animation-delay: 0.6s; }
         .audio-bar:nth-child(8) { animation-duration: 0.7s; animation-delay: 0.7s; }
         .audio-bar:nth-child(9) { animation-duration: 1.1s; animation-delay: 0.8s; }
+        
+        /* Enhanced Start Button Styles */
+        #startButton {
+            background: radial-gradient(circle at center, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+        }
+        
+        #startButton:hover {
+            background: radial-gradient(circle at center, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
+            box-shadow: 
+                0 0 30px rgba(255,255,255,0.2),
+                0 0 60px rgba(255,255,255,0.1),
+                0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        #startButton:active {
+            background: radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.08) 100%);
+        }
+        
+        /* Elegant glow effect */
+        @keyframes subtleGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255,255,255,0.1); }
+            50% { box-shadow: 0 0 30px rgba(255,255,255,0.15); }
+        }
+        
+        #startButton {
+            animation: subtleGlow 3s ease-in-out infinite;
+        }
     </style>
 </head>
 <body class="m-0 p-0 h-screen mobile-fullscreen overflow-hidden relative font-sans bg-center bg-cover bg-no-repeat bg-fixed" 
@@ -184,10 +211,20 @@
 
     <!-- Elegant "Start Music" button overlay -->
     <div id="start-button-overlay" class="fixed inset-0 flex items-center justify-center z-40 bg-black/30 opacity-0 transition-opacity duration-500" style="display: none; pointer-events: none;">
-        <button id="startButton" class="px-8 py-4 rounded-full border border-white/30 bg-white/10 glass-effect text-white text-base font-medium shadow-xl backdrop-blur-lg transition-all duration-300 hover:bg-white/20 hover:border-white/50 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/40" style="pointer-events: auto;">
-            <span class="inline-flex items-center gap-3">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8.118v3.764a1 1 0 001.555.832l3.197-1.882a1 1 0 000-1.664l-3.197-1.882z" clip-rule="evenodd"></path></svg>
-                Start Music
+        <button id="startButton" class="group relative w-20 h-20 rounded-full border border-white/20 bg-white/5 glass-effect text-white shadow-2xl backdrop-blur-xl transition-all duration-500 hover:bg-white/10 hover:border-white/40 hover:scale-110 hover:shadow-3xl focus:outline-none focus:ring-2 focus:ring-white/30 active:scale-95" style="pointer-events: auto;">
+            <!-- Play Icon with elegant animation -->
+            <div class="absolute inset-0 flex items-center justify-center">
+                <svg class="w-8 h-8 transform transition-all duration-300 group-hover:scale-110 group-active:scale-95" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                </svg>
+            </div>
+            
+            <!-- Subtle pulsing ring animation -->
+            <div class="absolute inset-0 rounded-full border border-white/10 animate-ping opacity-30"></div>
+            
+            <!-- Minimalist label that appears on hover -->
+            <span class="absolute -bottom-12 left-1/2 transform -translate-x-1/2 text-xs font-light text-white/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap tracking-wider">
+                PLAY
             </span>
         </button>
     </div>
