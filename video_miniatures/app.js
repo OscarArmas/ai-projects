@@ -25,7 +25,7 @@ const DEFAULT_TRACK_ARTIST = 'Default Playlist';
 // INITIAL VIDEO - CHANGE YOUR PREFERRED VIDEO HERE
 // ==========================================
 const INITIAL_VIDEO = {
-    url: 'https://pouch.jumpshare.com/preview/ULNBN0ExiJt8TqhzxWhVbxxdZLTXiFDCaua94nyZE-LzNivr1TqXdfzujN0g9_v0SHSF3IEeWn3We2u5sBpiOvkR1T-yFINJVvaCkbX2YqGt2HXjIx8bjXpG99p07D909ozGAknEhGhmCt2gs-ayBW6yjbN-I2pg_cnoHs_AmgI.mp4',
+    url: 'https://samplelib.com/lib/preview/mp4/sample-5s.mp4',
     title: 'Initial Video',
     type: 'initial'
 };
@@ -123,25 +123,6 @@ function showAlbumPresentationFromTrack() {
     albumPresentationShown = true;
 }
 
-// Additional videos that appear when "Default Video" is pressed
-const DEFAULT_VIDEOS = [
-    {
-        url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-        title: 'Elephants Dream',
-        type: 'sample'
-    },
-    {
-        url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-        title: 'For Bigger Blazes',
-        type: 'sample'
-    },
-    {
-        url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
-        title: 'Sintel',
-        type: 'sample'
-    }
-];
-
 // Load default track using direct URL (more reliable)
 async function loadDefaultTrack() {
     console.log('Loading default track via direct URL...');
@@ -158,28 +139,21 @@ function useDirectUrlFallback() {
     console.log('Using direct URL fallback for default music');
     
     const container = document.getElementById('playerContainer');
-    const indicator = document.getElementById('playingIndicator');
     const player = document.getElementById('soundcloudPlayer');
     
     // Use the URL set by the user
     const fallbackUrl = DEFAULT_TRACK_URL;
     
     // Update indicator
-    indicator.innerHTML = `♪ Loading ${DEFAULT_TRACK_TITLE}...`;
     
     // Show player
     container.style.display = 'block';
     container.classList.remove('hidden');
-    indicator.style.display = 'block';
-    indicator.classList.remove('hidden');
     
     // Create widget URL - using visual=false for the compact player
     const widgetUrl = `https://w.soundcloud.com/player/?url=${encodeURIComponent(fallbackUrl)}&hide_related=true&show_comments=false&show_user=false&show_reposts=false&visual=false`;
     
     player.src = widgetUrl;
-    
-    // Clear search results
-    clearSearchResults();
     
     // Initialize widget
     player.onload = function() {
@@ -189,8 +163,7 @@ function useDirectUrlFallback() {
             
             // Update the 'Now Playing' title
             currentWidget.getCurrentSound(function(sound) {
-                if (sound && indicator) {
-                    indicator.innerHTML = `♪ ${sound.title} - ${sound.user.username}`;
+                if (sound) {
                     
                     const nowPlayingEl = document.getElementById('nowPlaying');
                     if (nowPlayingEl) {
@@ -245,10 +218,8 @@ function loadInitialVideo() {
     console.log(`Loading initial video: ${selectedVideo.title}`);
     console.log(`URL: ${selectedVideo.url}`);
     
-    // Update loading progress
     updateLoadingProgress(60, 'Loading initial video...');
     
-    // Get the video element
     const videoElement = document.getElementById('backgroundVideo');
     if (!videoElement) {
         console.error('ERROR: backgroundVideo element not found');
@@ -256,7 +227,6 @@ function loadInitialVideo() {
         return;
     }
     
-    // Configure video events
     videoElement.addEventListener('loadeddata', function() {
         console.log('Initial video loaded successfully');
         markVideoLoaded();
@@ -268,7 +238,6 @@ function loadInitialVideo() {
         markVideoLoaded(); // Mark as loaded even if it fails
     }, { once: true });
     
-    // Load the video
     try {
         console.log('Calling setVideoBackground for initial video...');
         setVideoBackground(selectedVideo.url);
@@ -278,117 +247,22 @@ function loadInitialVideo() {
     }
 }
 
-// Function to load random default video (when button is pressed)
-function loadDefaultVideo() {
-    console.log('=== Starting loadDefaultVideo (button pressed) ===');
-    
-    // Select a random video from the additional list
-    const randomIndex = Math.floor(Math.random() * DEFAULT_VIDEOS.length);
-    const selectedVideo = DEFAULT_VIDEOS[randomIndex];
-    
-    console.log(`Loading random video: ${selectedVideo.title}`);
-    console.log(`URL: ${selectedVideo.url}`);
-    
-    // Get the video element
-    const videoElement = document.getElementById('backgroundVideo');
-    if (!videoElement) {
-        console.error('ERROR: backgroundVideo element not found');
-        return;
-    }
-    
-    // Configure video events
-    videoElement.addEventListener('loadeddata', function() {
-        console.log('Video loaded successfully');
-    }, { once: true });
-    
-    videoElement.addEventListener('error', function(e) {
-        console.error('Error loading video:', e);
-    }, { once: true });
-    
-    // Try to use the existing function
-    try {
-        console.log('Calling setVideoBackground...');
-        setVideoBackground(selectedVideo.url);
-        console.log('setVideoBackground executed');
-    } catch (error) {
-        console.error('Error in setVideoBackground:', error);
-    }
-}
-
-// Fallback function to load another video if the first one fails
-function loadFallbackVideo(excludeIndex) {
-    console.log('Trying fallback video...');
-    
-    const availableVideos = DEFAULT_VIDEOS.filter((_, index) => index !== excludeIndex);
-    
-    if (availableVideos.length === 0) {
-        console.log('No more videos available');
-        return;
-    }
-    
-    const randomIndex = Math.floor(Math.random() * availableVideos.length);
-    const selectedVideo = availableVideos[randomIndex];
-    
-    console.log(`Trying fallback video: ${selectedVideo.title}`);
-    
-    try {
-        setVideoBackground(selectedVideo.url);
-    } catch (error) {
-        console.error('Error in fallback video:', error);
-    }
-}
-
 // Function to minimize/show the UI
 function toggleMinimize() {
-    const container = document.getElementById('mainContainer');
-    const minimizeBtn = document.getElementById('minimizeBtn');
-    const minimizeIcon = document.getElementById('minimizeIcon');
-    const indicator = document.getElementById('minimizedIndicator');
     const playerContainer = document.getElementById('playerContainer');
-    const playingIndicator = document.getElementById('playingIndicator');
     
     isMinimized = !isMinimized;
     
     if (isMinimized) {
         // Minimize UI
-        container.classList.add('minimized-slide', 'opacity-0', 'pointer-events-none');
-        minimizeBtn.classList.add('bg-black/30');
-        minimizeBtn.classList.remove('bg-white/10');
-        minimizeIcon.textContent = '+';
-        minimizeBtn.title = 'Show UI (M)';
-        
-        // Minimize player if visible
         if (playerContainer.style.display === 'block') {
             playerContainer.classList.add('minimized-slide-x', 'opacity-0', 'pointer-events-none');
-        }
-        if (playingIndicator.style.display === 'block') {
-            playingIndicator.classList.add('minimized-slide-x', 'opacity-0', 'pointer-events-none');
-        }
-        
-        // Show temporary indicator only if the page has already loaded
-        if (loadingProgress >= 100) {
-            indicator.classList.remove('hidden');
-            indicator.classList.add('animate-fade-in-out');
-            setTimeout(() => {
-                indicator.classList.add('hidden');
-                indicator.classList.remove('animate-fade-in-out');
-            }, 3000);
         }
         
     } else {
         // Show UI
-        container.classList.remove('minimized-slide', 'opacity-0', 'pointer-events-none');
-        minimizeBtn.classList.remove('bg-black/30');
-        minimizeBtn.classList.add('bg-white/10');
-        minimizeIcon.textContent = '−';
-        minimizeBtn.title = 'Minimize UI (M)';
-        
-        // Restore player if it was visible
         if (playerContainer.style.display === 'block') {
             playerContainer.classList.remove('minimized-slide-x', 'opacity-0', 'pointer-events-none');
-        }
-        if (playingIndicator.style.display === 'block') {
-            playingIndicator.classList.remove('minimized-slide-x', 'opacity-0', 'pointer-events-none');
         }
     }
 }
@@ -396,7 +270,6 @@ function toggleMinimize() {
 // Function to minimize only the player
 function togglePlayerMinimize() {
     const playerContainer = document.getElementById('playerContainer');
-    const playingIndicator = document.getElementById('playingIndicator');
     const minimizeBtn = document.querySelector('.minimize-player-btn') || 
                        playerContainer.querySelector('button[onclick="togglePlayerMinimize()"]');
     
@@ -405,7 +278,6 @@ function togglePlayerMinimize() {
     if (isPlayerMinimized) {
         // Minimize player
         playerContainer.classList.add('minimized-slide-x', 'opacity-0', 'pointer-events-none');
-        playingIndicator.classList.add('minimized-slide-x', 'opacity-0', 'pointer-events-none');
         if (minimizeBtn) {
             minimizeBtn.textContent = '+';
             minimizeBtn.title = 'Show player';
@@ -413,7 +285,6 @@ function togglePlayerMinimize() {
     } else {
         // Show player
         playerContainer.classList.remove('minimized-slide-x', 'opacity-0', 'pointer-events-none');
-        playingIndicator.classList.remove('minimized-slide-x', 'opacity-0', 'pointer-events-none');
         if (minimizeBtn) {
             minimizeBtn.textContent = '−';
             minimizeBtn.title = 'Minimize player';
@@ -430,22 +301,17 @@ function changeBackground(imageUrl) {
 
 // Function to set video background
 function setVideoBackground(videoUrl) {
-    backgroundVideo = document.getElementById('backgroundVideo');
+    const backgroundVideo = document.getElementById('backgroundVideo');
     backgroundVideo.src = videoUrl;
     backgroundVideo.classList.remove('hidden');
-    document.getElementById('videoControls').classList.remove('hidden');
-    document.getElementById('videoControls').classList.add('flex');
     
-    // Hide background image
+    // Hide background image to ensure video is visible
     document.body.style.backgroundImage = 'none';
-    isVideoBackground = true;
     
-    // Configure video - ALWAYS MUTED (no audio from video)
     backgroundVideo.muted = true;
     backgroundVideo.loop = true;
     backgroundVideo.play().catch(e => {
         console.log('Error playing video:', e);
-        showNotification('⚠️ Error playing video automatically');
     });
 }
 
@@ -645,31 +511,6 @@ function toggleMusicPlayback() {
     });
 }
 
-function removeVideoBackground() {
-    hideVideoBackground();
-    document.body.style.backgroundImage = `url('https://images.unsplash.com/photo-1470225620780-dba8ba36b745?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')`;
-    showNotification('✅ Background video removed');
-    const removeBtn = document.getElementById('removeVideoBtn') || document.querySelector('button[title="Remove video"]');
-    if (removeBtn) {
-        removeBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="18" x2="18" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
-        removeBtn.className = 'w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border border-white/20 bg-white/10 glass-effect text-white hover:bg-white/20 hover:scale-110 hover:border-white/30 flex items-center justify-center';
-    }
-}
-
-// Show/hide background options
-function toggleBackgroundOptions() {
-    const options = document.getElementById('backgroundOptions');
-    if (options.classList.contains('hidden')) {
-        options.classList.remove('hidden');
-    } else {
-        options.classList.add('hidden');
-    }
-}
-
-function closeBackgroundOptions() {
-    document.getElementById('backgroundOptions').classList.add('hidden');
-}
-
 // Show temporary notification
 function showNotification(message, isError = false) {
     const notification = document.createElement('div');
@@ -687,102 +528,21 @@ function showNotification(message, isError = false) {
     }, 3000);
 }
 
-// Clear search results and hide container
-function clearSearchResults() {
-    const resultsContainer = document.getElementById('searchResults');
-    resultsContainer.classList.add('hidden');
-    resultsContainer.innerHTML = '';
-}
-
-// Search for tracks on SoundCloud
-async function searchTracks() {
-    const query = document.getElementById('searchInput').value.trim();
-    
-    if (!query) {
-        alert('Please enter a search term');
-        return;
-    }
-    
-    const resultsContainer = document.getElementById('searchResults');
-    resultsContainer.classList.remove('hidden');
-    resultsContainer.innerHTML = '<div class="text-center text-gray-600 text-sm p-5">🔍 Searching for music...</div>';
-    
-    try {
-        const response = await fetch(`https://api.soundcloud.com/tracks?q=${encodeURIComponent(query)}&client_id=${CLIENT_ID}&limit=5`);
-        
-        if (!response.ok) {
-            throw new Error('Search error');
-        }
-        
-        const tracks = await response.json();
-        
-        if (tracks.length === 0) {
-            resultsContainer.innerHTML = '<div class="text-center text-gray-600 text-sm p-5">No results found</div>';
-            
-            // Hide the message automatically after 4 seconds
-            setTimeout(() => {
-                clearSearchResults();
-            }, 4000);
-            return;
-        }
-        
-        let resultsHTML = '';
-        tracks.forEach(track => {
-            if (track.streamable) {
-                resultsHTML += `
-                    <div class="p-3 border-b border-gray-200 cursor-pointer text-left transition-all duration-200 hover:bg-orange-100/50 last:border-b-0" 
-                         onclick="playTrack('${track.id}', '${track.title.replace(/'/g, "\\'")}', '${track.user.username.replace(/'/g, "\\'")}')">
-                        <div class="font-medium text-gray-800 text-sm">${track.title}</div>
-                        <div class="text-gray-600 text-xs mt-1">by ${track.user.username}</div>
-                    </div>
-                `;
-            }
-        });
-        
-        if (resultsHTML === '') {
-            resultsContainer.innerHTML = '<div class="text-center text-gray-600 text-sm p-5">No streamable tracks available</div>';
-            
-            // Hide the message automatically after 4 seconds
-            setTimeout(() => {
-                clearSearchResults();
-            }, 4000);
-        } else {
-            resultsContainer.innerHTML = resultsHTML;
-        }
-        
-    } catch (error) {
-        console.error('Error:', error);
-        resultsContainer.innerHTML = '<div class="text-center text-gray-600 text-sm p-5">❌ Search error. Please try again.</div>';
-        
-        // Hide the error automatically after 5 seconds
-        setTimeout(() => {
-            clearSearchResults();
-        }, 5000);
-    }
-}
-
 // Play track by ID
 function playTrack(trackId, title, artist, isAutoplay = false) {
     const container = document.getElementById('playerContainer');
-    const indicator = document.getElementById('playingIndicator');
     const player = document.getElementById('soundcloudPlayer');
     
     // Update indicator with track info
-    indicator.innerHTML = `♪ ${title} - ${artist}`;
     
     // Show player
     container.style.display = 'block';
     container.classList.remove('hidden');
-    indicator.style.display = 'block';
-    indicator.classList.remove('hidden');
     
     // Create widget URL
     const widgetUrl = `https://w.soundcloud.com/player/?url=https://api.soundcloud.com/tracks/${trackId}&client_id=${CLIENT_ID}&auto_play=true&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=false`;
     
     player.src = widgetUrl;
-    
-    // Hide search results
-    clearSearchResults();
     
     // Initialize widget when it loads
     player.onload = function() {
@@ -832,71 +592,6 @@ function playTrack(trackId, title, artist, isAutoplay = false) {
                 programmaticPlay = false; // Reset the flag
             }
         });
-    };
-}
-
-// Play from direct URL
-function playFromUrl() {
-    const input = document.getElementById('searchInput');
-    let url = input.value.trim();
-    
-    if (!url) {
-        // Use example URL
-        url = 'https://soundcloud.com/mt-marcy/cold-nights';
-    }
-    
-    if (!url.includes('soundcloud.com')) {
-        alert('Please enter a valid SoundCloud URL');
-        return;
-    }
-    
-    const container = document.getElementById('playerContainer');
-    const indicator = document.getElementById('playingIndicator');
-    const player = document.getElementById('soundcloudPlayer');
-    
-    // Show player
-    container.style.display = 'block';
-    container.classList.remove('hidden');
-    indicator.style.display = 'block';
-    indicator.classList.remove('hidden');
-    
-    // Create widget URL
-    const widgetUrl = `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&client_id=${CLIENT_ID}&auto_play=true&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=true`;
-    
-    player.src = widgetUrl;
-    
-    // Clear input
-    input.value = '';
-    
-    // Initialize widget when it loads
-    player.onload = function() {
-        currentWidget = SC.Widget(player);
-        
-        // Auto-minimize when user clicks play in the SoundCloud widget
-        currentWidget.bind(SC.Widget.Events.PLAY, function() {
-            console.log('🎵 Music started playing from SoundCloud widget (URL track)');
-            console.log('Programmatic play flag:', programmaticPlay);
-            
-            // Show album presentation when music starts (with a small delay to ensure track info is available)
-            setTimeout(() => {
-                showAlbumPresentationFromTrack();
-            }, 1000);
-            
-            // Only auto-minimize if it's NOT a programmatic play (user clicked play in widget)
-            if (!programmaticPlay) {
-                setTimeout(() => {
-                    if (!isPlayerMinimized) {
-                        console.log('🔄 Auto-minimizing player due to USER clicking play in SoundCloud widget');
-                        togglePlayerMinimize();
-                    }
-                }, 1500); // 1.5 second delay to ensure play started successfully
-            } else {
-                console.log('⏭️ Skipping auto-minimize because this was a programmatic play');
-                programmaticPlay = false; // Reset the flag
-            }
-        });
-        
-        // User-initiated, so play with sound
     };
 }
 
@@ -957,7 +652,6 @@ function initMobileFullscreen() {
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('searchInput');
     const startButton = document.getElementById('startButton');
 
     // Handle the "Click to Start" button
@@ -1006,17 +700,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize mobile fullscreen features
     initMobileFullscreen();
     
-    // Hide main container initially since it starts minimized
-    const mainContainer = document.getElementById('mainContainer');
-    if(mainContainer) {
-        mainContainer.style.transition = 'none'; // Prevent animation on page load
-    }
-
     // Load default track after a short delay
     setTimeout(() => {
         loadDefaultTrack();
     }, 800);
-    
+
     // Load initial video automatically after music
     setTimeout(() => {
         loadInitialVideo();
@@ -1027,56 +715,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if (loadingProgress < 100) {
             console.log('Fallback: Forcing display of start button due to timeout');
             musicLoaded = true;
-            videoLoaded = true;
+            videoLoaded = true; 
             checkLoadingComplete(); // This will now show the start button
-            
-            // Restore transitions after load
-            const mainContainer = document.getElementById('mainContainer');
-            if(mainContainer) {
-                setTimeout(() => {
-                    mainContainer.style.transition = 'all 0.5s ease';
-                }, 500);
-            }
         }
     }, 8000); // Increased timeout to 8 seconds
-    
-    // Clear results when the user starts typing
-    searchInput.addEventListener('input', function(e) {
-        // If results are visible and the user is typing, hide them
-        const resultsContainer = document.getElementById('searchResults');
-        if (!resultsContainer.classList.contains('hidden') && e.target.value.length > 0) {
-            // Only clear if an error message is visible
-            const errorMessage = resultsContainer.innerHTML.includes('❌ Search error');
-            if (errorMessage) {
-                clearSearchResults();
-            }
-        }
-    });
-    
-    // Allow searching with Enter key
-    searchInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            // Check if it looks like a URL
-            if (this.value.includes('soundcloud.com')) {
-                playFromUrl();
-            } else {
-                searchTracks();
-            }
-        }
-    });
     
     // Keyboard controls
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closePlayer();
-            closeBackgroundOptions();
-            clearSearchResults();
-        }
-        
-        // Minimize UI with M key
-        if (e.key === 'm' || e.key === 'M') {
-            e.preventDefault();
-            toggleMinimize();
         }
         
         // Minimize player with P key
@@ -1088,57 +735,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // Video controls with keys
-        if (isVideoBackground && backgroundVideo) {
-            if (e.code === 'Space') {
-                e.preventDefault();
-                // Space bar no longer controls video playback
-            } else if (e.key === 'v' || e.key === 'V') {
-                toggleMusicPlayback();
-            }
-        }
     });
     
     // Close options and results when clicking outside
     document.addEventListener('click', function(e) {
-        const options = document.getElementById('backgroundOptions');
-        const trigger = document.querySelector('[onclick="toggleBackgroundOptions()"]');
-        const resultsContainer = document.getElementById('searchResults');
-        const searchContainer = document.querySelector('.search-container') || searchInput.parentElement;
-        
-        // Close background options
-        if (!options.classList.contains('hidden') && 
-            !options.contains(e.target) && 
-            !trigger.contains(e.target)) {
-            closeBackgroundOptions();
-        }
-        
-        // Close search results if clicked outside
-        if (!resultsContainer.classList.contains('hidden') && 
-            !resultsContainer.contains(e.target) && 
-            !searchContainer.contains(e.target)) {
-            clearSearchResults();
-        }
+        // All click outside logic removed
     });
 
-    // Inicializar el botón toggle de música
-    const pauseBtn = document.getElementById('pauseBtn');
-    if (pauseBtn) {
-        // Set initial pause icon (assuming music will be playing after Start Music)
-        pauseBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-            <rect x="6" y="4" width="4" height="16" rx="1"/>
-            <rect x="14" y="4" width="4" height="16" rx="1"/>
-        </svg>`;
-        
-        // Improve accessibility
-        pauseBtn.setAttribute('role', 'button');
-        pauseBtn.setAttribute('aria-label', 'Toggle music playback');
-    }
-    
-    // Botón de remover video
-    const removeBtn = document.querySelector('button[title="Remove video"]') || document.getElementById('removeVideoBtn');
-    if (removeBtn) {
-        removeBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="18" x2="18" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
-        removeBtn.className = 'w-10 h-10 rounded-full cursor-pointer text-base transition-all duration-300 border border-white/20 bg-white/10 glass-effect text-white hover:bg-white/20 hover:scale-110 hover:border-white/30 flex items-center justify-center';
-    }
+    // We can remove the initialization for buttons that no longer exist
 });
