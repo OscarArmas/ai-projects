@@ -53,32 +53,30 @@
 /* =============================================== */
 
 .album-banner {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: auto;
-    min-height: 100px;
+    position: relative; /* Cambiado de fixed a relative */
+    width: 100%;
+    height: auto; /* La altura se ajusta al contenido */
+    min-height: 100vh; /* Asegura que al menos ocupe la pantalla */
     background: var(--banner-dark-bg);
     border-bottom: 1px solid var(--banner-border-gold);
     box-shadow: var(--banner-shadow-main);
-    z-index: 1000;
-    cursor: pointer;
-    transition: var(--banner-transition-main);
-    transform: translateY(-100%);
-    opacity: 0;
+    z-index: 20;
+    cursor: default; /* Ya no es interactivo para expandir/contraer */
+    transition: none;
+    transform: none;
+    opacity: 1; /* El control de opacidad ahora está en el wrapper */
 }
 
 .album-banner.visible {
-    transform: translateY(0);
+    transform: none;
     opacity: 1;
 }
 
 .album-banner.expanded {
     min-height: 100vh;
-    height: 100vh;
+    height: auto;
     cursor: default;
-    overflow-y: auto;
+    overflow-y: visible; /* El scroll lo maneja la página */
 }
 
 /* =============================================== */
@@ -121,9 +119,9 @@
 .banner-content {
     position: relative;
     z-index: 10;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+    width: 100%;
+    margin: 0 auto;
+    max-width: 1200px;
     padding: 20px;
 }
 
@@ -139,9 +137,7 @@
 
 /* Contenido expandido */
 .banner-expanded {
-    display: none;
-    height: 100vh;
-    overflow-y: auto;
+    display: block; /* Siempre visible dentro del banner */
     padding: 40px 20px;
 }
 
@@ -245,7 +241,7 @@
     bottom: 15px;
     left: 50%;
     transform: translateX(-50%);
-    display: flex;
+    display: none; /* Ocultamos el indicador ya que el scroll controla la expansión */
     align-items: center;
     gap: 8px;
     font-family: 'Crimson Text', serif;
