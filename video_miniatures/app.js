@@ -114,10 +114,21 @@ function showAlbumPresentationFromTrack() {
         return;
     }
     
-    // Always show banner with static configuration (WASTELAND)
-    console.log('📚 Showing static album banner: WASTELAND');
     if (window.AlbumBanner) {
-        window.AlbumBanner.show();
+        const showDuration = 8000; // 8 seconds visible
+        const hideDuration = 5000; // 5 seconds hidden
+
+        // Show the banner, which will auto-hide after `showDuration`
+        window.AlbumBanner.show(showDuration);
+
+        // After it's hidden, schedule it to reappear permanently
+        setTimeout(() => {
+            // Only show it again if the user hasn't manually expanded it
+            if (!window.AlbumBanner.isExpanded()) {
+                // A duration of 0 means it won't auto-hide again
+                window.AlbumBanner.show(0);
+            }
+        }, showDuration + hideDuration);
     }
     
     // Mark as shown to prevent showing again in the same session
