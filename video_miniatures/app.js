@@ -270,25 +270,24 @@ function toggleMinimize() {
 // Function to minimize only the player
 function togglePlayerMinimize() {
     const playerContainer = document.getElementById('playerContainer');
-    const minimizeBtn = document.querySelector('.minimize-player-btn') || 
-                       playerContainer.querySelector('button[onclick="togglePlayerMinimize()"]');
+    const minimizeBtn = document.getElementById('minimizePlayerBtn');
+    const restoreBtn = document.getElementById('restorePlayerBtn');
     
     isPlayerMinimized = !isPlayerMinimized;
     
     if (isPlayerMinimized) {
         // Minimize player
         playerContainer.classList.add('minimized-slide-x', 'opacity-0', 'pointer-events-none');
-        if (minimizeBtn) {
-            minimizeBtn.textContent = '+';
-            minimizeBtn.title = 'Show player';
-        }
+        
+        if (minimizeBtn) minimizeBtn.classList.add('hidden');
+        if (restoreBtn) restoreBtn.classList.remove('hidden');
+
     } else {
         // Show player
         playerContainer.classList.remove('minimized-slide-x', 'opacity-0', 'pointer-events-none');
-        if (minimizeBtn) {
-            minimizeBtn.textContent = '−';
-            minimizeBtn.title = 'Minimize player';
-        }
+        
+        if (minimizeBtn) minimizeBtn.classList.remove('hidden');
+        if (restoreBtn) restoreBtn.classList.add('hidden');
     }
 }
 

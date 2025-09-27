@@ -632,6 +632,36 @@
             80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
             100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
         }
+
+        .restore-player-tab {
+            position: fixed;
+            top: 62px;
+            right: 0;
+            width: 48px;
+            height: 96px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-right: none;
+            color: white;
+            border-top-left-radius: 0.75rem;
+            border-bottom-left-radius: 0.75rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+            backdrop-filter: blur(10px);
+        }
+        .restore-player-tab:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+        .restore-player-tab svg {
+            width: 32px;
+            height: 32px;
+        }
     </style>
 </head>
 <body>
@@ -715,13 +745,24 @@
     <!-- Reproductor lateral pequeño -->
     <div class="player-container" id="playerContainer">
         <div class="player-wrapper">
-            <button class="minimize-player-btn" onclick="togglePlayerMinimize()" title="Minimizar reproductor">−</button>
+            <button id="minimizePlayerBtn" class="minimize-player-btn" onclick="togglePlayerMinimize()" title="Minimizar reproductor">−</button>
             <button class="close-button" onclick="closePlayer()">&times;</button>
             <iframe id="soundcloudPlayer" class="soundcloud-player"></iframe>
         </div>
     </div>
     
-    <!-- Indicador de música reproduciéndose -->
+    <!-- Restore Player Button (visible when player is minimized) -->
+    <button id="restorePlayerBtn"
+            onclick="togglePlayerMinimize()"
+            title="Show player"
+            style="display: none;"
+            class="restore-player-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M9 13c0 1.105-1.12 2-2.5 2S4 14.105 4 13s1.12-2 2.5-2 2.5.895 2.5 2z"/>
+            <path fill-rule="evenodd" d="M9 3v10H8V3h1z"/>
+            <path d="M8 2.5a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-1 0v-10a.5.5 0 0 1 .5-.5z"/>
+        </svg>
+    </button>
 
     <script src="https://w.soundcloud.com/player/api.js"></script>
     <script>
@@ -777,20 +818,24 @@
         // Función para minimizar solo el reproductor
         function togglePlayerMinimize() {
             const playerContainer = document.getElementById('playerContainer');
-            const minimizeBtn = document.querySelector('.minimize-player-btn');
+            const minimizeBtn = document.getElementById('minimizePlayerBtn');
+            const restoreBtn = document.getElementById('restorePlayerBtn');
             
             isPlayerMinimized = !isPlayerMinimized;
             
             if (isPlayerMinimized) {
-                // Minimizar reproductor
+                // Minimize player
                 playerContainer.classList.add('minimized');
-                minimizeBtn.textContent = '+';
-                minimizeBtn.title = 'Mostrar reproductor';
+                
+                if (minimizeBtn) minimizeBtn.style.display = 'none';
+                if (restoreBtn) restoreBtn.style.display = 'flex';
+
             } else {
-                // Mostrar reproductor
+                // Show player
                 playerContainer.classList.remove('minimized');
-                minimizeBtn.textContent = '−';
-                minimizeBtn.title = 'Minimizar reproductor';
+                
+                if (minimizeBtn) minimizeBtn.style.display = 'flex';
+                if (restoreBtn) restoreBtn.style.display = 'none';
             }
         }
         
