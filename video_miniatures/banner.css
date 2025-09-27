@@ -405,7 +405,48 @@
     fill: var(--banner-text-accent);
 }
 
-/* Eliminamos clases de colores específicos */
+/* Iconos específicos de plataformas - Minimalistas */
+.soundcloud-icon svg {
+    fill: #ff5500;
+}
+
+.soundcloud-icon:hover {
+    background-color: rgba(255, 85, 0, 0.1);
+    border-color: #ff5500;
+    transform: translateY(-2px) scale(1.05);
+}
+
+.spotify-icon svg {
+    fill: #1db954;
+}
+
+.spotify-icon:hover {
+    background-color: rgba(29, 185, 84, 0.1);
+    border-color: #1db954;
+    transform: translateY(-2px) scale(1.05);
+}
+
+.apple-music-icon svg {
+    fill: #fa243c;
+}
+
+.apple-music-icon:hover {
+    background-color: rgba(250, 36, 60, 0.1);
+    border-color: #fa243c;
+    transform: translateY(-2px) scale(1.05);
+}
+
+.youtube-icon svg {
+    fill: #ff0000;
+}
+
+.youtube-icon:hover {
+    background-color: rgba(255, 0, 0, 0.1);
+    border-color: #ff0000;
+    transform: translateY(-2px) scale(1.05);
+}
+
+/* Eliminamos clases de colores específicos antiguos */
 .platform-icon.spotify,
 .platform-icon.apple-music,
 .platform-icon.soundcloud,
