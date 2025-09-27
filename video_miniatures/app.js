@@ -18,7 +18,7 @@ const CLIENT_ID = 'iZIs9mchVcX5lhVRyQGGAYlNPVldzAoJ'; // SoundCloud Public Clien
 // Default track
 const DEFAULT_TRACK_URL = 'https://soundcloud.com/brentfaiyaz/rolling-stone-8?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing';
 const DEFAULT_TRACK_ID = '293';
-const DEFAULT_TRACK_TITLE = 'Rolling Stone';
+const DEFAULT_TRACK_TITLE = 'Rollingds Stone';
 const DEFAULT_TRACK_ARTIST = 'Default Playlist';
 
 // ==========================================
@@ -106,41 +106,18 @@ function markVideoLoaded() {
 // ALBUM BANNER INTEGRATION
 // ==========================================
 
-// Show the album banner using the new component
+// Show the album banner using static configuration only
 function showAlbumPresentationFromTrack() {
     if (albumPresentationShown) {
         console.log('📚 Album banner already shown in this session');
         return;
     }
     
-    if (!currentWidget) {
-        console.log('📚 No widget available, showing default album banner');
-        if (window.AlbumBanner) {
-            window.AlbumBanner.show();
-        }
-        return;
+    // Always show banner with static configuration (WASTELAND)
+    console.log('📚 Showing static album banner: WASTELAND');
+    if (window.AlbumBanner) {
+        window.AlbumBanner.show();
     }
-    
-    // Try to get current track info
-    currentWidget.getCurrentSound(function(sound) {
-        if (sound && sound.title) {
-            console.log('📚 Got track info:', sound.title, 'by', sound.user?.username || 'Unknown Artist');
-            
-            // Use the new banner component
-            if (window.AlbumBanner) {
-                window.AlbumBanner.showForTrack({
-                    title: sound.title,
-                    artist: sound.user?.username || 'Rekon',
-                    duration: sound.duration || null
-                });
-            }
-        } else {
-            console.log('📚 No track info available, showing default banner');
-            if (window.AlbumBanner) {
-                window.AlbumBanner.show();
-            }
-        }
-    });
     
     // Mark as shown to prevent showing again in the same session
     albumPresentationShown = true;

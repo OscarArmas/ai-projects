@@ -13,7 +13,7 @@
 /*              FUENTES EXTERNAS                 */
 /* =============================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Archivo+Black&display=swap');
 
 /* =============================================== */
 /*              CONFIGURACIÓN PRINCIPAL          */
@@ -27,7 +27,7 @@
     --banner-border-gold: rgba(212, 197, 163, 0.2);
     --banner-text-primary: #EAEAEA;
     --banner-text-secondary: #888888;
-    --banner-text-accent: var(--banner-gold-champagne);
+    --banner-text-accent: #B66C6A;
     
     /* Sombras y efectos - Sutiles y elegantes */
     --banner-shadow-main: 0 10px 50px rgba(0, 0, 0, 0.4);
@@ -158,9 +158,9 @@
 /* =============================================== */
 
 .album-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Archivo Black', sans-serif;
     font-size: clamp(1.8rem, 4vw, 2.5rem);
-    font-weight: 500;
+    font-weight: 900;
     color: var(--banner-text-accent);
     text-align: center;
     margin: 0;
@@ -175,9 +175,9 @@
 }
 
 .album-title-expanded {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Archivo Black', sans-serif;
     font-size: clamp(4rem, 10vw, 7rem);
-    font-weight: 600;
+    font-weight: 900;
     color: var(--banner-text-accent);
     text-align: center;
     margin: 40px 0 20px 0;

@@ -21,14 +21,14 @@ let bannerAutoHideTimeout = null;
 // ==========================================
 const BANNER_CONFIG = {
     // 🎨 PORTADA DEL ÁLBUM - Cambia esta URL por la imagen que quieras
-    albumCoverUrl: 'https://cdn.mos.cms.futurecdn.net/v2/t:0,l:298,cw:944,ch:944,q:80,w:944/VWQmb8znPD7gKuDYRsMkYg.jpeg',
+    albumCoverUrl: 'https://i.ibb.co/JWNrt0j0/Unnamed.png',
     
     // 👤 FOTO DEL ARTISTA - Cambia esta URL por la foto del cantante
     artistPhotoUrl: 'https://i1.sndcdn.com/artworks-bNnkmDQzpL2jXdNb-4JCTwA-t240x240.jpg',
     
     // 📝 INFORMACIÓN DEL ÁLBUM
-    albumTitle: 'Midnight Symphony',
-    artistName: 'Rekon'
+    albumTitle: 'WASTELAND',
+    artistName: 'Brent Faiyaz'
 };
 
 /**
@@ -172,34 +172,7 @@ function scheduleAutoHide(delay = 5000) {
  * =====================================================
  */
 
-/**
- * Actualizar información del banner dinámicamente
- * @param {string} albumTitle - Título del álbum
- * @param {string} artistName - Nombre del artista  
- * @param {Array} tracks - Array de tracks (opcional)
- */
-function updateBannerInfo(albumTitle, artistName, tracks = []) {
-    // Actualizar título en vista minimizada
-    const minTitle = document.querySelector('.banner-minimized .album-title');
-    const minArtist = document.querySelector('.banner-minimized .artist-subtitle');
-    
-    if (minTitle) minTitle.textContent = albumTitle;
-    if (minArtist) minArtist.textContent = `by ${artistName}`;
-    
-    // Actualizar título en vista expandida
-    const expTitle = document.querySelector('.album-title-expanded');
-    const expArtist = document.querySelector('.banner-expanded .artist-subtitle');
-    
-    if (expTitle) expTitle.textContent = albumTitle;
-    if (expArtist) expArtist.textContent = `By ${artistName}`;
-    
-    // Actualizar tracklist si se proporciona
-    if (tracks.length > 0) {
-        updateTracklist(tracks);
-    }
-    
-    console.log(`🎭 Banner actualizado: ${albumTitle} by ${artistName}`);
-}
+// Función eliminada - Solo se usa configuración estática de WASTELAND
 
 /**
  * Actualizar tracklist dinámicamente
@@ -413,25 +386,7 @@ function initBannerEvents() {
  * =====================================================
  */
 
-/**
- * Mostrar banner cuando inicia la música
- * @param {Object} trackInfo - Información del track {title, artist, duration}
- */
-function showBannerForTrack(trackInfo = {}) {
-    if (!trackInfo.title || !trackInfo.artist) {
-        console.log('🎭 Información de track incompleta, usando datos por defecto');
-        showBanner();
-        return;
-    }
-    
-    // Actualizar información del banner
-    updateBannerInfo(trackInfo.title, trackInfo.artist);
-    
-    // Mostrar banner
-    showBanner();
-    
-    console.log(`🎭 Banner mostrado para: ${trackInfo.title} by ${trackInfo.artist}`);
-}
+// Función eliminada - Solo se usa configuración estática
 
 /**
  * =====================================================
@@ -446,8 +401,7 @@ window.AlbumBanner = {
     hide: hideBanner,
     toggle: toggleBanner,
     
-    // Funciones de contenido
-    updateInfo: updateBannerInfo,
+    // Funciones de contenido (solo estáticas)
     updateTracklist: updateTracklist,
     updatePlatforms: updatePlatformLinks,
     updateSocials: updateSocialLinks,
@@ -460,8 +414,7 @@ window.AlbumBanner = {
     isExpanded: () => bannerExpanded,
     isVisible: () => bannerVisible,
     
-    // Integración con música
-    showForTrack: showBannerForTrack,
+    // Integración eliminada - Solo configuración estática
     
     // Inicialización
     init: initBannerEvents
@@ -491,8 +444,7 @@ document.addEventListener('DOMContentLoaded', function() {
  */
 function createBanner(config = {}) {
     if (document.getElementById('albumBanner')) {
-        console.log('🎭 Banner ya existe, actualizando contenido');
-        updateBannerInfo(config.albumTitle || 'Midnight Symphony', config.artistName || 'Rekon');
+        console.log('🎭 Banner ya existe, usando configuración estática WASTELAND');
         return;
     }
     
