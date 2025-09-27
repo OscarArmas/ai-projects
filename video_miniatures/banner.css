@@ -294,50 +294,52 @@
 .album-cover {
     width: 280px;
     height: 280px;
-    background: transparent;
-    border-radius: 50%;
+    background: #1a1a1a;
+    border-radius: 8px;
     transform: none;
-    box-shadow: none;
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.3),
+        0 0 0 1px var(--banner-border-gold);
     transition: var(--banner-transition-fast);
     position: relative;
-    overflow: visible;
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .album-cover:hover {
     transform: scale(1.03);
-    box-shadow: none;
-}
-
-.album-cover::before, .album-cover::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 50%;
-    background: transparent;
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        0 15px 40px rgba(0, 0, 0, 0.4),
+        0 0 0 1px var(--banner-text-accent);
 }
 
 .album-cover::before {
-    width: 100%;
-    height: 100%;
-    border: 1px solid var(--banner-border-gold);
-}
-
-.album-cover::after {
-    width: 10px;
-    height: 10px;
-    background: var(--banner-text-accent);
-    border: none;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 0%, rgba(212, 197, 163, 0.05) 50%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.6s ease;
 }
 
 .album-cover:hover::before {
-    border-color: var(--banner-text-accent);
-    transform: translate(-50%, -50%) scale(1.02);
+    opacity: 1;
+}
+
+/* Placeholder cuando no hay imagen */
+.album-cover:not([style*="background-image"])::after {
+    content: '♪';
+    font-size: 3rem;
+    color: var(--banner-text-secondary);
+    opacity: 0.3;
 }
 
 @keyframes bannerVinylSpin {
@@ -559,15 +561,27 @@
     width: 70px;
     height: 70px;
     border-radius: 50%;
-    background: transparent;
+    background: #1a1a1a;
     margin-bottom: 20px;
-    box-shadow: none;
+    box-shadow: 
+        0 4px 12px rgba(0, 0, 0, 0.3),
+        0 0 0 1px var(--banner-border-gold);
     position: relative;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid var(--banner-border-gold);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: var(--banner-transition-fast);
+}
+
+.artist-photo:hover {
+    transform: scale(1.05);
+    box-shadow: 
+        0 6px 16px rgba(0, 0, 0, 0.4),
+        0 0 0 1px var(--banner-text-accent);
 }
 
 .artist-photo svg {
@@ -575,6 +589,11 @@
     height: 30px;
     opacity: 0.8;
     fill: var(--banner-text-secondary);
+}
+
+/* Ocultar el SVG cuando hay imagen de fondo */
+.artist-photo[style*="background-image"] svg {
+    display: none;
 }
 
 .social-links {
@@ -652,8 +671,8 @@
     }
     
     .album-cover {
-        width: 250px;
-        height: 250px;
+        width: 220px;
+        height: 220px;
     }
     
     .platforms-container {
@@ -718,8 +737,8 @@
     }
     
     .album-cover {
-        width: 200px;
-        height: 200px;
+        width: 180px;
+        height: 180px;
     }
     
     .platforms-container {

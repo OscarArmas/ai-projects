@@ -16,6 +16,21 @@ let bannerExpanded = false;
 let bannerVisible = false;
 let bannerAutoHideTimeout = null;
 
+// ==========================================
+// CONFIGURACIÓN DE IMÁGENES
+// ==========================================
+const BANNER_CONFIG = {
+    // 🎨 PORTADA DEL ÁLBUM - Cambia esta URL por la imagen que quieras
+    albumCoverUrl: 'https://cdn.mos.cms.futurecdn.net/v2/t:0,l:298,cw:944,ch:944,q:80,w:944/VWQmb8znPD7gKuDYRsMkYg.jpeg',
+    
+    // 👤 FOTO DEL ARTISTA - Cambia esta URL por la foto del cantante
+    artistPhotoUrl: 'https://i1.sndcdn.com/artworks-bNnkmDQzpL2jXdNb-4JCTwA-t240x240.jpg',
+    
+    // 📝 INFORMACIÓN DEL ÁLBUM
+    albumTitle: 'Midnight Symphony',
+    artistName: 'Rekon'
+};
+
 /**
  * =====================================================
  * FUNCIONES PRINCIPALES DEL BANNER
@@ -79,12 +94,28 @@ function showBanner(duration = 5000) {
     banner.classList.add('visible');
     bannerVisible = true;
     
+    // Cargar imágenes por defecto
+    loadDefaultImages();
+    
     // Programar auto-hide si no está expandido
     if (!bannerExpanded && duration > 0) {
         scheduleAutoHide(duration);
     }
     
     console.log('🎭 Banner del álbum mostrado');
+}
+
+/**
+ * Cargar imágenes por defecto desde la configuración
+ */
+function loadDefaultImages() {
+    if (BANNER_CONFIG.albumCoverUrl && BANNER_CONFIG.albumCoverUrl !== 'https://example.com/album-cover.jpg') {
+        updateAlbumCover();
+    }
+    
+    if (BANNER_CONFIG.artistPhotoUrl && BANNER_CONFIG.artistPhotoUrl !== 'https://example.com/artist-photo.jpg') {
+        updateArtistPhoto();
+    }
 }
 
 /**
@@ -253,6 +284,70 @@ function updateSocialLinks(socials = {}) {
 }
 
 /**
+ * Actualizar imagen de portada del álbum
+ * @param {string} imageUrl- URL de la imagen de portada
+ */
+function updateAlbumCover(imageUrl = BANNER_CONFIG.albumCoverUrl) {
+    const albumCover = document.querySelector('.album-cover');
+    
+    if (!albumCover) {
+        console.error('❌ Album cover element not found');
+        return;
+    }
+    
+    if (imageUrl && imageUrl.trim() !== '') {
+        // Verificar que la imagen se puede cargar
+        const img = new Image();
+        img.onload = function() {
+            albumCover.style.backgroundImage = `url(${imageUrl})`;
+            console.log('🎭 Portada del álbum actualizada');
+        };
+        img.onerror = function() {
+            console.error('❌ Error loading album cover image:', imageUrl);
+            // Remover imagen de fondo si hay error
+            albumCover.style.backgroundImage = '';
+        };
+        img.src = imageUrl;
+    } else {
+        // Remover imagen de fondo
+        albumCover.style.backgroundImage = '';
+        console.log('🎭 Portada del álbum removida');
+    }
+}
+
+/**
+ * Actualizar foto del artista
+ * @param {string} imageUrl - URL de la imagen del artista
+ */
+function updateArtistPhoto(imageUrl = BANNER_CONFIG.artistPhotoUrl) {
+    const artistPhoto = document.querySelector('.artist-photo');
+    
+    if (!artistPhoto) {
+        console.error('❌ Artist photo element not found');
+        return;
+    }
+    
+    if (imageUrl && imageUrl.trim() !== '') {
+        // Verificar que la imagen se puede cargar
+        const img = new Image();
+        img.onload = function() {
+            artistPhoto.style.backgroundImage = `url(${imageUrl})`;
+            console.log('🎭 Foto del artista actualizada');
+        };
+        img.onerror = function() {
+            console.error('❌ Error loading artist photo:', imageUrl);
+            // Remover imagen de fondo si hay error
+            artistPhoto.style.backgroundImage = '';
+        };
+        img.src = imageUrl;
+    } else {
+        // Remover imagen de fondo
+        artistPhoto.style.backgroundImage = '';
+        console.log('🎭 Foto del artista removida');
+    }
+}
+
+/**
  * =====================================================
  * EVENTOS Y LISTENERS
  * =====================================================
@@ -356,6 +451,10 @@ window.AlbumBanner = {
     updateTracklist: updateTracklist,
     updatePlatforms: updatePlatformLinks,
     updateSocials: updateSocialLinks,
+    
+    // Funciones de imágenes
+    updateAlbumCover: updateAlbumCover,
+    updateArtistPhoto: updateArtistPhoto,
     
     // Funciones de estado
     isExpanded: () => bannerExpanded,
