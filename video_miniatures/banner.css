@@ -477,6 +477,7 @@
 .tracklist-container {
     max-width: 600px;
     margin: 50px auto;
+    counter-reset: track-number;
 }
 
 .tracklist-title {
@@ -505,6 +506,23 @@
     position: relative;
     overflow: hidden;
     transform: none !important;
+    counter-increment: track-number;
+}
+
+.track-sticker::before {
+    content: counter(track-number, decimal-leading-zero);
+    font-family: 'Anton', sans-serif;
+    font-size: 1.2rem;
+    color: var(--banner-text-secondary);
+    opacity: 0.6;
+    width: 30px;
+    text-align: right;
+    transition: all 0.4s ease;
+}
+
+.track-sticker:hover::before {
+    color: var(--banner-text-accent);
+    opacity: 1;
 }
 
 .track-sticker:first-of-type {
@@ -527,25 +545,7 @@
 }
 
 .track-icon {
-    width: 20px;
-    height: 20px;
-    opacity: 0.6;
-    transition: all 0.4s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.track-icon svg {
-    width: 14px;
-    height: 14px;
-    fill: var(--banner-text-secondary);
-    transition: all 0.4s ease;
-}
-
-.track-sticker:hover .track-icon svg {
-    fill: var(--banner-text-accent);
-    transform: scale(1.1);
+    display: none;
 }
 
 .track-info {
@@ -553,17 +553,19 @@
 }
 
 .track-name {
-    font-family: 'EB Garamond', serif;
-    font-size: 1.1rem;
+    font-family: 'Anton', sans-serif;
+    font-size: 1.2rem;
     font-weight: 400;
-    font-style: italic;
-    color: var(--banner-text-primary);
+    font-style: normal;
+    color: var(--banner-text-accent);
     margin: 0;
     transition: color 0.4s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .track-sticker:hover .track-name {
-    color: var(--banner-text-accent);
+    color: var(--banner-text-primary);
 }
 
 .track-duration {
