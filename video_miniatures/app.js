@@ -26,7 +26,7 @@ const DEFAULT_TRACK_ARTIST = 'Default Playlist';
 // INITIAL VIDEO - CHANGE YOUR PREFERRED VIDEO HERE
 // ==========================================
 const INITIAL_VIDEO = {
-    url: 'https://samplelib.com/lib/preview/mp4/sample-5s.mp4',
+    url: 'https://cdn-cf-east.streamable.com/video/mp4/0gdq20.mp4?Expires=1759248878788&Key-Pair-Id=APKAIEYUVEN4EVB2OKEQ&Signature=Yo9kimD8tYPGAkPd4e1EqIHw0pPrc-N~Klngny~4pvH3mUXLiqK-nQ9teQVwV2~sH27ndysQkcwtEJlcxOcno0B-JaUXd4vtD1rUgeldtHc784JaEO9H~LqE1UUuIIFhGBFddhLRfEybvbbLLAZRKLvKv2E5qL~jDrHhI9JRDc8eYLsaj4Y2ycLtumm5n0PYxhhgcFWCfsYud-KaJZxwFspTl3Kz3h7VhuXfdaLStFjaLVCoJ1QBZNtex9Wui0OAsZ04OdvhPOVO9~K7NsNaGIhQ0IojeQCs-Kj8~XO4U-ni6IzRZ9nR4CzWup1hEhJXdmJ9Bnp7Jq7PF73x72cCaA__',
     title: 'Initial Video',
     type: 'initial'
 };
