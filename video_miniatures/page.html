@@ -662,6 +662,39 @@
             width: 32px;
             height: 32px;
         }
+
+        .page-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 12px;
+            z-index: 30;
+            transform: translateY(100%);
+            transition: transform 0.5s ease-in-out;
+            padding: 16px 32px;
+        }
+        .page-footer.visible {
+            transform: translateY(0);
+        }
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .footer-nav a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            margin-left: 16px;
+            transition: color 0.3s;
+        }
+        .footer-nav a:hover {
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -763,6 +796,18 @@
             <path d="M8 2.5a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-1 0v-10a.5.5 0 0 1 .5-.5z"/>
         </svg>
     </button>
+
+    <!-- Footer -->
+    <footer id="pageFooter" class="page-footer">
+        <div class="footer-content">
+            <div>© 2025 Sony Music Entertainment UK Ltd.</div>
+            <nav class="footer-nav">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms & Conditions</a>
+                <a href="#">AI Usage</a>
+            </nav>
+        </div>
+    </footer>
 
     <script src="https://w.soundcloud.com/player/api.js"></script>
     <script>
@@ -1269,6 +1314,32 @@
                 !trigger.contains(e.target)) {
                 closeBackgroundOptions();
             }
+        });
+
+        // Handle footer reveal on scroll
+        let isFooterVisible = false;
+        let scrollTimeout;
+        document.addEventListener('wheel', function(e) {
+            const footer = document.getElementById('pageFooter');
+            if (!footer) return;
+
+            clearTimeout(scrollTimeout);
+
+            if (e.deltaY > 0 && !isFooterVisible) {
+                // Scrolling down
+                footer.classList.add('visible');
+                isFooterVisible = true;
+            } else if (e.deltaY < 0 && isFooterVisible) {
+                // Scrolling up
+                footer.classList.remove('visible');
+                isFooterVisible = false;
+            }
+
+            // Hide footer after a delay of inactivity
+            scrollTimeout = setTimeout(() => {
+                footer.classList.remove('visible');
+                isFooterVisible = false;
+            }, 3000);
         });
     </script>
 </body>

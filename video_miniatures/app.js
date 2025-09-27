@@ -14,6 +14,7 @@ let experienceStarted = false; // Flag to ensure completion logic runs only once
 let programmaticPlay = false; // Flag to distinguish between user clicks and programmatic play
 let albumPresentationShown = false; // Flag to track if album presentation has been shown
 const CLIENT_ID = 'iZIs9mchVcX5lhVRyQGGAYlNPVldzAoJ'; // SoundCloud Public Client ID (Updated 2024)
+let isFooterVisible = false;
 
 // Default track
 const DEFAULT_TRACK_URL = 'https://soundcloud.com/brentfaiyaz/rolling-stone-8?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing';
@@ -739,6 +740,31 @@ document.addEventListener('DOMContentLoaded', function() {
     // Close options and results when clicking outside
     document.addEventListener('click', function(e) {
         // All click outside logic removed
+    });
+
+    // Handle footer reveal on scroll
+    let scrollTimeout;
+    document.addEventListener('wheel', function(e) {
+        const footer = document.getElementById('pageFooter');
+        if (!footer) return;
+
+        clearTimeout(scrollTimeout);
+
+        if (e.deltaY > 0 && !isFooterVisible) {
+            // Scrolling down
+            footer.classList.remove('translate-y-full');
+            isFooterVisible = true;
+        } else if (e.deltaY < 0 && isFooterVisible) {
+            // Scrolling up
+            footer.classList.add('translate-y-full');
+            isFooterVisible = false;
+        }
+
+        // Hide footer after a delay of inactivity
+        scrollTimeout = setTimeout(() => {
+            footer.classList.add('translate-y-full');
+            isFooterVisible = false;
+        }, 3000);
     });
 
     // We can remove the initialization for buttons that no longer exist
