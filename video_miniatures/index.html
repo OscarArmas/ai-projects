@@ -164,39 +164,58 @@
         
         /* Estilos para la cabecera minimalista */
         .scroll-indicator {
-            width: 32px; /* Aumentado */
-            height: 52px; /* Aumentado */
-            border: 2px solid rgba(255, 255, 255, 0.7); /* Más visible */
-            border-radius: 16px; /* Ajustado */
+            width: 32px;
+            height: 32px;
             position: relative;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3); /* Efecto de brillo */
+            animation: scroll-bounce 2s ease-in-out infinite;
+            transition: all 0.3s ease;
         }
 
-        .scroll-indicator span {
+        /* Línea izquierda del pájaro */
+        .scroll-indicator::before {
             content: '';
             position: absolute;
-            top: 10px; /* Ajustado */
+            top: 4px;
             left: 50%;
-            width: 4px; /* Más grueso */
-            height: 10px; /* Más largo */
-            background: rgba(255, 255, 255, 0.8); /* Más brillante */
-            border-radius: 2px;
-            transform: translateX(-50%);
-            animation: scroll-animation 2s infinite;
+            width: 2px;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.8);
+            transform: translateX(-50%) rotate(-45deg);
+            transform-origin: bottom center;
+            border-radius: 1px;
         }
 
-        @keyframes scroll-animation {
-            0% {
-                transform: translate(-50%, 0);
-                opacity: 1;
+        /* Línea derecha del pájaro */
+        .scroll-indicator::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 50%;
+            width: 2px;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.8);
+            transform: translateX(-50%) rotate(45deg);
+            transform-origin: bottom center;
+            border-radius: 1px;
+        }
+
+        .scroll-indicator:hover {
+            transform: scale(1.1);
+        }
+
+        .scroll-indicator:hover::before,
+        .scroll-indicator:hover::after {
+            background: rgba(255, 255, 255, 1);
+        }
+
+        @keyframes scroll-bounce {
+            0%, 100% {
+                opacity: 0.7;
+                transform: translateY(0);
             }
             50% {
-                transform: translate(-50%, 15px); /* Ajustado */
                 opacity: 1;
-            }
-            100% {
-                transform: translate(-50%, 30px); /* Ajustado */
-                opacity: 0;
+                transform: translateY(6px);
             }
         }
     </style>
@@ -225,9 +244,7 @@
                 </div>
             </div>
             <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-                <div class="scroll-indicator" title="Scroll down">
-                    <span></span>
-                </div>
+                <div class="scroll-indicator" title="Scroll down"></div>
             </div>
         </div>
     </header>
