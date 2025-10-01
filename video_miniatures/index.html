@@ -164,21 +164,22 @@
         
         /* Estilos para la cabecera minimalista */
         .scroll-indicator {
-            width: 24px;
-            height: 40px;
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            border-radius: 12px;
+            width: 32px; /* Aumentado */
+            height: 52px; /* Aumentado */
+            border: 2px solid rgba(255, 255, 255, 0.7); /* Más visible */
+            border-radius: 16px; /* Ajustado */
             position: relative;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3); /* Efecto de brillo */
         }
 
         .scroll-indicator span {
             content: '';
             position: absolute;
-            top: 8px;
+            top: 10px; /* Ajustado */
             left: 50%;
-            width: 2px;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.5);
+            width: 4px; /* Más grueso */
+            height: 10px; /* Más largo */
+            background: rgba(255, 255, 255, 0.8); /* Más brillante */
             border-radius: 2px;
             transform: translateX(-50%);
             animation: scroll-animation 2s infinite;
@@ -190,11 +191,11 @@
                 opacity: 1;
             }
             50% {
-                transform: translate(-50%, 10px);
+                transform: translate(-50%, 15px); /* Ajustado */
                 opacity: 1;
             }
             100% {
-                transform: translate(-50%, 20px);
+                transform: translate(-50%, 30px); /* Ajustado */
                 opacity: 0;
             }
         }
@@ -232,7 +233,7 @@
     </header>
 
     <!-- Escena 2: Espacio intermedio para mostrar solo el fondo -->
-    <div id="spacer" class="relative z-20 h-screen"></div>
+    <div id="spacer" class="relative z-20 h-[40vh]"></div>
 
     <!-- Escena 3: Contenedor del Banner y Footer -->
     <div id="content-wrapper" class="relative z-20 bg-black/50">
@@ -434,15 +435,6 @@
             </button>
         </div>
         
-        <!-- Minimize button -->
-        <button id="minimizeBtn" 
-                onclick="toggleMinimize()" 
-                title="Show UI (M)"
-                class="fixed top-5 left-5 w-12 h-12 rounded-full cursor-pointer text-xl flex items-center justify-center transition-all duration-300 z-50 
-                       bg-black/30 glass-effect border border-white/20 text-white shadow-lg hover:bg-white/20 hover:scale-110 hover:shadow-xl">
-            <span id="minimizeIcon">+</span>
-        </button>
-        
         <!-- Minimized UI indicator -->
         <div id="minimizedIndicator" 
              class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
@@ -522,11 +514,11 @@
                 }
 
                 // Transición del contenido principal (banner y footer)
-                const contentStartScroll = vh; // Empieza a aparecer después de la primera pantalla
+                const contentStartScroll = vh * 0.9; // Empieza a aparecer antes (70% de la pantalla)
                 let contentOpacity = 0;
                 if (scrollY > contentStartScroll) {
                     const scrollInContentArea = scrollY - contentStartScroll;
-                    contentOpacity = Math.min(1, scrollInContentArea / vh);
+                    contentOpacity = Math.min(1, scrollInContentArea / (vh * 0.4));
                 }
                 
                 if (contentWrapper) {

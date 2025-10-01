@@ -259,25 +259,7 @@ function loadInitialVideo() {
     }
 }
 
-// Function to minimize/show the UI
-function toggleMinimize() {
-    const playerContainer = document.getElementById('playerContainer');
-    
-    isMinimized = !isMinimized;
-    
-    if (isMinimized) {
-        // Minimize UI
-        if (playerContainer.style.display === 'block') {
-            playerContainer.classList.add('minimized-slide-x', 'opacity-0', 'pointer-events-none');
-        }
-        
-    } else {
-        // Show UI
-        if (playerContainer.style.display === 'block') {
-            playerContainer.classList.remove('minimized-slide-x', 'opacity-0', 'pointer-events-none');
-        }
-    }
-}
+// Function to minimize/show the UI has been removed as per user request.
 
 // Function to minimize only the player
 function togglePlayerMinimize() {
