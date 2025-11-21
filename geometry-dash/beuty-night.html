@@ -104,6 +104,14 @@
             text-shadow: 0 0 10px rgba(255, 159, 28, 0.8), 0 0 20px rgba(255, 105, 180, 0.4);
             line-height: 1.3;
             letter-spacing: 1px;
+            /* Animación de latido suave */
+            animation: heartbeat 2s infinite ease-in-out;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); text-shadow: 0 0 15px rgba(255, 159, 28, 1), 0 0 25px rgba(255, 105, 180, 0.6); }
+            100% { transform: scale(1); }
         }
 
         /* Estilo del Botón */
@@ -276,6 +284,7 @@
         let ch = window.innerHeight;
         let fireworks = [];
         let particles = [];
+        let fireflies = []; // Array para las luciérnagas
 
         canvas.width = cw;
         canvas.height = ch;
@@ -294,6 +303,64 @@
         function randomColor() {
             return palette[Math.floor(Math.random() * palette.length)];
         }
+
+        class Firefly {
+            constructor() {
+                this.x = Math.random() * cw;
+                this.y = Math.random() * ch; // Aparecen en cualquier altura inicial
+                // Movimiento suave y aleatorio
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.radius = Math.random() * 1.5 + 0.5;
+                this.alpha = Math.random();
+                this.flashSpeed = Math.random() * 0.02 + 0.005;
+                this.increasing = true;
+                // Color amarillo/dorado suave
+                this.color = `255, 200, 100`; 
+            }
+
+            update() {
+                // Mover
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Rebotar suavemente en los bordes o reaparecer
+                if (this.x < 0 || this.x > cw) this.vx *= -1;
+                if (this.y < 0 || this.y > ch) this.vy *= -1;
+
+                // Efecto de parpadeo
+                if (this.increasing) {
+                    this.alpha += this.flashSpeed;
+                    if (this.alpha >= 1) this.increasing = false;
+                } else {
+                    this.alpha -= this.flashSpeed;
+                    if (this.alpha <= 0.2) this.increasing = true;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${this.color}, ${this.alpha})`;
+                
+                // Brillo difuso alrededor
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = `rgba(${this.color}, ${this.alpha})`;
+                
+                ctx.fill();
+                ctx.shadowBlur = 0; // Resetear sombra para no afectar otros elementos
+            }
+        }
+
+        // Inicializar luciérnagas
+        function initFireflies() {
+            for (let i = 0; i < 50; i++) { // 50 luciérnagas
+                fireflies.push(new Firefly());
+            }
+        }
+
+        // Llamar a la inicialización
+        initFireflies();
 
         class Firework {
             constructor(sx, sy, tx, ty) {
@@ -416,6 +483,12 @@
                 particles[j].draw();
                 particles[j].update(j);
             }
+
+            // Dibujar y actualizar luciérnagas
+            fireflies.forEach(firefly => {
+                firefly.draw();
+                firefly.update();
+            });
         }
 
         // --- INTERACCIÓN ---
