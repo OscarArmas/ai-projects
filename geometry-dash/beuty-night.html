@@ -116,7 +116,14 @@
             cursor: pointer;
             font-family: 'Fredoka One', cursive;
             box-shadow: 0 5px 15px rgba(255, 159, 28, 0.4);
-            transition: transform 0.2s, background 0.3s;
+            transition: transform 0.2s, background 0.3s, opacity 0.5s, display 0.5s;
+            display: none; /* Oculto inicialmente hasta que se muestre el mensaje final */
+            opacity: 0;
+        }
+        
+        .btn-si.show {
+            display: block;
+            opacity: 1;
         }
 
         .btn-si:hover {
@@ -429,11 +436,70 @@
                 messageShown = true;
                 counterEl.classList.add('hidden'); // Ocultar contador
                 
-                setTimeout(() => {
-                    document.getElementById('message-box').classList.add('visible');
-                }, 1000);
+                // Secuencia de mensajes antes del mensaje final
+                mostrarSecuenciaMensajes();
             }
         });
+
+        // Función para mostrar la secuencia de mensajes
+        function mostrarSecuenciaMensajes() {
+            const messageBox = document.getElementById('message-box');
+            const h1 = messageBox.querySelector('h1');
+            const btn = messageBox.querySelector('.btn-si');
+            
+            // Ocultar el botón inicialmente
+            btn.style.display = 'none';
+            
+            // Secuencia de mensajes
+            const mensajes = [
+                { texto: "Ari niña hermosa", duracion: 2000 },
+                { texto: "Tengo una gran pregunta para ti", duracion: 2500 },
+                { texto: "¿Quieres ser mi novia?", duracion: 0, mostrarBoton: true }
+            ];
+            
+            let indiceMensaje = 0;
+            
+            function mostrarSiguienteMensaje() {
+                if (indiceMensaje >= mensajes.length) return;
+                
+                const mensaje = mensajes[indiceMensaje];
+                
+                // Ocultar el mensaje anterior
+                messageBox.classList.remove('visible');
+                
+                setTimeout(() => {
+                    // Cambiar el texto
+                    h1.innerHTML = mensaje.texto;
+                    
+                    // Mostrar el mensaje con animación
+                    messageBox.classList.add('visible');
+                    
+                    // Si es el último mensaje, mostrar el botón
+                    if (mensaje.mostrarBoton) {
+                        setTimeout(() => {
+                            btn.style.display = 'block';
+                            // Pequeño delay para la animación de opacidad
+                            setTimeout(() => {
+                                btn.classList.add('show');
+                            }, 50);
+                        }, 500);
+                    }
+                    
+                    // Si hay más mensajes, programar el siguiente
+                    if (mensaje.duracion > 0) {
+                        setTimeout(() => {
+                            indiceMensaje++;
+                            mostrarSiguienteMensaje();
+                        }, mensaje.duracion);
+                    }
+                }, 300); // Pequeño delay para la transición
+            }
+            
+            // Iniciar la secuencia después de un pequeño delay
+            setTimeout(() => {
+                mostrarSiguienteMensaje();
+            }, 1000);
+        }
 
         function aceptar() {
             const btn = document.querySelector('.btn-si');
