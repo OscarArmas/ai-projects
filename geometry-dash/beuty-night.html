@@ -81,7 +81,7 @@
             width: 100vw;
             height: 100vh;
             /* Aquí cargamos tu imagen - probamos múltiples formatos de ruta */
-            background-image: url('./night.png'); 
+            background-image: url('./night.JPG'); 
             background-position: center center; /* Centrado para mejor visualización */
             background-repeat: no-repeat;
             background-size: cover; /* Cubre toda la pantalla */
@@ -360,7 +360,7 @@
     <!-- Contenedor de fondo con imagen -->
     <div class="background-container">
         <!-- Imagen de fondo como respaldo (se oculta si el background-image funciona) -->
-        <img id="bg-image" src="./night.png" alt="Fondo nocturno" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
+        <img id="bg-image" src="./night.JPG" alt="Fondo nocturno" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
     </div>
     
     <div class="vignette"></div> <!-- Efecto de bordes oscuros -->
@@ -415,12 +415,18 @@
             
             img.onerror = function() {
                 console.error('❌ Error al cargar night.png, intentando rutas alternativas...');
-                // Intentar diferentes rutas
+                // Intentar diferentes rutas y extensiones
                 const alternativePaths = [
+                    'night.JPG',
+                    'night.jpg',
+                    './night.JPG',
+                    './night.jpg',
                     'night.png',
                     './night.png',
-                    '../night.png',
-                    'ai-projects/geometry-dash/night.png'
+                    '../night.JPG',
+                    '../night.jpg',
+                    'ai-projects/geometry-dash/night.JPG',
+                    'ai-projects/geometry-dash/night.jpg'
                 ];
                 
                 let pathIndex = 0;
@@ -448,8 +454,8 @@
                 tryNextPath();
             };
             
-            // Intentar cargar la imagen
-            img.src = './night.png';
+            // Intentar cargar la imagen (probar diferentes extensiones)
+            img.src = './night.JPG';
         })();
 
         // --- CONFIGURACIÓN ---
@@ -830,7 +836,7 @@
                 h1.style.opacity = '0';
                 
                 setTimeout(() => {
-                    h1.innerHTML = "¡Te amo! <br> 🧡 🌸 ✨";
+                    h1.innerHTML = "¡Te quiero! <br> ✨💖";
                     h1.style.transform = "scale(1.3)";
                     h1.style.opacity = '1';
                     
