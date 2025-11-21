@@ -80,8 +80,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            /* Aquí cargamos tu imagen - probamos múltiples formatos de ruta */
-            background-image: url('./night.JPG'); 
+            /* La imagen se carga desde JS usando CONFIG */
             background-position: center center; /* Centrado para mejor visualización */
             background-repeat: no-repeat;
             background-size: cover; /* Cubre toda la pantalla */
@@ -359,8 +358,8 @@
 
     <!-- Contenedor de fondo con imagen -->
     <div class="background-container">
-        <!-- Imagen de fondo como respaldo (se oculta si el background-image funciona) -->
-        <img id="bg-image" src="./night.JPG" alt="Fondo nocturno" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
+        <!-- Imagen de fondo como respaldo (se llena vía JS si falla la principal) -->
+        <img id="bg-image" src="" alt="Fondo nocturno" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
     </div>
     
     <div class="vignette"></div> <!-- Efecto de bordes oscuros -->
@@ -383,96 +382,71 @@
     </div>
 
     <script>
-        // --- VERIFICACIÓN Y CARGA DE IMAGEN DE FONDO ---
-        // Este script asegura que la imagen de fondo se cargue correctamente
-        (function() {
+        // --- CONFIGURACIÓN PRINCIPAL (EDITAR AQUÍ) ---
+        // Aquí puedes cambiar las imágenes, textos y opciones fácilmente
+        const CONFIG = {
+            assets: {
+                background: './night.JPG',    // Tu imagen principal
+                fallback: 'night.png'         // Imagen alternativa si falla la principal
+            },
+            game: {
+                clicksToWin: 11
+            },
+            messages: {
+                sequence: [
+                    { texto: "Ari niña hermosa", duration: 2000 },
+                    { texto: "Tengo una gran pregunta para ti", duration: 2500 },
+                    { texto: "¿Quieres ser mi novia?", duration: 0, showButtons: true }
+                ],
+                finalSuccess: "¡Te quiero! <br> ✨💖"
+            },
+            colors: [
+                '#ff9f1c', // Naranja luces
+                '#ffbf69', // Naranja suave
+                '#ff99c8', // Rosa flores
+                '#fca311', // Amarillo fuerte
+                '#ffffff'  // Blanco brillo
+            ]
+        };
+
+        // --- CARGADOR DE IMÁGENES SIMPLIFICADO ---
+        (function loadBackground() {
             const bgContainer = document.querySelector('.background-container');
             const bgImage = document.getElementById('bg-image');
             const img = new Image();
-            
-            // Función para aplicar la imagen cuando se carga correctamente
-            const applyImage = (path) => {
-                console.log('✅ Imagen night.png cargada correctamente desde:', path);
-                bgContainer.style.backgroundImage = `url("${path}")`;
-                // Ocultar el elemento img ya que usamos background-image
-                if (bgImage) bgImage.style.display = 'none';
+
+            // Intentar cargar la imagen principal desde CONFIG
+            img.src = CONFIG.assets.background;
+
+            img.onload = function() {
+                console.log('✅ Imagen cargada:', CONFIG.assets.background);
+                bgContainer.style.backgroundImage = `url("${CONFIG.assets.background}")`;
             };
-            
-            // Función para usar el elemento img como respaldo
-            const useImgFallback = (path) => {
-                console.log('⚠️ Usando elemento <img> como respaldo desde:', path);
-                bgContainer.style.backgroundImage = 'none';
-                if (bgImage) {
-                    bgImage.src = path;
-                    bgImage.style.display = 'block';
+
+            img.onerror = function() {
+                console.warn('⚠️ Falló la imagen principal, probando respaldo:', CONFIG.assets.fallback);
+                // Si falla, probar la de respaldo
+                const fallbackImg = new Image();
+                fallbackImg.src = CONFIG.assets.fallback;
+                
+                fallbackImg.onload = function() {
+                    bgContainer.style.backgroundImage = `url("${CONFIG.assets.fallback}")`;
+                };
+                
+                fallbackImg.onerror = function() {
+                    // Último recurso: usar el elemento IMG si todo falla
+                    if (bgImage) {
+                        bgImage.src = CONFIG.assets.fallback; 
+                        bgImage.style.display = 'block';
+                    }
                 }
             };
-            
-            // Intentar cargar la imagen y verificar si se carga correctamente
-            img.onload = function() {
-                applyImage('./night.png');
-            };
-            
-            img.onerror = function() {
-                console.error('❌ Error al cargar night.png, intentando rutas alternativas...');
-                // Intentar diferentes rutas y extensiones
-                const alternativePaths = [
-                    'night.JPG',
-                    'night.jpg',
-                    './night.JPG',
-                    './night.jpg',
-                    'night.png',
-                    './night.png',
-                    '../night.JPG',
-                    '../night.jpg',
-                    'ai-projects/geometry-dash/night.JPG',
-                    'ai-projects/geometry-dash/night.jpg'
-                ];
-                
-                let pathIndex = 0;
-                const tryNextPath = () => {
-                    if (pathIndex < alternativePaths.length) {
-                        const testImg = new Image();
-                        testImg.onload = function() {
-                            applyImage(alternativePaths[pathIndex]);
-                        };
-                        testImg.onerror = function() {
-                            pathIndex++;
-                            if (pathIndex < alternativePaths.length) {
-                                tryNextPath();
-                            } else {
-                                // Si ninguna ruta funciona, intentar con el elemento img
-                                console.error('❌ No se pudo cargar la imagen en ninguna ruta, usando elemento img');
-                                useImgFallback('./night.png');
-                            }
-                        };
-                        testImg.src = alternativePaths[pathIndex];
-                    } else {
-                        useImgFallback('./night.png');
-                    }
-                };
-                tryNextPath();
-            };
-            
-            // Intentar cargar la imagen (probar diferentes extensiones)
-            img.src = './night.JPG';
         })();
 
-        // --- CONFIGURACIÓN ---
-        const CLICK_LIMIT = 11;
+        // --- VARIABLES GLOBALES ---
         let clickCount = 0;
         let messageShown = false;
         const counterEl = document.getElementById('counter');
-
-        // --- COLORES DE LA IMAGEN ---
-        // He extraído los colores de tu imagen para los fuegos artificiales
-        const palette = [
-            '#ff9f1c', // Naranja luces
-            '#ffbf69', // Naranja suave
-            '#ff99c8', // Rosa flores
-            '#fca311', // Amarillo fuerte
-            '#ffffff'  // Blanco brillo
-        ];
 
         // --- LÓGICA CANVAS ---
         const canvas = document.getElementById("canvas");
@@ -481,7 +455,7 @@
         let ch = window.innerHeight;
         let fireworks = [];
         let particles = [];
-        let fireflies = []; // Array para las luciérnagas
+        let fireflies = []; 
 
         canvas.width = cw;
         canvas.height = ch;
@@ -498,21 +472,20 @@
         }
 
         function randomColor() {
-            return palette[Math.floor(Math.random() * palette.length)];
+            return CONFIG.colors[Math.floor(Math.random() * CONFIG.colors.length)];
         }
 
+        // --- CLASES DE EFECTOS ---
         class Firefly {
             constructor() {
                 this.x = Math.random() * cw;
                 this.y = Math.random() * ch;
                 this.vx = (Math.random() - 0.5) * 0.5;
                 this.vy = (Math.random() - 0.5) * 0.5;
-                // Aumentamos un poco el tamaño para que destaquen más
                 this.radius = Math.random() * 2 + 1; 
                 this.alpha = Math.random();
                 this.flashSpeed = Math.random() * 0.02 + 0.005;
                 this.increasing = true;
-                // Color amarillo dorado más intenso
                 this.color = `255, 215, 100`; 
             }
 
@@ -536,24 +509,12 @@
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(${this.color}, ${this.alpha})`;
-                
-                // Aumentamos el brillo (shadowBlur) para que resplandezcan
                 ctx.shadowBlur = 15; 
                 ctx.shadowColor = `rgba(${this.color}, ${this.alpha})`;
-                
                 ctx.fill();
                 ctx.shadowBlur = 0;
             }
         }
-
-        // Inicializar luciérnagas
-        function initNature() {
-            for (let i = 0; i < 50; i++) { 
-                fireflies.push(new Firefly());
-            }
-        }
-
-        initNature();
 
         class Firework {
             constructor(sx, sy, tx, ty) {
@@ -574,7 +535,7 @@
                 this.speed = 2;
                 this.acceleration = 1.05;
                 this.brightness = random(50, 70);
-                this.color = randomColor(); // Color acorde al tema
+                this.color = randomColor();
             }
 
             update(index) {
@@ -598,7 +559,7 @@
                 ctx.beginPath();
                 ctx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
                 ctx.lineTo(this.x, this.y);
-                ctx.strokeStyle = this.color; // Usar color de la paleta
+                ctx.strokeStyle = this.color;
                 ctx.lineWidth = 2;
                 ctx.stroke();
             }
@@ -649,7 +610,7 @@
         }
 
         function createParticles(x, y, color) {
-            let particleCount = 40; // Más partículas para que se vea mejor
+            let particleCount = 40;
             while (particleCount--) {
                 particles.push(new Particle(x, y, color));
             }
@@ -657,13 +618,7 @@
 
         function loop() {
             requestAnimationFrame(loop);
-            
-            // LIMPIADO TOTAL DEL CANVAS (Sin estelas sucias)
-            // Borramos todo el canvas para que sea 100% transparente en cada frame
-            // Esto elimina la "marca" o trazo oscuro sobre la imagen de fondo
             ctx.clearRect(0, 0, cw, ch);
-            
-            // Usamos 'lighter' para que los colores brillen más (efecto neón)
             ctx.globalCompositeOperation = 'lighter';
 
             let i = fireworks.length;
@@ -678,8 +633,6 @@
                 particles[j].update(j);
             }
 
-            // Dibujar y actualizar luciérnagas (sobre todo lo demás)
-            // Volvemos a source-over para que las luciérnagas tengan color sólido si se quiere
             ctx.globalCompositeOperation = 'source-over'; 
             fireflies.forEach(firefly => {
                 firefly.draw();
@@ -687,34 +640,26 @@
             });
         }
 
-        // --- LÓGICA DEL CURSOR MÁGICO ---
+        // --- CURSOR Y EVENTOS ---
         const cursor = document.getElementById('cursor');
         
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
             
-            // Crear estela de polvo mágico
-            if (Math.random() > 0.5) { // No crear en cada frame para no saturar
+            if (Math.random() > 0.5) {
                 const trail = document.createElement('div');
                 trail.className = 'cursor-trail';
                 trail.style.left = e.clientX + 'px';
                 trail.style.top = e.clientY + 'px';
-                // Variación aleatoria de tamaño
                 const size = Math.random() * 6 + 2;
                 trail.style.width = size + 'px';
                 trail.style.height = size + 'px';
-                
                 document.body.appendChild(trail);
-                
-                // Eliminar el elemento después de la animación
-                setTimeout(() => {
-                    trail.remove();
-                }, 500);
+                setTimeout(() => trail.remove(), 500);
             }
         });
 
-        // Efecto al hacer click con el cursor
         document.addEventListener('mousedown', () => {
             cursor.style.transform = 'translate(-50%, -50%) scale(0.8)';
             cursor.style.borderColor = '#ff9f1c';
@@ -725,78 +670,55 @@
             cursor.style.borderColor = 'rgba(255, 255, 255, 0.8)';
         });
 
-        // --- INTERACCIÓN ---
+        // --- INTERACCIÓN PRINCIPAL ---
         canvas.addEventListener('click', (e) => {
-            if (messageShown) return; // Si ya salió el mensaje, solo lanza fuegos sin contar
+            if (messageShown) return;
 
             fireworks.push(new Firework(cw / 2, ch, e.clientX, e.clientY));
-            
             clickCount++;
             
-            // Actualizar Contador Visual
-            if(clickCount <= CLICK_LIMIT) {
-                counterEl.innerText = `Magia: ${clickCount} / ${CLICK_LIMIT}`;
-                // Efecto de pulso en el contador
+            if(clickCount <= CONFIG.game.clicksToWin) {
+                counterEl.innerText = `Magia: ${clickCount} / ${CONFIG.game.clicksToWin}`;
                 counterEl.style.transform = "scale(1.2)";
                 setTimeout(() => counterEl.style.transform = "scale(1)", 100);
             }
 
-            if (clickCount >= CLICK_LIMIT) {
+            if (clickCount >= CONFIG.game.clicksToWin) {
                 messageShown = true;
-                counterEl.classList.add('hidden'); // Ocultar contador
-                
-                // Secuencia de mensajes antes del mensaje final
+                counterEl.classList.add('hidden');
                 mostrarSecuenciaMensajes();
             }
         });
 
-        // Función para mostrar la secuencia de mensajes
+        // --- SECUENCIA DE MENSAJES ---
         function mostrarSecuenciaMensajes() {
             const messageBox = document.getElementById('message-box');
             const h1 = messageBox.querySelector('h1');
             const btn = messageBox.querySelector('.btn-si');
             const btnNo = document.getElementById('btn-no');
             
-            // Ocultar los botones inicialmente
             btn.style.display = 'none';
             btnNo.style.display = 'none';
-            
-            // Secuencia de mensajes
-            const mensajes = [
-                { texto: "Ari niña hermosa", duracion: 2000 },
-                { texto: "Tengo una gran pregunta para ti", duracion: 2500 },
-                { texto: "¿Quieres ser mi novia?", duracion: 0, mostrarBoton: true }
-            ];
             
             let indiceMensaje = 0;
             
             function mostrarSiguienteMensaje() {
-                if (indiceMensaje >= mensajes.length) return;
+                if (indiceMensaje >= CONFIG.messages.sequence.length) return;
                 
-                const mensaje = mensajes[indiceMensaje];
-                
-                // Ocultar el mensaje anterior
+                const mensaje = CONFIG.messages.sequence[indiceMensaje];
                 messageBox.classList.remove('visible');
                 
                 setTimeout(() => {
-                    // Cambiar el texto
                     h1.innerHTML = mensaje.texto;
-                    
-                    // Mostrar el mensaje con animación
                     messageBox.classList.add('visible');
                     
-                    // Si es el último mensaje, mostrar los botones
-                    if (mensaje.mostrarBoton) {
+                    if (mensaje.showButtons) {
                         setTimeout(() => {
                             btn.style.display = 'block';
                             btnNo.style.display = 'inline-block';
-                            
-                            // El botón NO empieza en posición relativa (al lado del SÍ)
-                            // Solo se moverá cuando se haga clic
                             btnNo.style.position = 'relative';
                             btnNo.style.margin = '20px 0 0 20px';
                             
-                            // Pequeño delay para la animación de opacidad
                             setTimeout(() => {
                                 btn.classList.add('show');
                                 btnNo.classList.add('show');
@@ -804,177 +726,137 @@
                         }, 500);
                     }
                     
-                    // Si hay más mensajes, programar el siguiente
-                    if (mensaje.duracion > 0) {
+                    if (mensaje.duration > 0) {
                         setTimeout(() => {
                             indiceMensaje++;
                             mostrarSiguienteMensaje();
-                        }, mensaje.duracion);
+                        }, mensaje.duration);
                     }
-                }, 300); // Pequeño delay para la transición
+                }, 300);
             }
             
-            // Iniciar la secuencia después de un pequeño delay
             setTimeout(() => {
                 mostrarSiguienteMensaje();
             }, 1000);
         }
 
+        // --- LÓGICA DE BOTONES ---
         function aceptar() {
             const btn = document.querySelector('.btn-si');
             const h1 = document.querySelector('h1');
             
-            // Agregar la clase de animación al botón
             btn.classList.add('clicking');
             
-            // Esperar a que termine la animación antes de cambiar el texto e iniciar la celebración
             setTimeout(() => {
-                btn.style.display = 'none'; // Ocultar botón después de la animación
-                
-                // Cambiar el texto con una transición suave
+                btn.style.display = 'none';
                 h1.style.transition = 'all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
                 h1.style.opacity = '0';
                 
                 setTimeout(() => {
-                    h1.innerHTML = "¡Te quiero! <br> ✨💖";
+                    h1.innerHTML = CONFIG.messages.finalSuccess;
                     h1.style.transform = "scale(1.3)";
                     h1.style.opacity = '1';
-                    
-                    // Iniciar la celebración masiva después de que aparezca el texto
                     iniciarCelebracion();
                 }, 300);
-            }, 600); // Esperar a que termine la animación del botón (0.6s)
+            }, 600);
         }
 
-        // Función para mover el botón NO a otra posición (más cerca y con rastro de cometa)
         let btnNoPosition = { x: 0, y: 0 };
-        let isFirstMove = true; // Para saber si es el primer movimiento
+        let isFirstMove = true;
 
         function moverBotonNo() {
             const btnNo = document.getElementById('btn-no');
-            
-            // Obtener posición actual del botón
             const rect = btnNo.getBoundingClientRect();
             const currentX = rect.left + rect.width / 2;
             const currentY = rect.top + rect.height / 2;
             
-            // Si es el primer movimiento, cambiar a posición fixed
             if (isFirstMove) {
                 btnNo.style.position = 'fixed';
                 btnNo.style.margin = '0';
                 isFirstMove = false;
             }
             
-            // Calcular nueva posición más cercana (máximo 200px de distancia)
             const maxDistance = 200;
             const angle = Math.random() * Math.PI * 2;
-            const distance = Math.random() * maxDistance + 50; // Entre 50 y 250px
+            const distance = Math.random() * maxDistance + 50;
             
             const newX = currentX + Math.cos(angle) * distance;
             const newY = currentY + Math.sin(angle) * distance;
             
-            // Asegurar que no se salga de la pantalla
             const maxX = window.innerWidth - 100;
             const maxY = window.innerHeight - 50;
             const finalX = Math.max(50, Math.min(newX, maxX));
             const finalY = Math.max(50, Math.min(newY, maxY));
             
-            // Guardar posición final
             btnNoPosition.x = finalX;
             btnNoPosition.y = finalY;
             
-            // Agregar clase de movimiento para transición suave y brillo
             btnNo.classList.add('moving');
-            
-            // Crear rastro de cometa durante el movimiento
             crearRastroCometa(currentX, currentY, finalX, finalY);
             
-            // Mover el botón a la nueva posición
             btnNo.style.left = (finalX - rect.width / 2) + 'px';
             btnNo.style.top = (finalY - rect.height / 2) + 'px';
             
-            // Pequeño efecto visual al moverse
             btnNo.style.transform = 'scale(0.9) rotate(5deg)';
-            setTimeout(() => {
-                btnNo.style.transform = 'scale(1) rotate(0deg)';
-            }, 250);
-            
-            // Remover la clase de movimiento después de que termine la animación
-            setTimeout(() => {
-                btnNo.classList.remove('moving');
-            }, 500);
+            setTimeout(() => btnNo.style.transform = 'scale(1) rotate(0deg)', 250);
+            setTimeout(() => btnNo.classList.remove('moving'), 500);
         }
 
-        // Función para crear el rastro de cometa mientras se mueve el botón
         function crearRastroCometa(startX, startY, endX, endY) {
-            const duration = 500; // Duración del movimiento en ms
-            const trailCount = 15; // Número de partículas en el rastro
+            const duration = 500;
+            const trailCount = 15;
             const interval = duration / trailCount;
-            
             let step = 0;
             
             const createTrail = setInterval(() => {
-                // Calcular posición intermedia
                 const progress = step / trailCount;
                 const x = startX + (endX - startX) * progress;
                 const y = startY + (endY - startY) * progress;
                 
-                // Crear partícula del rastro
                 const trail = document.createElement('div');
                 trail.className = 'comet-trail';
                 trail.style.left = x + 'px';
                 trail.style.top = y + 'px';
-                
-                // Variación en tamaño para efecto más natural
                 const size = Math.random() * 3 + 2;
                 trail.style.width = size + 'px';
                 trail.style.height = size + 'px';
                 
                 document.body.appendChild(trail);
-                
-                // Eliminar después de la animación
-                setTimeout(() => {
-                    trail.remove();
-                }, 800);
+                setTimeout(() => trail.remove(), 800);
                 
                 step++;
-                if (step >= trailCount) {
-                    clearInterval(createTrail);
-                }
+                if (step >= trailCount) clearInterval(createTrail);
             }, interval);
         }
 
         function iniciarCelebracion() {
-            // Ocultar el botón NO cuando se acepta
             const btnNo = document.getElementById('btn-no');
-            if (btnNo) {
-                btnNo.style.display = 'none';
-            }
+            if (btnNo) btnNo.style.display = 'none';
             
-            // Ráfaga inicial masiva de fuegos artificiales
             for(let i = 0; i < 10; i++) {
                 setTimeout(() => {
                     fireworks.push(new Firework(random(0, cw), ch, random(0, cw), random(0, ch/2)));
                 }, i * 50);
             }
             
-            // Celebración sostenida e intensa
             let count = 0;
             const celebration = setInterval(() => {
-                // Lanzar múltiples fuegos a la vez para llenar la pantalla
                 fireworks.push(new Firework(random(0, cw), ch, random(0, cw), random(0, ch/2)));
-                
-                // A veces lanzar 2 o 3 a la vez para más intensidad
                 if (Math.random() > 0.5) {
                     fireworks.push(new Firework(random(0, cw), ch, random(0, cw), random(ch/3, ch/1.5)));
                 }
-                
                 count++;
-                // Duración de la celebración (aprox 10 segundos)
                 if(count > 50) clearInterval(celebration);
             }, 200);
         }
 
+        // --- INICIALIZAR ---
+        function initNature() {
+            for (let i = 0; i < 50; i++) { 
+                fireflies.push(new Firefly());
+            }
+        }
+        initNature();
         loop();
 
     </script>
