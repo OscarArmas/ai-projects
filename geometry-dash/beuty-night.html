@@ -170,33 +170,73 @@
             100% { transform: scale(1); }
         }
 
-        /* Estilo del Botón */
+        /* Estilo del Botón SÍ - Diseño Premium Táctil */
         .btn-si {
             margin-top: 30px;
-            background: linear-gradient(45deg, #ff9f1c, #ffbf69); /* Degradado cálido */
+            /* Degradado más rico y profundo */
+            background: linear-gradient(135deg, #ff9f1c 0%, #ffbf69 50%, #ff9f1c 100%);
+            background-size: 200% 200%;
             color: #0d1b2a;
             border: none;
-            padding: 15px 60px;
-            font-size: 1.8rem;
+            padding: 18px 60px; /* Más área táctil */
+            font-size: 2rem; /* Texto más grande para móvil */
             border-radius: 50px;
             cursor: pointer;
             font-family: 'Pacifico', cursive;
-            box-shadow: 0 5px 20px rgba(255, 159, 28, 0.5);
-            transition: transform 0.2s, background 0.3s, opacity 0.5s, display 0.5s;
-            display: none; /* Oculto inicialmente hasta que se muestre el mensaje final */
+            /* Sombra con profundidad */
+            box-shadow: 0 10px 25px rgba(255, 159, 28, 0.6),
+                        0 5px 10px rgba(0, 0, 0, 0.2),
+                        inset 0 2px 5px rgba(255, 255, 255, 0.5); /* Brillo superior */
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: none;
             opacity: 0;
+            position: relative;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent; /* Quitar resaltado azul en móvil */
+            /* Animación de llamada a la acción constante */
+            animation: pulseGold 2s infinite;
+        }
+
+        @keyframes pulseGold {
+            0% { transform: scale(1); box-shadow: 0 10px 25px rgba(255, 159, 28, 0.6); }
+            50% { transform: scale(1.05); box-shadow: 0 15px 35px rgba(255, 159, 28, 0.8); }
+            100% { transform: scale(1); box-shadow: 0 10px 25px rgba(255, 159, 28, 0.6); }
         }
         
+        .btn-si:active {
+            transform: scale(0.95);
+            box-shadow: 0 5px 15px rgba(255, 159, 28, 0.4);
+        }
+
+        /* Brillo animado que recorre el botón */
+        .btn-si::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            20% { left: 100%; }
+            100% { left: 100%; }
+        }
+
         .btn-si.show {
             display: block;
             opacity: 1;
         }
 
-        .btn-si:hover {
-            transform: scale(1.1);
-            background: #ffbf69; /* Un naranja más claro al pasar el mouse */
-            box-shadow: 0 0 25px rgba(255, 159, 28, 0.8);
-        }
 
         /* Animación cuando se presiona el botón */
         .btn-si.clicking {
@@ -228,65 +268,39 @@
             }
         }
 
-        /* Estilo del Botón NO (más discreto con efecto de luz) */
+        /* Estilo del Botón NO (Etéreo y resbaladizo) */
         .btn-no {
             margin-top: 20px;
             margin-left: 20px;
-            background: rgba(100, 100, 100, 0.3); /* Gris muy transparente */
-            color: rgba(255, 255, 255, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 8px 25px;
-            font-size: 1rem;
-            border-radius: 20px;
+            /* Fondo casi transparente glassmorphism */
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 30px; /* Tamaño decente para dedo */
+            font-size: 1.2rem;
+            border-radius: 25px;
             cursor: pointer;
             font-family: 'Quicksand', sans-serif;
-            /* Efecto de luz/resplandor */
-            box-shadow: 0 0 10px rgba(200, 200, 255, 0.4), 
-                        0 0 20px rgba(150, 150, 255, 0.2),
-                        0 2px 5px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            display: none; /* Oculto inicialmente */
+            display: none;
             opacity: 0;
-            position: fixed; /* Para poder moverlo libremente */
+            position: relative;
             z-index: 100;
-            /* Efecto de brillo pulsante */
-            animation: subtleGlow 2s ease-in-out infinite;
-        }
-        
-        @keyframes subtleGlow {
-            0%, 100% {
-                box-shadow: 0 0 10px rgba(200, 200, 255, 0.4), 
-                            0 0 20px rgba(150, 150, 255, 0.2),
-                            0 2px 5px rgba(0, 0, 0, 0.2);
-            }
-            50% {
-                box-shadow: 0 0 15px rgba(200, 200, 255, 0.6), 
-                            0 0 30px rgba(150, 150, 255, 0.4),
-                            0 2px 5px rgba(0, 0, 0, 0.2);
-            }
+            -webkit-tap-highlight-color: transparent;
         }
         
         .btn-no.show {
             display: inline-block;
             opacity: 1;
         }
-
-        .btn-no:hover {
-            background: rgba(120, 120, 120, 0.4);
-            color: rgba(255, 255, 255, 0.8);
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(200, 200, 255, 0.6), 
-                        0 0 40px rgba(150, 150, 255, 0.4),
-                        0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-
+        
+        /* Efecto cuando se mueve (se vuelve borroso) */
         .btn-no.moving {
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            /* Brillo más intenso mientras se mueve */
-            box-shadow: 0 0 20px rgba(200, 200, 255, 0.8), 
-                        0 0 40px rgba(150, 150, 255, 0.6),
-                        0 0 60px rgba(100, 100, 255, 0.3),
-                        0 2px 5px rgba(0, 0, 0, 0.2);
+            opacity: 0.5;
+            transform: scale(0.8) rotate(10deg);
+            filter: blur(2px);
         }
 
         /* Rastro de cometa (partículas que siguen al botón) */
@@ -363,8 +377,8 @@
         <!-- El texto flota sin caja detrás -->
         <h1>¿Quieres ser mi novia?</h1>
         <div style="display: flex; gap: 15px; align-items: center; justify-content: center; flex-wrap: wrap;">
-            <button class="btn-si" onclick="aceptar()">¡SÍ!</button>
-            <button class="btn-no" id="btn-no" onclick="moverBotonNo()">No</button>
+            <button class="btn-si" onclick="aceptar()" ontouchstart="aceptar()">¡SÍ!</button>
+            <button class="btn-no" id="btn-no" onclick="moverBotonNo()" ontouchstart="moverBotonNo()">No</button>
         </div>
     </div>
 
@@ -640,13 +654,19 @@
 
         function loop() {
             requestAnimationFrame(loop);
-            // Truco para dejar estela transparente pero borrar lo anterior
-            // Reducimos la opacidad para que la imagen de fondo sea visible
+            
+            // MÉTODO DE BORRADO LIMPIO PARA FONDOS TRANSPARENTES
+            // En lugar de pintar negro semitransparente encima (que mancha la imagen de fondo),
+            // usamos 'destination-out' para borrar suavemente el contenido previo,
+            // dejando el canvas transparente de nuevo.
+            
             ctx.globalCompositeOperation = 'destination-out';
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; // Reducido de 0.5 a 0.1 para que se vea el fondo
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'; // Ajusta este valor (0.1 a 0.3) para controlar la longitud de la estela
             ctx.fillRect(0, 0, cw, ch);
             
-            ctx.globalCompositeOperation = 'source-over'; // Modo normal de dibujo
+            // Volver al modo normal de dibujo
+            ctx.globalCompositeOperation = 'lighter'; // 'lighter' hace que los colores brillen más al superponerse
+
 
             let i = fireworks.length;
             while (i--) {
