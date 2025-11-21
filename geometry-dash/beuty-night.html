@@ -498,28 +498,25 @@
         class Firefly {
             constructor() {
                 this.x = Math.random() * cw;
-                this.y = Math.random() * ch; // Aparecen en cualquier altura inicial
-                // Movimiento suave y aleatorio
+                this.y = Math.random() * ch;
                 this.vx = (Math.random() - 0.5) * 0.5;
                 this.vy = (Math.random() - 0.5) * 0.5;
-                this.radius = Math.random() * 1.5 + 0.5;
+                // Aumentamos un poco el tamaño para que destaquen más
+                this.radius = Math.random() * 2 + 1; 
                 this.alpha = Math.random();
                 this.flashSpeed = Math.random() * 0.02 + 0.005;
                 this.increasing = true;
-                // Color amarillo/dorado suave
-                this.color = `255, 200, 100`; 
+                // Color amarillo dorado más intenso
+                this.color = `255, 215, 100`; 
             }
 
             update() {
-                // Mover
                 this.x += this.vx;
                 this.y += this.vy;
 
-                // Rebotar suavemente en los bordes o reaparecer
                 if (this.x < 0 || this.x > cw) this.vx *= -1;
                 if (this.y < 0 || this.y > ch) this.vy *= -1;
 
-                // Efecto de parpadeo
                 if (this.increasing) {
                     this.alpha += this.flashSpeed;
                     if (this.alpha >= 1) this.increasing = false;
@@ -534,12 +531,12 @@
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(${this.color}, ${this.alpha})`;
                 
-                // Brillo difuso alrededor
-                ctx.shadowBlur = 10;
+                // Aumentamos el brillo (shadowBlur) para que resplandezcan
+                ctx.shadowBlur = 15; 
                 ctx.shadowColor = `rgba(${this.color}, ${this.alpha})`;
                 
                 ctx.fill();
-                ctx.shadowBlur = 0; // Resetear sombra para no afectar otros elementos
+                ctx.shadowBlur = 0;
             }
         }
 
@@ -655,18 +652,13 @@
         function loop() {
             requestAnimationFrame(loop);
             
-            // MÉTODO DE BORRADO LIMPIO PARA FONDOS TRANSPARENTES
-            // En lugar de pintar negro semitransparente encima (que mancha la imagen de fondo),
-            // usamos 'destination-out' para borrar suavemente el contenido previo,
-            // dejando el canvas transparente de nuevo.
+            // LIMPIADO TOTAL DEL CANVAS (Sin estelas sucias)
+            // Borramos todo el canvas para que sea 100% transparente en cada frame
+            // Esto elimina la "marca" o trazo oscuro sobre la imagen de fondo
+            ctx.clearRect(0, 0, cw, ch);
             
-            ctx.globalCompositeOperation = 'destination-out';
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'; // Ajusta este valor (0.1 a 0.3) para controlar la longitud de la estela
-            ctx.fillRect(0, 0, cw, ch);
-            
-            // Volver al modo normal de dibujo
-            ctx.globalCompositeOperation = 'lighter'; // 'lighter' hace que los colores brillen más al superponerse
-
+            // Usamos 'lighter' para que los colores brillen más (efecto neón)
+            ctx.globalCompositeOperation = 'lighter';
 
             let i = fireworks.length;
             while (i--) {
@@ -680,7 +672,9 @@
                 particles[j].update(j);
             }
 
-            // Dibujar y actualizar luciérnagas
+            // Dibujar y actualizar luciérnagas (sobre todo lo demás)
+            // Volvemos a source-over para que las luciérnagas tengan color sólido si se quiere
+            ctx.globalCompositeOperation = 'source-over'; 
             fireflies.forEach(firefly => {
                 firefly.draw();
                 firefly.update();
