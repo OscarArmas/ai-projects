@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Una Noche Mágica</title>
+    <!-- Fonts: Pacifico (titles) and Quicksand (text) -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #0d1b2a; /* Fallback color if image fails to load */
+            font-family: 'Quicksand', sans-serif;
+            cursor: none; /* Hide native cursor to use the magic one */
+        }
+
+        /* --- VIGNETTE EFFECT (DARK EDGES) --- */
+        .vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allows clicking through */
+            background: radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(0,0,0,0.6) 100%);
+            z-index: 5; /* Above background but below text */
+        }
+
+        /* --- MAGIC CURSOR --- */
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 9999;
+            transition: width 0.2s, height 0.2s, background 0.2s;
+            mix-blend-mode: difference;
+        }
+
+        .cursor::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px #fff, 0 0 20px #ff9f1c;
+        }
+
+        /* Cursor Trail */
+        .cursor-trail {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 159, 28, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            animation: fadeOutTrail 0.5s forwards;
+        }
+
+        @keyframes fadeOutTrail {
+            to { opacity: 0; transform: scale(0); }
+        }
+
+        /* --- BACKGROUND CONFIG --- */
+        .background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            /* Image is loaded via JS using CONFIG */
+            background-position: center center; /* Centered for better visualization */
+            background-repeat: no-repeat;
+            background-size: cover; /* Covers the entire screen */
+            background-attachment: fixed; /* Fix background */
+            z-index: 0; /* 0 to be behind canvas but visible */
+            /* Ensure container has dimensions */
+            min-width: 100%;
+            min-height: 100%;
+        }
+
+        /* --- COUNTER --- */
+        #counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            color: rgba(255, 255, 255, 0.9);
+            font-family: 'Pacifico', cursive; /* Elegant handwritten font */
+            font-size: 1.8rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            background: rgba(13, 27, 42, 0.4); /* Very subtle background */
+            padding: 10px 25px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 159, 28, 0.3);
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+
+        /* --- FIREWORKS CANVAS --- */
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            cursor: crosshair;
+            /* Ensure canvas is transparent to see background */
+            background: transparent;
+            pointer-events: auto; /* Allow clicks on canvas */
+        }
+
+        /* --- FINAL MESSAGE (TRANSPARENT) --- */
+        #message-box {
+            position: absolute;
+            top: 40%; /* Slightly higher to avoid covering tents */
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.5);
+            text-align: center;
+            width: 90%;
+            
+            /* NO BACKGROUND (TRANSPARENT) */
+            background: transparent; 
+            
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Soft bounce effect */
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        #message-box.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Main Text Style */
+        h1 {
+            font-family: 'Pacifico', cursive;
+            font-size: 3.5rem; /* Slightly larger for this font */
+            margin: 0;
+            color: #fff;
+            /* Warm shadow inspired by image lights */
+            text-shadow: 0 0 10px rgba(255, 159, 28, 0.8), 0 0 20px rgba(255, 105, 180, 0.4);
+            line-height: 1.3;
+            letter-spacing: 1px;
+            /* Gentle heartbeat animation */
+            animation: heartbeat 2s infinite ease-in-out;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); text-shadow: 0 0 15px rgba(255, 159, 28, 1), 0 0 25px rgba(255, 105, 180, 0.6); }
+            100% { transform: scale(1); }
+        }
+
+        /* YES Button Style - Premium Touch Design */
+        .btn-si {
+            margin-top: 30px;
+            /* Richer and deeper gradient */
+            background: linear-gradient(135deg, #ff9f1c 0%, #ffbf69 50%, #ff9f1c 100%);
+            background-size: 200% 200%;
+            color: #0d1b2a;
+            border: none;
+            padding: 18px 60px; /* Larger touch area */
+            font-size: 2rem; /* Larger text for mobile */
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Pacifico', cursive;
+            /* Shadow with depth */
+            box-shadow: 0 10px 25px rgba(255, 159, 28, 0.6),
+                        0 5px 10px rgba(0, 0, 0, 0.2),
+                        inset 0 2px 5px rgba(255, 255, 255, 0.5); /* Top shine */
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: none;
+            opacity: 0;
+            position: relative;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent; /* Remove blue highlight on mobile */
+            /* Constant call to action animation */
+            animation: pulseGold 2s infinite;
+        }
+
+        @keyframes pulseGold {
+            0% { transform: scale(1); box-shadow: 0 10px 25px rgba(255, 159, 28, 0.6); }
+            50% { transform: scale(1.05); box-shadow: 0 15px 35px rgba(255, 159, 28, 0.8); }
+            100% { transform: scale(1); box-shadow: 0 10px 25px rgba(255, 159, 28, 0.6); }
+        }
+        
+        .btn-si:active {
+            transform: scale(0.95);
+            box-shadow: 0 5px 15px rgba(255, 159, 28, 0.4);
+        }
+
+        /* Animated shine traversing the button */
+        .btn-si::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            20% { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        .btn-si.show {
+            display: block;
+            opacity: 1;
+        }
+
+
+        /* Button press animation */
+        .btn-si.clicking {
+            animation: buttonPress 0.6s forwards ease-out;
+            pointer-events: none; /* Prevent multiple clicks */
+        }
+
+        @keyframes buttonPress {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 5px 20px rgba(255, 159, 28, 0.5);
+            }
+            30% {
+                transform: scale(0.95);
+                background: #fff;
+                color: #ff9f1c;
+                box-shadow: 0 0 40px rgba(255, 255, 255, 0.9), 0 0 80px rgba(255, 159, 28, 0.8);
+            }
+            60% {
+                transform: scale(1.3);
+                background: linear-gradient(45deg, #ff9f1c, #ffbf69);
+                box-shadow: 0 0 60px rgba(255, 159, 28, 1), 0 0 120px rgba(255, 255, 255, 0.8);
+                filter: brightness(1.5);
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+                filter: blur(10px) brightness(2);
+            }
+        }
+
+        /* NO Button Style (Ethereal and slippery) */
+        .btn-no {
+            margin-top: 20px;
+            margin-left: 20px;
+            /* Almost transparent glassmorphism background */
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 30px; /* Decent size for finger */
+            font-size: 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: bold;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: none;
+            opacity: 0;
+            position: relative;
+            z-index: 100;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .btn-no.show {
+            display: inline-block;
+            opacity: 1;
+        }
+        
+        /* Effect when moving (becomes blurry) */
+        .btn-no.moving {
+            opacity: 0.5;
+            transform: scale(0.8) rotate(10deg);
+            filter: blur(2px);
+        }
+
+        /* Comet trail (particles following the button) */
+        .comet-trail {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, rgba(200, 200, 255, 0.8) 0%, rgba(150, 150, 255, 0.4) 50%, transparent 100%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99;
+            box-shadow: 0 0 6px rgba(200, 200, 255, 0.6);
+            animation: fadeTrail 0.8s forwards;
+        }
+
+        @keyframes fadeTrail {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+        }
+
+        /* Small hint at the beginning */
+        .hint {
+            position: absolute;
+            bottom: 50px;
+            width: 100%;
+            text-align: center;
+            color: rgba(255, 153, 200, 0.8); /* Pink like the flowers */
+            font-size: 1.1rem;
+            font-family: 'Fredoka One', cursive;
+            pointer-events: none;
+            animation: fadeOut 4s forwards;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 0; transform: translateY(10px); }
+            20% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Hide counter at the end */
+        .hidden {
+            opacity: 0;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Background container with image -->
+    <div class="background-container">
+        <!-- Background image fallback (filled via JS if main fails) -->
+        <img id="bg-image" src="" alt="Night background" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
+    </div>
+    
+    <div class="vignette"></div> <!-- Dark edges effect -->
+    <div class="cursor" id="cursor"></div> <!-- Magic cursor -->
+
+    <!-- Magic Counter -->
+    <div id="counter">Magia: 0 / 11</div>
+
+    <div class="hint">Haz clic en el cielo para celebrar...</div>
+
+    <canvas id="canvas"></canvas>
+
+    <div id="message-box">
+        <!-- Text floats without a box behind -->
+        <h1>¿Quieres ser mi novia?</h1>
+        <div style="display: flex; gap: 15px; align-items: center; justify-content: center; flex-wrap: wrap;">
+            <button class="btn-si" onclick="aceptar()" ontouchstart="aceptar()">¡SÍ!</button>
+            <button class="btn-no" id="btn-no" onclick="moverBotonNo()" ontouchstart="moverBotonNo()">No</button>
+        </div>
+    </div>
+
+    <script>
+        // --- MAIN CONFIGURATION (EDIT HERE) ---
+        // You can easily change images, text, and options here
+        const CONFIG = {
+            assets: {
+                background: './night.png',    // Your main image
+                fallback: 'night.png'         // Fallback image if main fails
+            },
+            game: {
+                clicksToWin: 11
+            },
+            messages: {
+                sequence: [
+                    { texto: "Ari niña hermosa", duration: 2000 },
+                    { texto: "Tengo una gran pregunta para ti", duration: 2500 },
+                    { texto: "¿Quieres ser mi novia?", duration: 0, showButtons: true }
+                ],
+                finalSuccess: "¡Te quiero! <br> ✨💖"
+            },
+            colors: [
+                '#ff9f1c', // Orange lights
+                '#ffbf69', // Soft orange
+                '#ff99c8', // Pink flowers
+                '#fca311', // Strong yellow
+                '#ffffff'  // White shine
+            ]
+        };
+
+        // --- SIMPLIFIED IMAGE LOADER ---
+        (function loadBackground() {
+            const bgContainer = document.querySelector('.background-container');
+            const bgImage = document.getElementById('bg-image');
+            const img = new Image();
+
+            // Try to load main image from CONFIG
+            img.src = CONFIG.assets.background;
+
+            img.onload = function() {
+                console.log('✅ Image loaded:', CONFIG.assets.background);
+                bgContainer.style.backgroundImage = `url("${CONFIG.assets.background}")`;
+            };
+
+            img.onerror = function() {
+                console.warn('⚠️ Main image failed, trying fallback:', CONFIG.assets.fallback);
+                // If failed, try fallback
+                const fallbackImg = new Image();
+                fallbackImg.src = CONFIG.assets.fallback;
+                
+                fallbackImg.onload = function() {
+                    bgContainer.style.backgroundImage = `url("${CONFIG.assets.fallback}")`;
+                };
+                
+                fallbackImg.onerror = function() {
+                    // Last resort: use IMG element if everything fails
+                    if (bgImage) {
+                        bgImage.src = CONFIG.assets.fallback; 
+                        bgImage.style.display = 'block';
+                    }
+                }
+            };
+        })();
+
+        // --- GLOBAL VARIABLES ---
+        let clickCount = 0;
+        let messageShown = false;
+        const counterEl = document.getElementById('counter');
+
+        // --- CANVAS LOGIC ---
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        let cw = window.innerWidth;
+        let ch = window.innerHeight;
+        let fireworks = [];
+        let particles = [];
+        let fireflies = []; 
+
+        canvas.width = cw;
+        canvas.height = ch;
+
+        window.addEventListener("resize", () => {
+            cw = window.innerWidth;
+            ch = window.innerHeight;
+            canvas.width = cw;
+            canvas.height = ch;
+        });
+
+        function random(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        function randomColor() {
+            return CONFIG.colors[Math.floor(Math.random() * CONFIG.colors.length)];
+        }
+
+        // --- EFFECT CLASSES ---
+        class Firefly {
+            constructor() {
+                this.x = Math.random() * cw;
+                this.y = Math.random() * ch;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.radius = Math.random() * 2 + 1; 
+                this.alpha = Math.random();
+                this.flashSpeed = Math.random() * 0.02 + 0.005;
+                this.increasing = true;
+                this.color = `255, 215, 100`; 
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > cw) this.vx *= -1;
+                if (this.y < 0 || this.y > ch) this.vy *= -1;
+
+                if (this.increasing) {
+                    this.alpha += this.flashSpeed;
+                    if (this.alpha >= 1) this.increasing = false;
+                } else {
+                    this.alpha -= this.flashSpeed;
+                    if (this.alpha <= 0.2) this.increasing = true;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${this.color}, ${this.alpha})`;
+                ctx.shadowBlur = 15; 
+                ctx.shadowColor = `rgba(${this.color}, ${this.alpha})`;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        class Firework {
+            constructor(sx, sy, tx, ty) {
+                this.x = sx;
+                this.y = sy;
+                this.sx = sx;
+                this.sy = sy;
+                this.tx = tx;
+                this.ty = ty;
+                this.distanceToTarget = Math.sqrt(Math.pow(tx - sx, 2) + Math.pow(ty - sy, 2));
+                this.distanceTraveled = 0;
+                this.coordinates = [];
+                this.coordinateCount = 3;
+                while (this.coordinateCount--) {
+                    this.coordinates.push([this.x, this.y]);
+                }
+                this.angle = Math.atan2(ty - sy, tx - sx);
+                this.speed = 2;
+                this.acceleration = 1.05;
+                this.brightness = random(50, 70);
+                this.color = randomColor();
+            }
+
+            update(index) {
+                this.coordinates.pop();
+                this.coordinates.unshift([this.x, this.y]);
+                this.speed *= this.acceleration;
+                const vx = Math.cos(this.angle) * this.speed;
+                const vy = Math.sin(this.angle) * this.speed;
+                this.distanceTraveled = Math.sqrt(Math.pow(this.sx - this.x, 2) + Math.pow(this.sy - this.y, 2));
+
+                if (this.distanceTraveled >= this.distanceToTarget) {
+                    createParticles(this.tx, this.ty, this.color);
+                    fireworks.splice(index, 1);
+                } else {
+                    this.x += vx;
+                    this.y += vy;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
+                ctx.lineTo(this.x, this.y);
+                ctx.strokeStyle = this.color;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+        }
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.coordinates = [];
+                this.coordinateCount = 5;
+                while (this.coordinateCount--) {
+                    this.coordinates.push([this.x, this.y]);
+                }
+                this.angle = random(0, Math.PI * 2);
+                this.speed = random(1, 10);
+                this.friction = 0.95;
+                this.gravity = 1;
+                this.color = color;
+                this.alpha = 1;
+                this.decay = random(0.015, 0.03);
+            }
+
+            update(index) {
+                this.coordinates.pop();
+                this.coordinates.unshift([this.x, this.y]);
+                this.speed *= this.friction;
+                this.x += Math.cos(this.angle) * this.speed;
+                this.y += Math.sin(this.angle) * this.speed + this.gravity;
+                this.alpha -= this.decay;
+
+                if (this.alpha <= this.decay) {
+                    particles.splice(index, 1);
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
+                ctx.lineTo(this.x, this.y);
+                ctx.strokeStyle = this.color;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+
+        function createParticles(x, y, color) {
+            let particleCount = 40;
+            while (particleCount--) {
+                particles.push(new Particle(x, y, color));
+            }
+        }
+
+        function loop() {
+            requestAnimationFrame(loop);
+            ctx.clearRect(0, 0, cw, ch);
+            ctx.globalCompositeOperation = 'lighter';
+
+            let i = fireworks.length;
+            while (i--) {
+                fireworks[i].draw();
+                fireworks[i].update(i);
+            }
+
+            let j = particles.length;
+            while (j--) {
+                particles[j].draw();
+                particles[j].update(j);
+            }
+
+            ctx.globalCompositeOperation = 'source-over'; 
+            fireflies.forEach(firefly => {
+                firefly.draw();
+                firefly.update();
+            });
+        }
+
+        // --- CURSOR AND EVENTS ---
+        const cursor = document.getElementById('cursor');
+        
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            
+            if (Math.random() > 0.5) {
+                const trail = document.createElement('div');
+                trail.className = 'cursor-trail';
+                trail.style.left = e.clientX + 'px';
+                trail.style.top = e.clientY + 'px';
+                const size = Math.random() * 6 + 2;
+                trail.style.width = size + 'px';
+                trail.style.height = size + 'px';
+                document.body.appendChild(trail);
+                setTimeout(() => trail.remove(), 500);
+            }
+        });
+
+        document.addEventListener('mousedown', () => {
+            cursor.style.transform = 'translate(-50%, -50%) scale(0.8)';
+            cursor.style.borderColor = '#ff9f1c';
+        });
+
+        document.addEventListener('mouseup', () => {
+            cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+            cursor.style.borderColor = 'rgba(255, 255, 255, 0.8)';
+        });
+
+        // --- MAIN INTERACTION ---
+        canvas.addEventListener('click', (e) => {
+            if (messageShown) return;
+
+            fireworks.push(new Firework(cw / 2, ch, e.clientX, e.clientY));
+            clickCount++;
+            
+            if(clickCount <= CONFIG.game.clicksToWin) {
+                counterEl.innerText = `Magia: ${clickCount} / ${CONFIG.game.clicksToWin}`;
+                counterEl.style.transform = "scale(1.2)";
+                setTimeout(() => counterEl.style.transform = "scale(1)", 100);
+            }
+
+            if (clickCount >= CONFIG.game.clicksToWin) {
+                messageShown = true;
+                counterEl.classList.add('hidden');
+                mostrarSecuenciaMensajes();
+            }
+        });
+
+        // --- MESSAGE SEQUENCE ---
+        function mostrarSecuenciaMensajes() {
+            const messageBox = document.getElementById('message-box');
+            const h1 = messageBox.querySelector('h1');
+            const btn = messageBox.querySelector('.btn-si');
+            const btnNo = document.getElementById('btn-no');
+            
+            btn.style.display = 'none';
+            btnNo.style.display = 'none';
+            
+            let indiceMensaje = 0;
+            
+            function mostrarSiguienteMensaje() {
+                if (indiceMensaje >= CONFIG.messages.sequence.length) return;
+                
+                const mensaje = CONFIG.messages.sequence[indiceMensaje];
+                messageBox.classList.remove('visible');
+                
+                setTimeout(() => {
+                    h1.innerHTML = mensaje.texto;
+                    messageBox.classList.add('visible');
+                    
+                    if (mensaje.showButtons) {
+                        setTimeout(() => {
+                            btn.style.display = 'block';
+                            btnNo.style.display = 'inline-block';
+                            btnNo.style.position = 'relative';
+                            btnNo.style.margin = '20px 0 0 20px';
+                            
+                            setTimeout(() => {
+                                btn.classList.add('show');
+                                btnNo.classList.add('show');
+                            }, 50);
+                        }, 500);
+                    }
+                    
+                    if (mensaje.duration > 0) {
+                        setTimeout(() => {
+                            indiceMensaje++;
+                            mostrarSiguienteMensaje();
+                        }, mensaje.duration);
+                    }
+                }, 300);
+            }
+            
+            setTimeout(() => {
+                mostrarSiguienteMensaje();
+            }, 1000);
+        }
+
+        // --- BUTTON LOGIC ---
+        function aceptar() {
+            const btn = document.querySelector('.btn-si');
+            const h1 = document.querySelector('h1');
+            
+            btn.classList.add('clicking');
+            
+            setTimeout(() => {
+                btn.style.display = 'none';
+                h1.style.transition = 'all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                h1.style.opacity = '0';
+                
+                setTimeout(() => {
+                    h1.innerHTML = CONFIG.messages.finalSuccess;
+                    h1.style.transform = "scale(1.3)";
+                    h1.style.opacity = '1';
+                    iniciarCelebracion();
+                }, 300);
+            }, 600);
+        }
+
+        let btnNoPosition = { x: 0, y: 0 };
+        let isFirstMove = true;
+
+        function moverBotonNo() {
+            const btnNo = document.getElementById('btn-no');
+            const rect = btnNo.getBoundingClientRect();
+            const currentX = rect.left + rect.width / 2;
+            const currentY = rect.top + rect.height / 2;
+            
+            if (isFirstMove) {
+                btnNo.style.position = 'fixed';
+                btnNo.style.margin = '0';
+                isFirstMove = false;
+            }
+            
+            const maxDistance = 200;
+            const angle = Math.random() * Math.PI * 2;
+            const distance = Math.random() * maxDistance + 50;
+            
+            const newX = currentX + Math.cos(angle) * distance;
+            const newY = currentY + Math.sin(angle) * distance;
+            
+            const maxX = window.innerWidth - 100;
+            const maxY = window.innerHeight - 50;
+            const finalX = Math.max(50, Math.min(newX, maxX));
+            const finalY = Math.max(50, Math.min(newY, maxY));
+            
+            btnNoPosition.x = finalX;
+            btnNoPosition.y = finalY;
+            
+            btnNo.classList.add('moving');
+            crearRastroCometa(currentX, currentY, finalX, finalY);
+            
+            btnNo.style.left = (finalX - rect.width / 2) + 'px';
+            btnNo.style.top = (finalY - rect.height / 2) + 'px';
+            
+            btnNo.style.transform = 'scale(0.9) rotate(5deg)';
+            setTimeout(() => btnNo.style.transform = 'scale(1) rotate(0deg)', 250);
+            setTimeout(() => btnNo.classList.remove('moving'), 500);
+        }
+
+        function crearRastroCometa(startX, startY, endX, endY) {
+            const duration = 500;
+            const trailCount = 15;
+            const interval = duration / trailCount;
+            let step = 0;
+            
+            const createTrail = setInterval(() => {
+                const progress = step / trailCount;
+                const x = startX + (endX - startX) * progress;
+                const y = startY + (endY - startY) * progress;
+                
+                const trail = document.createElement('div');
+                trail.className = 'comet-trail';
+                trail.style.left = x + 'px';
+                trail.style.top = y + 'px';
+                const size = Math.random() * 3 + 2;
+                trail.style.width = size + 'px';
+                trail.style.height = size + 'px';
+                
+                document.body.appendChild(trail);
+                setTimeout(() => trail.remove(), 800);
+                
+                step++;
+                if (step >= trailCount) clearInterval(createTrail);
+            }, interval);
+        }
+
+        function iniciarCelebracion() {
+            const btnNo = document.getElementById('btn-no');
+            if (btnNo) btnNo.style.display = 'none';
+            
+            for(let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    fireworks.push(new Firework(random(0, cw), ch, random(0, cw), random(0, ch/2)));
+                }, i * 50);
+            }
+            
+            let count = 0;
+            const celebration = setInterval(() => {
+                fireworks.push(new Firework(random(0, cw), ch, random(0, cw), random(0, ch/2)));
+                if (Math.random() > 0.5) {
+                    fireworks.push(new Firework(random(0, cw), ch, random(0, cw), random(ch/3, ch/1.5)));
+                }
+                count++;
+                if(count > 50) clearInterval(celebration);
+            }, 200);
+        }
+
+        // --- INITIALIZE ---
+        function initNature() {
+            for (let i = 0; i < 50; i++) { 
+                fireflies.push(new Firefly());
+            }
+        }
+        initNature();
+        loop();
+
+    </script>
+</body>
+</html>
