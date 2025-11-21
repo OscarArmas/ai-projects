@@ -22,14 +22,18 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            /* Aquí cargamos tu imagen */
-            background-image: url('fondo.jpg'); 
-            background-position: center bottom; /* Alineado abajo para que se vean las flores */
+            width: 100vw;
+            height: 100vh;
+            /* Aquí cargamos tu imagen - probamos múltiples formatos de ruta */
+            background-image: url('./night.png'); 
+            background-position: center center; /* Centrado para mejor visualización */
             background-repeat: no-repeat;
             background-size: cover; /* Cubre toda la pantalla */
-            z-index: -1;
+            background-attachment: fixed; /* Fijar el fondo */
+            z-index: 0; /* Cambiado de -1 a 0 para estar detrás del canvas pero visible */
+            /* Asegurar que el contenedor tenga dimensiones */
+            min-width: 100%;
+            min-height: 100%;
         }
 
         /* --- EL CONTADOR --- */
@@ -56,6 +60,9 @@
             left: 0;
             z-index: 1;
             cursor: crosshair;
+            /* Asegurar que el canvas sea transparente para ver el fondo */
+            background: transparent;
+            pointer-events: auto; /* Permitir clicks en el canvas */
         }
 
         /* --- MENSAJE FINAL (TRANSPARENTE) --- */
@@ -148,7 +155,11 @@
 </head>
 <body>
 
-    <div class="background-container"></div>
+    <!-- Contenedor de fondo con imagen -->
+    <div class="background-container">
+        <!-- Imagen de fondo como respaldo (se oculta si el background-image funciona) -->
+        <img id="bg-image" src="./night.png" alt="Fondo nocturno" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
+    </div>
     
     <!-- Contador de Magia -->
     <div id="counter">Magia: 0 / 11</div>
@@ -164,6 +175,75 @@
     </div>
 
     <script>
+        // --- VERIFICACIÓN Y CARGA DE IMAGEN DE FONDO ---
+        // Este script asegura que la imagen de fondo se cargue correctamente
+        (function() {
+            const bgContainer = document.querySelector('.background-container');
+            const bgImage = document.getElementById('bg-image');
+            const img = new Image();
+            
+            // Función para aplicar la imagen cuando se carga correctamente
+            const applyImage = (path) => {
+                console.log('✅ Imagen night.png cargada correctamente desde:', path);
+                bgContainer.style.backgroundImage = `url("${path}")`;
+                // Ocultar el elemento img ya que usamos background-image
+                if (bgImage) bgImage.style.display = 'none';
+            };
+            
+            // Función para usar el elemento img como respaldo
+            const useImgFallback = (path) => {
+                console.log('⚠️ Usando elemento <img> como respaldo desde:', path);
+                bgContainer.style.backgroundImage = 'none';
+                if (bgImage) {
+                    bgImage.src = path;
+                    bgImage.style.display = 'block';
+                }
+            };
+            
+            // Intentar cargar la imagen y verificar si se carga correctamente
+            img.onload = function() {
+                applyImage('./night.png');
+            };
+            
+            img.onerror = function() {
+                console.error('❌ Error al cargar night.png, intentando rutas alternativas...');
+                // Intentar diferentes rutas
+                const alternativePaths = [
+                    'night.png',
+                    './night.png',
+                    '../night.png',
+                    'ai-projects/geometry-dash/night.png'
+                ];
+                
+                let pathIndex = 0;
+                const tryNextPath = () => {
+                    if (pathIndex < alternativePaths.length) {
+                        const testImg = new Image();
+                        testImg.onload = function() {
+                            applyImage(alternativePaths[pathIndex]);
+                        };
+                        testImg.onerror = function() {
+                            pathIndex++;
+                            if (pathIndex < alternativePaths.length) {
+                                tryNextPath();
+                            } else {
+                                // Si ninguna ruta funciona, intentar con el elemento img
+                                console.error('❌ No se pudo cargar la imagen en ninguna ruta, usando elemento img');
+                                useImgFallback('./night.png');
+                            }
+                        };
+                        testImg.src = alternativePaths[pathIndex];
+                    } else {
+                        useImgFallback('./night.png');
+                    }
+                };
+                tryNextPath();
+            };
+            
+            // Intentar cargar la imagen
+            img.src = './night.png';
+        })();
+
         // --- CONFIGURACIÓN ---
         const CLICK_LIMIT = 11;
         let clickCount = 0;
@@ -309,8 +389,9 @@
         function loop() {
             requestAnimationFrame(loop);
             // Truco para dejar estela transparente pero borrar lo anterior
+            // Reducimos la opacidad para que la imagen de fondo sea visible
             ctx.globalCompositeOperation = 'destination-out';
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; // Reducido de 0.5 a 0.1 para que se vea el fondo
             ctx.fillRect(0, 0, cw, ch);
             
             ctx.globalCompositeOperation = 'source-over'; // Modo normal de dibujo
