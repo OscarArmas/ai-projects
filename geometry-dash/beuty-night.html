@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Una Noche Mágica</title>
-    <!-- Fuentes tipográficas que combinan con la ilustración (Redondas y amigables) -->
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Fuentes tipográficas: Pacifico (títulos) y Quicksand (texto) -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body, html {
             margin: 0;
@@ -14,7 +14,7 @@
             height: 100%;
             overflow: hidden;
             background-color: #0d1b2a; /* Color de respaldo por si la imagen no carga */
-            font-family: 'Nunito', sans-serif;
+            font-family: 'Quicksand', sans-serif;
         }
 
         /* --- CONFIGURACIÓN DEL FONDO --- */
@@ -41,13 +41,14 @@
             position: fixed;
             top: 20px;
             right: 20px;
-            color: rgba(255, 255, 255, 0.8);
-            font-family: 'Fredoka One', cursive; /* Fuente gordita estilo cartoon */
-            font-size: 1.5rem;
-            background: rgba(13, 27, 42, 0.3); /* Fondo muy sutil para lectura */
-            padding: 10px 20px;
+            color: rgba(255, 255, 255, 0.9);
+            font-family: 'Pacifico', cursive; /* Fuente manuscrita elegante */
+            font-size: 1.8rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            background: rgba(13, 27, 42, 0.4); /* Fondo muy sutil */
+            padding: 10px 25px;
             border-radius: 30px;
-            border: 2px solid rgba(255, 159, 28, 0.5); /* Borde naranja suave */
+            border: 1px solid rgba(255, 159, 28, 0.3);
             pointer-events: none;
             transition: opacity 0.5s;
         }
@@ -95,27 +96,28 @@
 
         /* Estilo del Texto Principal */
         h1 {
-            font-family: 'Fredoka One', cursive;
-            font-size: 3rem; /* Grande y legible */
+            font-family: 'Pacifico', cursive;
+            font-size: 3.5rem; /* Un poco más grande para esta fuente */
             margin: 0;
             color: #fff;
-            /* Sombra para que se lea bien sobre el fondo oscuro pero sin caja */
-            text-shadow: 0 4px 10px rgba(255, 105, 180, 0.8), 0 0 20px rgba(255, 159, 28, 0.6);
-            line-height: 1.2;
+            /* Sombra cálida inspirada en las luces de la imagen */
+            text-shadow: 0 0 10px rgba(255, 159, 28, 0.8), 0 0 20px rgba(255, 105, 180, 0.4);
+            line-height: 1.3;
+            letter-spacing: 1px;
         }
 
         /* Estilo del Botón */
         .btn-si {
-            margin-top: 20px;
-            background: #ff9f1c; /* Naranja como las luces de la carpa */
-            color: #0d1b2a; /* Azul oscuro para contraste */
+            margin-top: 30px;
+            background: linear-gradient(45deg, #ff9f1c, #ffbf69); /* Degradado cálido */
+            color: #0d1b2a;
             border: none;
-            padding: 15px 50px;
-            font-size: 1.5rem;
+            padding: 15px 60px;
+            font-size: 1.8rem;
             border-radius: 50px;
             cursor: pointer;
-            font-family: 'Fredoka One', cursive;
-            box-shadow: 0 5px 15px rgba(255, 159, 28, 0.4);
+            font-family: 'Pacifico', cursive;
+            box-shadow: 0 5px 20px rgba(255, 159, 28, 0.5);
             transition: transform 0.2s, background 0.3s, opacity 0.5s, display 0.5s;
             display: none; /* Oculto inicialmente hasta que se muestre el mensaje final */
             opacity: 0;
