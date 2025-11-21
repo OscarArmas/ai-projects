@@ -228,6 +228,91 @@
             }
         }
 
+        /* Estilo del Botón NO (más discreto con efecto de luz) */
+        .btn-no {
+            margin-top: 20px;
+            margin-left: 20px;
+            background: rgba(100, 100, 100, 0.3); /* Gris muy transparente */
+            color: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 25px;
+            font-size: 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Quicksand', sans-serif;
+            /* Efecto de luz/resplandor */
+            box-shadow: 0 0 10px rgba(200, 200, 255, 0.4), 
+                        0 0 20px rgba(150, 150, 255, 0.2),
+                        0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: none; /* Oculto inicialmente */
+            opacity: 0;
+            position: fixed; /* Para poder moverlo libremente */
+            z-index: 100;
+            /* Efecto de brillo pulsante */
+            animation: subtleGlow 2s ease-in-out infinite;
+        }
+        
+        @keyframes subtleGlow {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(200, 200, 255, 0.4), 
+                            0 0 20px rgba(150, 150, 255, 0.2),
+                            0 2px 5px rgba(0, 0, 0, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 15px rgba(200, 200, 255, 0.6), 
+                            0 0 30px rgba(150, 150, 255, 0.4),
+                            0 2px 5px rgba(0, 0, 0, 0.2);
+            }
+        }
+        
+        .btn-no.show {
+            display: inline-block;
+            opacity: 1;
+        }
+
+        .btn-no:hover {
+            background: rgba(120, 120, 120, 0.4);
+            color: rgba(255, 255, 255, 0.8);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(200, 200, 255, 0.6), 
+                        0 0 40px rgba(150, 150, 255, 0.4),
+                        0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-no.moving {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            /* Brillo más intenso mientras se mueve */
+            box-shadow: 0 0 20px rgba(200, 200, 255, 0.8), 
+                        0 0 40px rgba(150, 150, 255, 0.6),
+                        0 0 60px rgba(100, 100, 255, 0.3),
+                        0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Rastro de cometa (partículas que siguen al botón) */
+        .comet-trail {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, rgba(200, 200, 255, 0.8) 0%, rgba(150, 150, 255, 0.4) 50%, transparent 100%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99;
+            box-shadow: 0 0 6px rgba(200, 200, 255, 0.6);
+            animation: fadeTrail 0.8s forwards;
+        }
+
+        @keyframes fadeTrail {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+        }
+
         /* Instrucción pequeña al inicio */
         .hint {
             position: absolute;
@@ -277,7 +362,10 @@
     <div id="message-box">
         <!-- El texto flota sin caja detrás -->
         <h1>¿Quieres ser mi novia?</h1>
-        <button class="btn-si" onclick="aceptar()">¡SÍ!</button>
+        <div style="display: flex; gap: 15px; align-items: center; justify-content: center; flex-wrap: wrap;">
+            <button class="btn-si" onclick="aceptar()">¡SÍ!</button>
+            <button class="btn-no" id="btn-no" onclick="moverBotonNo()">No</button>
+        </div>
     </div>
 
     <script>
@@ -647,9 +735,11 @@
             const messageBox = document.getElementById('message-box');
             const h1 = messageBox.querySelector('h1');
             const btn = messageBox.querySelector('.btn-si');
+            const btnNo = document.getElementById('btn-no');
             
-            // Ocultar el botón inicialmente
+            // Ocultar los botones inicialmente
             btn.style.display = 'none';
+            btnNo.style.display = 'none';
             
             // Secuencia de mensajes
             const mensajes = [
@@ -675,13 +765,21 @@
                     // Mostrar el mensaje con animación
                     messageBox.classList.add('visible');
                     
-                    // Si es el último mensaje, mostrar el botón
+                    // Si es el último mensaje, mostrar los botones
                     if (mensaje.mostrarBoton) {
                         setTimeout(() => {
                             btn.style.display = 'block';
+                            btnNo.style.display = 'inline-block';
+                            
+                            // El botón NO empieza en posición relativa (al lado del SÍ)
+                            // Solo se moverá cuando se haga clic
+                            btnNo.style.position = 'relative';
+                            btnNo.style.margin = '20px 0 0 20px';
+                            
                             // Pequeño delay para la animación de opacidad
                             setTimeout(() => {
                                 btn.classList.add('show');
+                                btnNo.classList.add('show');
                             }, 50);
                         }, 500);
                     }
@@ -728,7 +826,111 @@
             }, 600); // Esperar a que termine la animación del botón (0.6s)
         }
 
+        // Función para mover el botón NO a otra posición (más cerca y con rastro de cometa)
+        let btnNoPosition = { x: 0, y: 0 };
+        let isFirstMove = true; // Para saber si es el primer movimiento
+
+        function moverBotonNo() {
+            const btnNo = document.getElementById('btn-no');
+            
+            // Obtener posición actual del botón
+            const rect = btnNo.getBoundingClientRect();
+            const currentX = rect.left + rect.width / 2;
+            const currentY = rect.top + rect.height / 2;
+            
+            // Si es el primer movimiento, cambiar a posición fixed
+            if (isFirstMove) {
+                btnNo.style.position = 'fixed';
+                btnNo.style.margin = '0';
+                isFirstMove = false;
+            }
+            
+            // Calcular nueva posición más cercana (máximo 200px de distancia)
+            const maxDistance = 200;
+            const angle = Math.random() * Math.PI * 2;
+            const distance = Math.random() * maxDistance + 50; // Entre 50 y 250px
+            
+            const newX = currentX + Math.cos(angle) * distance;
+            const newY = currentY + Math.sin(angle) * distance;
+            
+            // Asegurar que no se salga de la pantalla
+            const maxX = window.innerWidth - 100;
+            const maxY = window.innerHeight - 50;
+            const finalX = Math.max(50, Math.min(newX, maxX));
+            const finalY = Math.max(50, Math.min(newY, maxY));
+            
+            // Guardar posición final
+            btnNoPosition.x = finalX;
+            btnNoPosition.y = finalY;
+            
+            // Agregar clase de movimiento para transición suave y brillo
+            btnNo.classList.add('moving');
+            
+            // Crear rastro de cometa durante el movimiento
+            crearRastroCometa(currentX, currentY, finalX, finalY);
+            
+            // Mover el botón a la nueva posición
+            btnNo.style.left = (finalX - rect.width / 2) + 'px';
+            btnNo.style.top = (finalY - rect.height / 2) + 'px';
+            
+            // Pequeño efecto visual al moverse
+            btnNo.style.transform = 'scale(0.9) rotate(5deg)';
+            setTimeout(() => {
+                btnNo.style.transform = 'scale(1) rotate(0deg)';
+            }, 250);
+            
+            // Remover la clase de movimiento después de que termine la animación
+            setTimeout(() => {
+                btnNo.classList.remove('moving');
+            }, 500);
+        }
+
+        // Función para crear el rastro de cometa mientras se mueve el botón
+        function crearRastroCometa(startX, startY, endX, endY) {
+            const duration = 500; // Duración del movimiento en ms
+            const trailCount = 15; // Número de partículas en el rastro
+            const interval = duration / trailCount;
+            
+            let step = 0;
+            
+            const createTrail = setInterval(() => {
+                // Calcular posición intermedia
+                const progress = step / trailCount;
+                const x = startX + (endX - startX) * progress;
+                const y = startY + (endY - startY) * progress;
+                
+                // Crear partícula del rastro
+                const trail = document.createElement('div');
+                trail.className = 'comet-trail';
+                trail.style.left = x + 'px';
+                trail.style.top = y + 'px';
+                
+                // Variación en tamaño para efecto más natural
+                const size = Math.random() * 3 + 2;
+                trail.style.width = size + 'px';
+                trail.style.height = size + 'px';
+                
+                document.body.appendChild(trail);
+                
+                // Eliminar después de la animación
+                setTimeout(() => {
+                    trail.remove();
+                }, 800);
+                
+                step++;
+                if (step >= trailCount) {
+                    clearInterval(createTrail);
+                }
+            }, interval);
+        }
+
         function iniciarCelebracion() {
+            // Ocultar el botón NO cuando se acepta
+            const btnNo = document.getElementById('btn-no');
+            if (btnNo) {
+                btnNo.style.display = 'none';
+            }
+            
             // Ráfaga inicial masiva de fuegos artificiales
             for(let i = 0; i < 10; i++) {
                 setTimeout(() => {
