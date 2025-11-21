@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Una Noche Mágica</title>
-    <!-- Fuentes tipográficas: Pacifico (títulos) y Quicksand (texto) -->
+    <!-- Fonts: Pacifico (titles) and Quicksand (text) -->
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body, html {
@@ -13,24 +13,24 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #0d1b2a; /* Color de respaldo por si la imagen no carga */
+            background-color: #0d1b2a; /* Fallback color if image fails to load */
             font-family: 'Quicksand', sans-serif;
-            cursor: none; /* Ocultamos el cursor nativo para usar el mágico */
+            cursor: none; /* Hide native cursor to use the magic one */
         }
 
-        /* --- EFECTO VIGNETTE (BORDES OSCUROS) --- */
+        /* --- VIGNETTE EFFECT (DARK EDGES) --- */
         .vignette {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none; /* Permite clicks a través */
+            pointer-events: none; /* Allows clicking through */
             background: radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(0,0,0,0.6) 100%);
-            z-index: 5; /* Por encima del fondo pero debajo del texto */
+            z-index: 5; /* Above background but below text */
         }
 
-        /* --- CURSOR MÁGICO --- */
+        /* --- MAGIC CURSOR --- */
         .cursor {
             position: fixed;
             width: 20px;
@@ -57,7 +57,7 @@
             box-shadow: 0 0 10px #fff, 0 0 20px #ff9f1c;
         }
 
-        /* Estela del cursor */
+        /* Cursor Trail */
         .cursor-trail {
             position: fixed;
             width: 8px;
@@ -73,34 +73,34 @@
             to { opacity: 0; transform: scale(0); }
         }
 
-        /* --- CONFIGURACIÓN DEL FONDO --- */
+        /* --- BACKGROUND CONFIG --- */
         .background-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            /* La imagen se carga desde JS usando CONFIG */
-            background-position: center center; /* Centrado para mejor visualización */
+            /* Image is loaded via JS using CONFIG */
+            background-position: center center; /* Centered for better visualization */
             background-repeat: no-repeat;
-            background-size: cover; /* Cubre toda la pantalla */
-            background-attachment: fixed; /* Fijar el fondo */
-            z-index: 0; /* Cambiado de -1 a 0 para estar detrás del canvas pero visible */
-            /* Asegurar que el contenedor tenga dimensiones */
+            background-size: cover; /* Covers the entire screen */
+            background-attachment: fixed; /* Fix background */
+            z-index: 0; /* 0 to be behind canvas but visible */
+            /* Ensure container has dimensions */
             min-width: 100%;
             min-height: 100%;
         }
 
-        /* --- EL CONTADOR --- */
+        /* --- COUNTER --- */
         #counter {
             position: fixed;
             top: 20px;
             right: 20px;
             color: rgba(255, 255, 255, 0.9);
-            font-family: 'Pacifico', cursive; /* Fuente manuscrita elegante */
+            font-family: 'Pacifico', cursive; /* Elegant handwritten font */
             font-size: 1.8rem;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            background: rgba(13, 27, 42, 0.4); /* Fondo muy sutil */
+            background: rgba(13, 27, 42, 0.4); /* Very subtle background */
             padding: 10px 25px;
             border-radius: 30px;
             border: 1px solid rgba(255, 159, 28, 0.3);
@@ -108,7 +108,7 @@
             transition: opacity 0.5s;
         }
 
-        /* --- CANVAS DE FUEGOS --- */
+        /* --- FIREWORKS CANVAS --- */
         canvas {
             display: block;
             position: absolute;
@@ -116,26 +116,26 @@
             left: 0;
             z-index: 1;
             cursor: crosshair;
-            /* Asegurar que el canvas sea transparente para ver el fondo */
+            /* Ensure canvas is transparent to see background */
             background: transparent;
-            pointer-events: auto; /* Permitir clicks en el canvas */
+            pointer-events: auto; /* Allow clicks on canvas */
         }
 
-        /* --- MENSAJE FINAL (TRANSPARENTE) --- */
+        /* --- FINAL MESSAGE (TRANSPARENT) --- */
         #message-box {
             position: absolute;
-            top: 40%; /* Un poco más arriba para no tapar las carpas */
+            top: 40%; /* Slightly higher to avoid covering tents */
             left: 50%;
             transform: translate(-50%, -50%) scale(0.5);
             text-align: center;
             width: 90%;
             
-            /* SIN FONDO (TRANSPARENTE) */
+            /* NO BACKGROUND (TRANSPARENT) */
             background: transparent; 
             
             opacity: 0;
             pointer-events: none;
-            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Efecto rebote suave */
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Soft bounce effect */
             z-index: 10;
             display: flex;
             flex-direction: column;
@@ -149,17 +149,17 @@
             transform: translate(-50%, -50%) scale(1);
         }
 
-        /* Estilo del Texto Principal */
+        /* Main Text Style */
         h1 {
             font-family: 'Pacifico', cursive;
-            font-size: 3.5rem; /* Un poco más grande para esta fuente */
+            font-size: 3.5rem; /* Slightly larger for this font */
             margin: 0;
             color: #fff;
-            /* Sombra cálida inspirada en las luces de la imagen */
+            /* Warm shadow inspired by image lights */
             text-shadow: 0 0 10px rgba(255, 159, 28, 0.8), 0 0 20px rgba(255, 105, 180, 0.4);
             line-height: 1.3;
             letter-spacing: 1px;
-            /* Animación de latido suave */
+            /* Gentle heartbeat animation */
             animation: heartbeat 2s infinite ease-in-out;
         }
 
@@ -169,30 +169,30 @@
             100% { transform: scale(1); }
         }
 
-        /* Estilo del Botón SÍ - Diseño Premium Táctil */
+        /* YES Button Style - Premium Touch Design */
         .btn-si {
             margin-top: 30px;
-            /* Degradado más rico y profundo */
+            /* Richer and deeper gradient */
             background: linear-gradient(135deg, #ff9f1c 0%, #ffbf69 50%, #ff9f1c 100%);
             background-size: 200% 200%;
             color: #0d1b2a;
             border: none;
-            padding: 18px 60px; /* Más área táctil */
-            font-size: 2rem; /* Texto más grande para móvil */
+            padding: 18px 60px; /* Larger touch area */
+            font-size: 2rem; /* Larger text for mobile */
             border-radius: 50px;
             cursor: pointer;
             font-family: 'Pacifico', cursive;
-            /* Sombra con profundidad */
+            /* Shadow with depth */
             box-shadow: 0 10px 25px rgba(255, 159, 28, 0.6),
                         0 5px 10px rgba(0, 0, 0, 0.2),
-                        inset 0 2px 5px rgba(255, 255, 255, 0.5); /* Brillo superior */
+                        inset 0 2px 5px rgba(255, 255, 255, 0.5); /* Top shine */
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             display: none;
             opacity: 0;
             position: relative;
             overflow: hidden;
-            -webkit-tap-highlight-color: transparent; /* Quitar resaltado azul en móvil */
-            /* Animación de llamada a la acción constante */
+            -webkit-tap-highlight-color: transparent; /* Remove blue highlight on mobile */
+            /* Constant call to action animation */
             animation: pulseGold 2s infinite;
         }
 
@@ -207,7 +207,7 @@
             box-shadow: 0 5px 15px rgba(255, 159, 28, 0.4);
         }
 
-        /* Brillo animado que recorre el botón */
+        /* Animated shine traversing the button */
         .btn-si::after {
             content: '';
             position: absolute;
@@ -237,10 +237,10 @@
         }
 
 
-        /* Animación cuando se presiona el botón */
+        /* Button press animation */
         .btn-si.clicking {
             animation: buttonPress 0.6s forwards ease-out;
-            pointer-events: none; /* Evitar múltiples clicks */
+            pointer-events: none; /* Prevent multiple clicks */
         }
 
         @keyframes buttonPress {
@@ -267,16 +267,16 @@
             }
         }
 
-        /* Estilo del Botón NO (Etéreo y resbaladizo) */
+        /* NO Button Style (Ethereal and slippery) */
         .btn-no {
             margin-top: 20px;
             margin-left: 20px;
-            /* Fondo casi transparente glassmorphism */
+            /* Almost transparent glassmorphism background */
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(5px);
             color: rgba(255, 255, 255, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 12px 30px; /* Tamaño decente para dedo */
+            padding: 12px 30px; /* Decent size for finger */
             font-size: 1.2rem;
             border-radius: 25px;
             cursor: pointer;
@@ -295,14 +295,14 @@
             opacity: 1;
         }
         
-        /* Efecto cuando se mueve (se vuelve borroso) */
+        /* Effect when moving (becomes blurry) */
         .btn-no.moving {
             opacity: 0.5;
             transform: scale(0.8) rotate(10deg);
             filter: blur(2px);
         }
 
-        /* Rastro de cometa (partículas que siguen al botón) */
+        /* Comet trail (particles following the button) */
         .comet-trail {
             position: fixed;
             width: 4px;
@@ -326,13 +326,13 @@
             }
         }
 
-        /* Instrucción pequeña al inicio */
+        /* Small hint at the beginning */
         .hint {
             position: absolute;
             bottom: 50px;
             width: 100%;
             text-align: center;
-            color: rgba(255, 153, 200, 0.8); /* Rosado como las flores */
+            color: rgba(255, 153, 200, 0.8); /* Pink like the flowers */
             font-size: 1.1rem;
             font-family: 'Fredoka One', cursive;
             pointer-events: none;
@@ -347,7 +347,7 @@
             100% { opacity: 0; }
         }
 
-        /* Ocultar el contador al final */
+        /* Hide counter at the end */
         .hidden {
             opacity: 0;
         }
@@ -356,16 +356,16 @@
 </head>
 <body>
 
-    <!-- Contenedor de fondo con imagen -->
+    <!-- Background container with image -->
     <div class="background-container">
-        <!-- Imagen de fondo como respaldo (se llena vía JS si falla la principal) -->
-        <img id="bg-image" src="" alt="Fondo nocturno" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
+        <!-- Background image fallback (filled via JS if main fails) -->
+        <img id="bg-image" src="" alt="Night background" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
     </div>
     
-    <div class="vignette"></div> <!-- Efecto de bordes oscuros -->
-    <div class="cursor" id="cursor"></div> <!-- Cursor mágico -->
+    <div class="vignette"></div> <!-- Dark edges effect -->
+    <div class="cursor" id="cursor"></div> <!-- Magic cursor -->
 
-    <!-- Contador de Magia -->
+    <!-- Magic Counter -->
     <div id="counter">Magia: 0 / 11</div>
 
     <div class="hint">Haz clic en el cielo para celebrar...</div>
@@ -373,7 +373,7 @@
     <canvas id="canvas"></canvas>
 
     <div id="message-box">
-        <!-- El texto flota sin caja detrás -->
+        <!-- Text floats without a box behind -->
         <h1>¿Quieres ser mi novia?</h1>
         <div style="display: flex; gap: 15px; align-items: center; justify-content: center; flex-wrap: wrap;">
             <button class="btn-si" onclick="aceptar()" ontouchstart="aceptar()">¡SÍ!</button>
@@ -382,12 +382,12 @@
     </div>
 
     <script>
-        // --- CONFIGURACIÓN PRINCIPAL (EDITAR AQUÍ) ---
-        // Aquí puedes cambiar las imágenes, textos y opciones fácilmente
+        // --- MAIN CONFIGURATION (EDIT HERE) ---
+        // You can easily change images, text, and options here
         const CONFIG = {
             assets: {
-                background: './night.JPG',    // Tu imagen principal
-                fallback: 'night.png'         // Imagen alternativa si falla la principal
+                background: './night.png',    // Your main image
+                fallback: 'night.png'         // Fallback image if main fails
             },
             game: {
                 clicksToWin: 11
@@ -401,31 +401,31 @@
                 finalSuccess: "¡Te quiero! <br> ✨💖"
             },
             colors: [
-                '#ff9f1c', // Naranja luces
-                '#ffbf69', // Naranja suave
-                '#ff99c8', // Rosa flores
-                '#fca311', // Amarillo fuerte
-                '#ffffff'  // Blanco brillo
+                '#ff9f1c', // Orange lights
+                '#ffbf69', // Soft orange
+                '#ff99c8', // Pink flowers
+                '#fca311', // Strong yellow
+                '#ffffff'  // White shine
             ]
         };
 
-        // --- CARGADOR DE IMÁGENES SIMPLIFICADO ---
+        // --- SIMPLIFIED IMAGE LOADER ---
         (function loadBackground() {
             const bgContainer = document.querySelector('.background-container');
             const bgImage = document.getElementById('bg-image');
             const img = new Image();
 
-            // Intentar cargar la imagen principal desde CONFIG
+            // Try to load main image from CONFIG
             img.src = CONFIG.assets.background;
 
             img.onload = function() {
-                console.log('✅ Imagen cargada:', CONFIG.assets.background);
+                console.log('✅ Image loaded:', CONFIG.assets.background);
                 bgContainer.style.backgroundImage = `url("${CONFIG.assets.background}")`;
             };
 
             img.onerror = function() {
-                console.warn('⚠️ Falló la imagen principal, probando respaldo:', CONFIG.assets.fallback);
-                // Si falla, probar la de respaldo
+                console.warn('⚠️ Main image failed, trying fallback:', CONFIG.assets.fallback);
+                // If failed, try fallback
                 const fallbackImg = new Image();
                 fallbackImg.src = CONFIG.assets.fallback;
                 
@@ -434,7 +434,7 @@
                 };
                 
                 fallbackImg.onerror = function() {
-                    // Último recurso: usar el elemento IMG si todo falla
+                    // Last resort: use IMG element if everything fails
                     if (bgImage) {
                         bgImage.src = CONFIG.assets.fallback; 
                         bgImage.style.display = 'block';
@@ -443,12 +443,12 @@
             };
         })();
 
-        // --- VARIABLES GLOBALES ---
+        // --- GLOBAL VARIABLES ---
         let clickCount = 0;
         let messageShown = false;
         const counterEl = document.getElementById('counter');
 
-        // --- LÓGICA CANVAS ---
+        // --- CANVAS LOGIC ---
         const canvas = document.getElementById("canvas");
         const ctx = canvas.getContext("2d");
         let cw = window.innerWidth;
@@ -475,7 +475,7 @@
             return CONFIG.colors[Math.floor(Math.random() * CONFIG.colors.length)];
         }
 
-        // --- CLASES DE EFECTOS ---
+        // --- EFFECT CLASSES ---
         class Firefly {
             constructor() {
                 this.x = Math.random() * cw;
@@ -640,7 +640,7 @@
             });
         }
 
-        // --- CURSOR Y EVENTOS ---
+        // --- CURSOR AND EVENTS ---
         const cursor = document.getElementById('cursor');
         
         document.addEventListener('mousemove', (e) => {
@@ -670,7 +670,7 @@
             cursor.style.borderColor = 'rgba(255, 255, 255, 0.8)';
         });
 
-        // --- INTERACCIÓN PRINCIPAL ---
+        // --- MAIN INTERACTION ---
         canvas.addEventListener('click', (e) => {
             if (messageShown) return;
 
@@ -690,7 +690,7 @@
             }
         });
 
-        // --- SECUENCIA DE MENSAJES ---
+        // --- MESSAGE SEQUENCE ---
         function mostrarSecuenciaMensajes() {
             const messageBox = document.getElementById('message-box');
             const h1 = messageBox.querySelector('h1');
@@ -740,7 +740,7 @@
             }, 1000);
         }
 
-        // --- LÓGICA DE BOTONES ---
+        // --- BUTTON LOGIC ---
         function aceptar() {
             const btn = document.querySelector('.btn-si');
             const h1 = document.querySelector('h1');
@@ -850,7 +850,7 @@
             }, 200);
         }
 
-        // --- INICIALIZAR ---
+        // --- INITIALIZE ---
         function initNature() {
             for (let i = 0; i < 50; i++) { 
                 fireflies.push(new Firefly());
