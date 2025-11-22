@@ -186,7 +186,7 @@
             box-shadow: 0 10px 25px rgba(255, 159, 28, 0.6),
                         0 5px 10px rgba(0, 0, 0, 0.2),
                         inset 0 2px 5px rgba(255, 255, 255, 0.5); /* Top shine */
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
             display: none;
             opacity: 0;
             position: relative;
@@ -203,6 +203,7 @@
         }
         
         .btn-si:active {
+            transition: all 0.1s ease;
             transform: scale(0.95);
             box-shadow: 0 5px 15px rgba(255, 159, 28, 0.4);
         }
@@ -282,7 +283,7 @@
             cursor: pointer;
             font-family: 'Quicksand', sans-serif;
             font-weight: bold;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
             display: none;
             opacity: 0;
             position: relative;
@@ -297,6 +298,7 @@
         
         /* Effect when moving (becomes blurry) */
         .btn-no.moving {
+            transition: all 0.3s ease;
             opacity: 0.5;
             transform: scale(0.8) rotate(10deg);
             filter: blur(2px);
@@ -386,7 +388,7 @@
         // You can easily change images, text, and options here
         const CONFIG = {
             assets: {
-                background: 'https://i.ibb.co/Z16zwQnt/ari-fair.webp',    // Your main image
+                background: 'https://pouch.jumpshare.com/preview/2heiAToafWKQl-4QzvBemGpg56bPUmL8lv8faGFfU5PRTVOOH6XroWkm9KZ9_s1fzqbQ56XKv9iDv-J15OWNdxHp1eKZbobkyBP7tj0YL_o',    // Your main image
                 fallback: 'night.png'         // Fallback image if main fails
             },
             game: {
@@ -723,7 +725,7 @@
                                 btn.classList.add('show');
                                 btnNo.classList.add('show');
                             }, 50);
-                        }, 500);
+                        }, 2000);
                     }
                     
                     if (mensaje.duration > 0) {
