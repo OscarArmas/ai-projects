@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- viewport-fit=cover permite que el contenido se extienda hasta los bordes del iPhone (incluyendo Dynamic Island y home indicator) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Una Noche Mágica</title>
     <!-- Fonts: Pacifico (titles) and Quicksand (text) https://ibb.co/m55vF5Zs --> 
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
@@ -11,19 +12,23 @@
             margin: 0;
             padding: 0;
             width: 100%;
-            height: 100%;
-            overflow: hidden;
+            /* Altura > 100vh para permitir scroll y ocultar barras de Safari */
+            min-height: 140vh; 
+            overflow-y: auto;
+            overflow-x: hidden;
             background-color: #0d1b2a; /* Fallback color if image fails to load */
             font-family: 'Quicksand', sans-serif;
+            /* Safe areas handled in specific elements to allow full background */
         }
 
         /* --- VIGNETTE EFFECT (DARK EDGES) --- */
         .vignette {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            /* Extender hasta los bordes incluyendo safe areas */
+            top: calc(-1 * env(safe-area-inset-top));
+            left: calc(-1 * env(safe-area-inset-left));
+            width: calc(100vw + env(safe-area-inset-left) + env(safe-area-inset-right));
+            height: calc(100vh + env(safe-area-inset-top) + env(safe-area-inset-bottom));
             pointer-events: none; /* Allows clicking through */
             background: radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(0,0,0,0.6) 100%);
             z-index: 5; /* Above background but below text */
@@ -32,26 +37,116 @@
         /* --- BACKGROUND CONFIG --- */
         .background-container {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            /* Extender hasta los bordes incluyendo safe areas */
+            top: calc(-1 * env(safe-area-inset-top));
+            left: calc(-1 * env(safe-area-inset-left));
+            width: calc(100vw + env(safe-area-inset-left) + env(safe-area-inset-right));
+            height: calc(100vh + env(safe-area-inset-top) + env(safe-area-inset-bottom));
             /* Image is loaded via JS using CONFIG */
             background-position: center center; /* Centered for better visualization */
             background-repeat: no-repeat;
             background-size: cover; /* Covers the entire screen */
             background-attachment: fixed; /* Fix background */
             z-index: 0; /* 0 to be behind canvas but visible */
-            /* Ensure container has dimensions */
-            min-width: 100%;
-            min-height: 100%;
+        }
+
+        /* --- SCROLL LAYOUT & HERO --- */
+        .scroll-content {
+            position: relative;
+            z-index: 3; /* Above canvas (z-index 1) */
+            width: 100%;
+            pointer-events: none; /* Allow clicks to pass through to canvas/body for scrolling */
+        }
+
+        .hero-section {
+            /* Slightly shorter than full screen to show content below */
+            height: 85vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            padding-top: env(safe-area-inset-top); /* Dynamic Island safe area */
+        }
+
+        .main-title {
+            font-family: 'Pacifico', cursive;
+            font-size: clamp(3rem, 10vw, 5rem);
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 159, 28, 0.6);
+            margin: 0;
+            opacity: 0;
+            animation: fadeInDown 1.5s ease-out forwards;
+            padding: 0 20px;
+        }
+
+        .subtitle {
+            font-family: 'Quicksand', sans-serif;
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 10px;
+            opacity: 0;
+            animation: fadeInDown 1.5s ease-out 0.5s forwards;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 5vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            opacity: 0;
+            animation: fadeInUp 1.5s ease-out 1s forwards, bounce 2s infinite 2.5s;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .scroll-text {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .scroll-arrow {
+            width: 20px;
+            height: 20px;
+            border-right: 2px solid rgba(255, 255, 255, 0.6);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.6);
+            transform: rotate(45deg);
+        }
+
+        .game-section {
+            height: 100vh; /* Full screen for the game part */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 10vh; /* Content peeks from here */
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
         }
 
         /* --- COUNTER --- */
         #counter {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            /* Respetar safe area superior (Dynamic Island) */
+            top: calc(20px + env(safe-area-inset-top));
+            right: calc(20px + env(safe-area-inset-right));
             color: rgba(255, 255, 255, 0.9);
             font-family: 'Pacifico', cursive; /* Elegant handwritten font */
             font-size: 1.8rem;
@@ -62,14 +157,19 @@
             border: 1px solid rgba(255, 159, 28, 0.3);
             pointer-events: none;
             transition: opacity 0.5s;
+            /* Asegurar que no se superponga con Dynamic Island */
+            max-width: calc(100vw - 40px - env(safe-area-inset-left) - env(safe-area-inset-right));
         }
 
         /* --- FIREWORKS CANVAS --- */
         canvas {
             display: block;
-            position: absolute;
+            position: fixed;
+            /* Extender canvas hasta los bordes pero contenido respeta safe areas */
             top: 0;
             left: 0;
+            width: 100vw;
+            height: 100vh;
             z-index: 1;
             cursor: crosshair;
             /* Ensure canvas is transparent to see background */
@@ -79,20 +179,21 @@
 
         /* --- FINAL MESSAGE (TRANSPARENT) --- */
         #message-box {
-            position: absolute;
-            top: 40%; /* Slightly higher to avoid covering tents */
+            position: absolute; /* Changed from fixed to absolute to stay in game section */
+            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0.5);
             text-align: center;
             width: 90%;
+            max-width: 600px;
             
             /* NO BACKGROUND (TRANSPARENT) */
             background: transparent; 
             
             opacity: 0;
             pointer-events: none;
-            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Soft bounce effect */
-            z-index: 10;
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 100; /* High z-index to be on top of everything in that section */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -117,6 +218,8 @@
             letter-spacing: 1px;
             /* Gentle heartbeat animation */
             animation: heartbeat 2s infinite ease-in-out;
+            /* Responsive font size para iPhone */
+            font-size: clamp(2rem, 8vw, 3.5rem);
         }
 
         @keyframes heartbeat {
@@ -134,7 +237,8 @@
             color: #0d1b2a;
             border: none;
             padding: 18px 60px; /* Larger touch area */
-            font-size: 2rem; /* Larger text for mobile */
+            /* Responsive font size para iPhone */
+            font-size: clamp(1.5rem, 5vw, 2rem);
             border-radius: 50px;
             cursor: pointer;
             font-family: 'Pacifico', cursive;
@@ -234,7 +338,8 @@
             color: rgba(255, 255, 255, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.3);
             padding: 12px 30px; /* Decent size for finger */
-            font-size: 1.2rem;
+            /* Responsive font size para iPhone */
+            font-size: clamp(1rem, 3vw, 1.2rem);
             border-radius: 25px;
             cursor: pointer;
             font-family: 'Quicksand', sans-serif;
@@ -286,16 +391,27 @@
 
         /* Small hint at the beginning */
         .hint {
-            position: absolute;
-            bottom: 50px;
-            width: 100%;
-            text-align: center;
-            color: rgba(255, 153, 200, 0.8); /* Pink like the flowers */
-            font-size: 1.1rem;
-            font-family: 'Fredoka One', cursive;
+            /* Now part of the flow in .game-section */
+            position: relative; 
+            margin-top: 30px;
+            color: rgba(255, 255, 255, 0.95); /* Blanco puro y brillante */
+            font-size: 1.2rem;
+            font-family: 'Quicksand', sans-serif; /* Fuente más limpia y elegante */
+            font-weight: 700; /* Negrita para legibilidad */
             pointer-events: none;
-            animation: fadeOut 4s forwards;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            text-shadow: 0 0 15px rgba(255, 159, 28, 0.8), 0 0 25px rgba(255, 105, 180, 0.6); /* Glow mágico intenso */
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: transparent; /* Sin fondo oscuro */
+            padding: 10px;
+            border-radius: 0;
+            backdrop-filter: none;
+            animation: pulseGlow 2.5s infinite ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.7; transform: scale(1); text-shadow: 0 0 15px rgba(255, 159, 28, 0.8); }
+            50% { opacity: 1; transform: scale(1.05); text-shadow: 0 0 25px rgba(255, 159, 28, 1), 0 0 40px rgba(255, 105, 180, 0.9); }
         }
 
         @keyframes fadeOut {
@@ -321,22 +437,42 @@
     </div>
     
     <div class="vignette"></div> <!-- Dark edges effect -->
+    
+    <!-- Scrollable Content Structure -->
+    <div class="scroll-content">
+        <section class="hero-section">
+            <h1 class="main-title">Una Noche Mágica</h1>
+            <div class="subtitle">para alguien especial</div>
+            
+            <div class="scroll-indicator">
+                <span class="scroll-text">Desliza</span>
+                <div class="scroll-arrow"></div>
+            </div>
+        </section>
+        
+        <section class="game-section">
+             <div class="hint">✨ Haz clic en el cielo para celebrar... ✨</div>
+             
+             <!-- Message Box MOVED HERE to be part of the scrollable game section -->
+             <div id="message-box">
+                <!-- Text floats without a box behind -->
+                <h1>¿Quieres ser mi novia?</h1>
+                <div style="display: flex; gap: 15px; align-items: center; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn-si" onclick="aceptar()" ontouchstart="aceptar()">¡SÍ!</button>
+                    <button class="btn-no" id="btn-no" onclick="moverBotonNo()" ontouchstart="moverBotonNo()">No</button>
+                </div>
+            </div>
+        </section>
+    </div>
 
     <!-- Magic Counter -->
     <div id="counter">Magia: 0 / 11</div>
 
-    <div class="hint">Haz clic en el cielo para celebrar...</div>
+    <!-- Hint moved to game-section -->
 
     <canvas id="canvas"></canvas>
 
-    <div id="message-box">
-        <!-- Text floats without a box behind -->
-        <h1>¿Quieres ser mi novia?</h1>
-        <div style="display: flex; gap: 15px; align-items: center; justify-content: center; flex-wrap: wrap;">
-            <button class="btn-si" onclick="aceptar()" ontouchstart="aceptar()">¡SÍ!</button>
-            <button class="btn-no" id="btn-no" onclick="moverBotonNo()" ontouchstart="moverBotonNo()">No</button>
-        </div>
-    </div>
+    <!-- Removed old hint div, now inside game-section -->
 
     <script>
         // --- MAIN CONFIGURATION (EDIT HERE) ---
@@ -683,6 +819,8 @@
                     h1.innerHTML = CONFIG.messages.finalSuccess;
                     h1.style.transform = "scale(1.3)";
                     h1.style.opacity = '1';
+                    // Asegurar que el mensaje final esté visible y centrado en la pantalla
+                    h1.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     iniciarCelebracion();
                 }, 300);
             }, 600);
