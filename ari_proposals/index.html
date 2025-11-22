@@ -558,15 +558,18 @@
         let particles = [];
         let fireflies = []; 
 
+        // CORRECCIÓN: Volver a resolución estándar para recuperar velocidad (FPS)
         canvas.width = cw;
         canvas.height = ch;
-
-        window.addEventListener("resize", () => {
+        
+        function resizeCanvas() {
             cw = window.innerWidth;
             ch = window.innerHeight;
             canvas.width = cw;
             canvas.height = ch;
-        });
+        }
+
+        window.addEventListener("resize", resizeCanvas);
 
         function random(min, max) {
             return Math.random() * (max - min) + min;
@@ -607,13 +610,19 @@
             }
 
             draw() {
+                // Optimización: Dibujar glow manualmente en lugar de usar shadowBlur (que es muy lento)
+                
+                // 1. Glow exterior (simulado con un círculo transparente grande)
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius * 3, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${this.color}, ${this.alpha * 0.2})`;
+                ctx.fill();
+
+                // 2. Núcleo brillante
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(${this.color}, ${this.alpha})`;
-                ctx.shadowBlur = 15; 
-                ctx.shadowColor = `rgba(${this.color}, ${this.alpha})`;
                 ctx.fill();
-                ctx.shadowBlur = 0;
             }
         }
 
@@ -711,7 +720,8 @@
         }
 
         function createParticles(x, y, color) {
-            let particleCount = 40;
+            // Optimización: Reducir número de partículas por explosión (40 -> 25)
+            let particleCount = 25;
             while (particleCount--) {
                 particles.push(new Particle(x, y, color));
             }
@@ -933,7 +943,8 @@
 
         // --- INITIALIZE ---
         function initNature() {
-            for (let i = 0; i < 50; i++) { 
+            // Optimización: Reducir número de luciérnagas (50 -> 25)
+            for (let i = 0; i < 25; i++) { 
                 fireflies.push(new Firefly());
             }
         }
