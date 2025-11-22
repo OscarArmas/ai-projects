@@ -773,6 +773,10 @@
                 if (hint) {
                     hint.classList.remove('visible');
                     hint.style.opacity = '0';
+                    // Remover totalmente del flujo después de la transición
+                    setTimeout(() => {
+                        hint.style.display = 'none';
+                    }, 1000);
                 }
                 
                 mostrarSecuenciaMensajes();
