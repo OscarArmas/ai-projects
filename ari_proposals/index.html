@@ -406,11 +406,20 @@
             padding: 10px;
             border-radius: 0;
             backdrop-filter: none;
+            /* Initial state hidden */
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+
+        .hint.visible {
+            opacity: 1;
+            transform: translateY(0);
             animation: pulseGlow 2.5s infinite ease-in-out;
         }
 
         @keyframes pulseGlow {
-            0%, 100% { opacity: 0.7; transform: scale(1); text-shadow: 0 0 15px rgba(255, 159, 28, 0.8); }
+            0%, 100% { opacity: 0.8; transform: scale(1); text-shadow: 0 0 15px rgba(255, 159, 28, 0.8); }
             50% { opacity: 1; transform: scale(1.05); text-shadow: 0 0 25px rgba(255, 159, 28, 1), 0 0 40px rgba(255, 105, 180, 0.9); }
         }
 
@@ -441,8 +450,7 @@
     <!-- Scrollable Content Structure -->
     <div class="scroll-content">
         <section class="hero-section">
-            <h1 class="main-title">Una Noche Mágica</h1>
-            <div class="subtitle">para alguien especial</div>
+            <!-- Titles removed per request -->
             
             <div class="scroll-indicator">
                 <span class="scroll-text">Desliza</span>
@@ -479,7 +487,7 @@
         // You can easily change images, text, and options here
         const CONFIG = {
             assets: {
-                background: 'https://pouch.jumpshare.com/preview/2heiAToafWKQl-4QzvBemGpg56bPUmL8lv8faGFfU5PRTVOOH6XroWkm9KZ9_s1fzqbQ56XKv9iDv-J15OWNdxHp1eKZbobkyBP7tj0YL_o',    // Your main image
+                background: 'https://i.postimg.cc/y6Fxgh5w/Chat-GPT-Image-Nov-21-2025-at-05-27-19-PM.webp',    // Your main image
                 fallback: 'night.png'         // Fallback image if main fails
             },
             game: {
@@ -487,7 +495,7 @@
             },
             messages: {
                 sequence: [
-                    { texto: "Ari niña hermosa", duration: 2000 },
+                    { texto: "Ari hermosa", duration: 2000 },
                     { texto: "Tengo una gran pregunta para ti", duration: 2500 },
                     { texto: "¿Quieres ser mi novia?", duration: 0, showButtons: true }
                 ],
@@ -550,15 +558,18 @@
         let particles = [];
         let fireflies = []; 
 
+        // CORRECCIÓN: Volver a resolución estándar para recuperar velocidad (FPS)
         canvas.width = cw;
         canvas.height = ch;
-
-        window.addEventListener("resize", () => {
+        
+        function resizeCanvas() {
             cw = window.innerWidth;
             ch = window.innerHeight;
             canvas.width = cw;
             canvas.height = ch;
-        });
+        }
+
+        window.addEventListener("resize", resizeCanvas);
 
         function random(min, max) {
             return Math.random() * (max - min) + min;
@@ -599,13 +610,19 @@
             }
 
             draw() {
+                // Optimización: Dibujar glow manualmente en lugar de usar shadowBlur (que es muy lento)
+                
+                // 1. Glow exterior (simulado con un círculo transparente grande)
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius * 3, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${this.color}, ${this.alpha * 0.2})`;
+                ctx.fill();
+
+                // 2. Núcleo brillante
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(${this.color}, ${this.alpha})`;
-                ctx.shadowBlur = 15; 
-                ctx.shadowColor = `rgba(${this.color}, ${this.alpha})`;
                 ctx.fill();
-                ctx.shadowBlur = 0;
             }
         }
 
@@ -703,7 +720,8 @@
         }
 
         function createParticles(x, y, color) {
-            let particleCount = 40;
+            // Optimización: Reducir número de partículas por explosión (40 -> 25)
+            let particleCount = 25;
             while (particleCount--) {
                 particles.push(new Particle(x, y, color));
             }
@@ -749,6 +767,14 @@
             if (clickCount >= CONFIG.game.clicksToWin) {
                 messageShown = true;
                 counterEl.classList.add('hidden');
+                
+                // Hide hint when game is won
+                const hint = document.querySelector('.hint');
+                if (hint) {
+                    hint.classList.remove('visible');
+                    hint.style.opacity = '0';
+                }
+                
                 mostrarSecuenciaMensajes();
             }
         });
@@ -917,10 +943,24 @@
 
         // --- INITIALIZE ---
         function initNature() {
-            for (let i = 0; i < 50; i++) { 
+            // Optimización: Reducir número de luciérnagas (50 -> 25)
+            for (let i = 0; i < 25; i++) { 
                 fireflies.push(new Firefly());
             }
         }
+        
+        // --- SCROLL DETECTION FOR HINT ---
+        window.addEventListener('scroll', () => {
+            const hint = document.querySelector('.hint');
+            const scrollPosition = window.scrollY;
+            const windowHeight = window.innerHeight;
+            
+            // Si hemos hecho scroll más del 30% de la altura de la pantalla, mostrar hint
+            if (scrollPosition > windowHeight * 0.3) {
+                hint.classList.add('visible');
+            }
+        });
+
         initNature();
         loop();
 
